@@ -1,0 +1,41 @@
+[
+    {
+        "id": "hanamichi-sakuragi",
+        "name_ar": "ساكوراجي هاناميتشي",
+        "name_en": "Hanamichi Sakuragi",
+        "name_jp": "桜木 花道",
+        "role": "Power Forward",
+        "height": "189.2 cm",
+        "weight": "83 kg",
+        "team": "Shohoku",
+        "number": 10,
+        "bio": "بطل القصة، يلقب نفسه بالعبقري. بدأ لعب كرة السلة لجذب انتباه هاروكو، لكنه سرعان ما وقع في حب الرياضة.",
+        "image": "https://images.unsplash.com/photo-1519861531473-920026393112?w=800&q=80"
+    },
+    {
+        "id": "kaede-rukawa",
+        "name_ar": "روكاوا كايدي",
+        "name_en": "Kaede Rukawa",
+        "name_jp": "流川 楓",
+        "role": "Small Forward",
+        "height": "187 cm",
+        "weight": "75 kg",
+        "team": "Shohoku",
+        "number": 11,
+        "bio": "النجم الصاعد والمنافس الأبدي لساكوراجي. هادئ جداً ويركز فقط على كرة السلة والنوم.",
+        "image": "https://images.unsplash.com/photo-1546519638-68e109498ad0?w=800&q=80"
+    },
+    {
+        "id": "takenori-akagi",
+        "name_ar": "أكاجي تاكينوري",
+        "name_en": "Takenori Akagi",
+        "name_jp": "赤木 剛憲",
+        "role": "Center",
+        "height": "197 cm",
+        "weight": "90 kg",
+        "team": "Shohoku",
+        "number": 4,
+        "bio": "كابتن فريق شوهوكو، يلقب بالغوريلا. يحلم بالفوز بالبطولة الوطنية.",
+        "image": "https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?w=800&q=80"
+    }
+]

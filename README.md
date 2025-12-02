@@ -1,36 +1,221 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# موقع سلام دانك - Slam Dunk Streaming Site
 
-## Getting Started
+موقع ويب عربي حديث ومتجاوب لعرض ومشاهدة حلقات أنمي سلام دانك، مع صفحات تفصيلية للشخصيات ومشغل فيديو مدمج.
 
-First, run the development server:
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16.0-black)
+![React](https://img.shields.io/badge/React-19.2-blue)
 
+## ✨ المميزات
+
+- 🎬 **مشغل فيديو متقدم** مع دعم تشغيل HTML5
+- 📱 **تصميم متجاوب** يعمل على جميع الأجهزة (موبايل، تابلت، ديسكتوب)
+- 🎨 **واجهة عصرية** بألوان متناسقة وتأثيرات حركية سلسة
+- 🔍 **بحث وفلترة** للحلقات حسب الموسم
+- 👥 **صفحات شخصيات** تفصيلية مع معلومات كاملة
+- 🌐 **دعم RTL** كامل للغة العربية
+- 🔗 **توافق Mega.nz** مع نظام fallback ذكي
+- 🚀 **SEO محسّن** مع metadata كاملة
+
+## 🛠️ التقنيات المستخدمة
+
+- **Framework**: Next.js 16 (App Router)
+- **UI**: React 19 + Tailwind CSS 4
+- **Icons**: Lucide React
+- **Font**: Cairo (Google Fonts)
+- **Deployment**: Vercel / Netlify / أي استضافة Node.js
+
+## 📦 التثبيت
+
+### المتطلبات الأساسية
+- Node.js 18+ or 20+
+- npm أو yarn أو pnpm
+
+### خطوات التثبيت
+
+1. **Clone المشروع**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd slam
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **تثبيت المكتبات**
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **تشغيل الخادم المحلي**
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **افتح المتصفح**
+```
+http://localhost:3000
+```
 
-## Learn More
+## 📁 هيكل المشروع
 
-To learn more about Next.js, take a look at the following resources:
+```
+slam/
+├── src/
+│   ├── app/                    # صفحات Next.js
+│   │   ├── page.tsx           # الصفحة الرئيسية
+│   │   ├── episodes/          # صفحات الحلقات
+│   │   ├── characters/        # صفحات الشخصيات
+│   │   └── terms/             # شروط الاستخدام
+│   ├── components/            # المكونات القابلة لإعادة الاستخدام
+│   │   ├── Navbar.tsx
+│   │   ├── Footer.tsx
+│   │   ├── Hero.tsx
+│   │   ├── VideoPlayer.tsx
+│   │   ├── EpisodeCard.tsx
+│   │   └── CharacterCard.tsx
+│   ├── data/                  # بيانات JSON
+│   │   ├── episodes.json
+│   │   └── characters.json
+│   ├── lib/                   # أدوات مساعدة
+│   └── types/                 # TypeScript types
+├── public/                    # ملفات ثابتة
+├── ADMIN_GUIDE.md            # دليل الإدارة
+└── README.md                 # هذا الملف
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎮 إدارة المحتوى
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### إضافة حلقة جديدة
 
-## Deploy on Vercel
+عدّل الملف `src/data/episodes.json` وأضف:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```json
+{
+  "id": "4",
+  "title": "عنوان الحلقة",
+  "description": "وصف الحلقة",
+  "season": 1,
+  "episode_number": 4,
+  "thumbnail": "https://example.com/image.jpg",
+  "duration": "24:00",
+  "mega_link": "https://mega.nz/file/XXX#YYY",
+  "video_url": ""
+}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### إضافة شخصية جديدة
+
+عدّل الملف `src/data/characters.json` وأضف:
+
+```json
+{
+  "id": "character-id",
+  "name_ar": "الاسم بالعربية",
+  "name_en": "English Name",
+  "name_jp": "日本語名",
+  "role": "Position",
+  "height": "180 cm",
+  "weight": "75 kg",
+  "team": "Shohoku",
+  "number": 7,
+  "bio": "نبذة عن الشخصية",
+  "image": "https://example.com/character.jpg"
+}
+```
+
+للمزيد من التفاصيل، راجع [ADMIN_GUIDE.md](./ADMIN_GUIDE.md)
+
+## 🚀 النشر
+
+### النشر على Vercel (موصى به)
+
+1. ادفع الكود إلى GitHub
+2. اذهب إلى [vercel.com](https://vercel.com)
+3. استورد المشروع من GitHub
+4. سيتم النشر تلقائياً!
+
+### النشر على Netlify
+
+```bash
+npm run build
+```
+
+ثم ارفع مجلد `.next` و `package.json` إلى Netlify.
+
+### النشر على VPS (مثل DigitalOcean)
+
+```bash
+npm run build
+npm start
+```
+
+استخدم PM2 لإدارة العملية:
+```bash
+npm install -g pm2
+pm2 start npm --name "slam-dunk" -- start
+```
+
+## 🔧 البناء للإنتاج
+
+```bash
+npm run build
+```
+
+سيُنشئ هذا الأمر النسخة المُحسّنة في مجلد `.next`.
+
+## 📝 الأوامر المتاحة
+
+```bash
+npm run dev      # تشغيل خادم التطوير
+npm run build    # بناء للإنتاج
+npm start        # تشغيل الإنتاج
+npm run lint     # فحص الكود
+```
+
+## ⚠️ تنويهات قانونية
+
+- هذا الموقع هو **موقع مروحة غير رسمي** تم إنشاؤه لأغراض تعليمية
+- جميع حقوق "سلام دانك" محفوظة لـ **Toei Animation** و **Takehiko Inoue**
+- لا نستضيف أي محتوى - الروابط مُقدمة من مصادر خارجية
+- نشجع الجميع على دعم الإصدارات الرسمية
+
+## 🐛 الإبلاغ عن مشاكل
+
+إذا واجهت أي مشكلة:
+1. تأكد من تحديث Node.js إلى أحدث إصدار
+2. احذف `node_modules` و `package-lock.json` وأعد التثبيت
+3. تحقق من صحة ملفات JSON
+4. راجع console المتصفح للأخطاء
+
+## 📱 المتطلبات التقنية
+
+### المتصفحات المدعومة
+- Chrome/Edge (آخر إصدارين)
+- Firefox (آخر إصدارين)
+- Safari 14+
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+### الأجهزة
+- ✅ Desktop (1920×1080 وما فوق)
+- ✅ Laptop (1366×768)
+- ✅ Tablet (768×1024)
+- ✅ Mobile (360×800 وما فوق)
+
+## 🤝 المساهمة
+
+المساهمات مرحب بها! يرجى:
+1. Fork المشروع
+2. إنشاء branch جديد (`git checkout -b feature/amazing-feature`)
+3. Commit التغييرات (`git commit -m 'Add amazing feature'`)
+4. Push إلى Branch (`git push origin feature/amazing-feature`)
+5. فتح Pull Request
+
+## 📄 الترخيص
+
+هذا المشروع مرخص تحت MIT License - راجع ملف LICENSE للتفاصيل.
+
+## 👨‍💻 المطور
+
+أُنشئ بواسطة AI Assistant لأغراض تعليمية.
+
+---
+
+**استمتع بمشاهدة سلام دانك! 🏀**
