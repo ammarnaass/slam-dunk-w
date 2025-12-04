@@ -1,55 +1,77 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { Character } from '@/types';
+import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import { Character } from "@/types";
 
-const dataFilePath = path.join(process.cwd(), 'src/data/characters.json');
+const dataFilePath = path.join(process.cwd(), "src/data/characters.json");
 
 function getCharacters(): Character[] {
-    const jsonData = fs.readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(jsonData);
+  const jsonData = fs.readFileSync(dataFilePath, "utf8");
+  return JSON.parse(jsonData);
 }
 
 function saveCharacters(characters: Character[]) {
-    fs.writeFileSync(dataFilePath, JSON.stringify(characters, null, 2));
+  fs.writeFileSync(dataFilePath, JSON.stringify(characters, null, 2));
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
-    try {
-        const { id } = await params;
-        const updatedData: Partial<Character> = await request.json();
-        const characters = getCharacters();
+// ==================== PUT ====================
+export async function PUT(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
+  try {
+    const { id } = context.params;
+    const updatedData: Partial<Character> = await req.json();
 
-        const index = characters.findIndex(c => c.id === id);
-        if (index === -1) {
-            return NextResponse.json({ error: 'Character not found' }, { status: 404 });
-        }
+    const characters = getCharacters();
+    const index = characters.findIndex((c) => c.id === id);
 
-        characters[index] = { ...characters[index], ...updatedData };
-        saveCharacters(characters);
-
-        return NextResponse.json(characters[index]);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to update character' }, { status: 500 });
+    if (index === -1) {
+      return NextResponse.json(
+        { error: "Character not found" },
+        { status: 404 }
+      );
     }
+
+    characters[index] = { ...characters[index], ...updatedData };
+    saveCharacters(characters);
+
+    return NextResponse.json(characters[index]);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to update character" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-    try {
-        const { id } = await params;
-        let characters = getCharacters();
+// ==================== DELETE ====================
+export async function DELETE(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
+  try {
+    const { id } = context.params;
 
-        const initialLength = characters.length;
-        characters = characters.filter(c => c.id !== id);
+    let characters = getCharacters();
+    const initialLength = characters.length;
 
-        if (characters.length === initialLength) {
-            return NextResponse.json({ error: 'Character not found' }, { status: 404 });
-        }
+    characters = characters.filter((c) => c.id !== id);
 
-        saveCharacters(characters);
-
-        return NextResponse.json({ message: 'Character deleted' });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to delete character' }, { status: 500 });
+    if (characters.length === initialLength) {
+      return NextResponse.json(
+        { error: "Character not found" },
+        { status: 404 }
+      );
     }
+
+    saveCharacters(characters);
+
+    return NextResponse.json({ message: "Character deleted" });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete character" },
+      { status: 500 }
+    );
+  }
 }
