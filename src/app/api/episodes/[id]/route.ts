@@ -14,7 +14,7 @@ function saveEpisodes(episodes: Episode[]) {
     fs.writeFileSync(dataFilePath, JSON.stringify(episodes, null, 2));
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
         const updatedData: Partial<Episode> = await request.json();
@@ -34,7 +34,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
         let episodes = getEpisodes();
