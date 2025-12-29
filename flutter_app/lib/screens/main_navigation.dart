@@ -35,9 +35,11 @@ class _MainNavigationState extends State<MainNavigation> {
       size: AdSize.banner,
       listener: BannerAdListener(
         onAdLoaded: (_) {
-          setState(() {
-            _isBannerAdReady = true;
-          });
+          if (mounted) {
+            setState(() {
+              _isBannerAdReady = true;
+            });
+          }
         },
         onAdFailedToLoad: (ad, err) {
           ad.dispose();

@@ -7,7 +7,7 @@ import 'providers/home_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   if (Platform.isAndroid || Platform.isIOS) {
     await MobileAds.instance.initialize();
   }
@@ -39,7 +39,7 @@ class AnimeDazeApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const HomeScreen(),
+      home: const MainNavigation(),
     );
   }
 }

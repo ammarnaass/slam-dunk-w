@@ -70,7 +70,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               "سجل دخولك لمزامنة قائمة المشاهدة",
-              style: TextStyle(color: Colors.white.withOpacity(0.5)),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
             ),
             const SizedBox(height: 40),
             _buildOption(Icons.favorite_rounded, "قائمة المشاهدة", () {}),
@@ -100,8 +100,8 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               "الإصدار $currentVersion",
-              style:
-                  TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 12),
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.2), fontSize: 12),
             ),
           ],
         ),

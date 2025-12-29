@@ -3,8 +3,17 @@ import 'package:http/http.dart' as http;
 import '../models/models.dart';
 
 class ApiService {
-  // Use your live URL
+  // 1. For Android Emulator: Use 10.0.2.2 instead of localhost
+  // static const String baseUrl = "http://10.0.2.2:3000/api/mobile/v1";
+
+  // 2. For Physical Device: Use your PC's IP address (run `ipconfig` to find it)
+  // static const String baseUrl = "http://192.168.8.101:3001/api/mobile/v1";
+
+  // 3. For Production (Vercel)
   static const String baseUrl = "https://slam-dunk-w.vercel.app/api/mobile/v1";
+
+  // CHANGE THIS: Select the URL appropriate for your testing environment.
+  // Currently defaulting to Vercel, but if deployment failed, use Option 1 or 2.
 
   Future<MobileHomeData> getHomeData() async {
     final response = await http.get(Uri.parse("$baseUrl/home"));

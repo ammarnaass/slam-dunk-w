@@ -42,7 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
         title: Container(
           height: 45,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
           ),
           child: TextField(
@@ -96,12 +96,12 @@ class _SearchScreenState extends State<SearchScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.search_rounded,
-              size: 80, color: Colors.white.withOpacity(0.1)),
+              size: 80, color: Colors.white.withValues(alpha: 0.1)),
           const SizedBox(height: 16),
           Text(
             "ابدأ البحث عن أعمالك المفضلة",
-            style:
-                TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 16),
+            style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.3), fontSize: 16),
           ),
         ],
       ),
@@ -119,8 +119,8 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       itemCount: 6,
       itemBuilder: (context, index) => Shimmer.fromColors(
-        baseColor: Colors.white.withOpacity(0.05),
-        highlightColor: Colors.white.withOpacity(0.1),
+        baseColor: Colors.white.withValues(alpha: 0.05),
+        highlightColor: Colors.white.withValues(alpha: 0.1),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.black,
@@ -146,7 +146,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),

@@ -18,8 +18,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<HomeProvider>(context, listen: false).fetchHomeData());
+    Future.microtask(() {
+      if (mounted) {
+        Provider.of<HomeProvider>(context, listen: false).fetchHomeData();
+      }
+    });
   }
 
   @override
@@ -206,8 +209,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    const Color(0xFF030712).withOpacity(0.9),
-                    const Color(0xFF030712).withOpacity(0.3),
+                    const Color(0xFF030712).withValues(alpha: 0.9),
+                    const Color(0xFF030712).withValues(alpha: 0.3),
                     Colors.transparent,
                   ],
                 ),

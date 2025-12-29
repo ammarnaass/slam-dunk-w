@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
+
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../models/models.dart';
 import '../services/api_service.dart';
@@ -49,12 +49,12 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
         onAdDismissedFullScreenContent: (ad) {
           ad.dispose();
           _loadInterstitialAd();
-          _playEpisode(ep);
+          if (mounted) _playEpisode(ep);
         },
         onAdFailedToShowFullScreenContent: (ad, err) {
           ad.dispose();
           _loadInterstitialAd();
-          _playEpisode(ep);
+          if (mounted) _playEpisode(ep);
         },
       );
       _interstitialAd!.show();
@@ -143,7 +143,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: CircleAvatar(
-          backgroundColor: Colors.black.withOpacity(0.5),
+          backgroundColor: Colors.black.withValues(alpha: 0.5),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.pop(context),
@@ -169,7 +169,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                   end: Alignment.topCenter,
                   colors: [
                     const Color(0xFF030712),
-                    const Color(0xFF030712).withOpacity(0.7),
+                    const Color(0xFF030712).withValues(alpha: 0.7),
                     Colors.transparent,
                   ],
                 ),
@@ -222,10 +222,10 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.08),
+                          color: Colors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(20),
-                          border:
-                              Border.all(color: Colors.white.withOpacity(0.1)),
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.1)),
                         ),
                         child: Text(
                           g,
@@ -244,7 +244,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
           Text(
             anime!.description,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               height: 1.6,
               fontSize: 15,
             ),
@@ -258,9 +258,9 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Text(
         label,
@@ -288,9 +288,9 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.06)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),
       child: InkWell(
         onTap: () => _showInterstitialAndPlay(ep),
@@ -313,7 +313,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                     Container(
                       width: 120,
                       height: 70,
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                     ),
                     const Icon(Icons.play_arrow_rounded,
                         color: Colors.white, size: 30),
@@ -339,7 +339,8 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                     Text(
                       "حلقة ${ep.episodeNumber} • ${ep.duration}",
                       style: TextStyle(
-                          color: Colors.white.withOpacity(0.5), fontSize: 12),
+                          color: Colors.white.withValues(alpha: 0.5),
+                          fontSize: 12),
                     ),
                   ],
                 ),
