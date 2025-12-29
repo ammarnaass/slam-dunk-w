@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Film, Users, LogOut, Home, Settings } from "lucide-react";
+import { LayoutDashboard, Film, Users, LogOut, Home, Settings, User as UserIcon, CreditCard, Banknote, Smartphone } from "lucide-react";
 
 export default function AdminLayout({
     children,
@@ -24,8 +24,12 @@ export default function AdminLayout({
 
     const navItems = [
         { href: "/admin", label: "لوحة التحكم", icon: LayoutDashboard },
-        { href: "/admin/episodes", label: "إدارة الحلقات", icon: Film },
+        { href: "/admin/animes", label: "إدارة المحتوى", icon: Film }, // Was Episodes
         { href: "/admin/characters", label: "إدارة الشخصيات", icon: Users },
+        { href: "/admin/users", label: "إدارة المشتركين", icon: UserIcon },
+        { href: "/admin/plans", label: "إدارة الخطط", icon: CreditCard },
+        { href: "/admin/payment-methods", label: "طرق الدفع", icon: Banknote },
+        { href: "/admin/api-app", label: "إعدادات التطبيق (API App)", icon: Smartphone },
         { href: "/admin/settings", label: "إعدادات الموقع", icon: Settings },
     ];
 

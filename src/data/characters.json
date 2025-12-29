@@ -1,6 +1,7 @@
 [
     {
         "id": "hanamichi-sakuragi",
+        "animeId": "slam-dunk",
         "name_ar": "ساكوراجي هاناميتشي",
         "name_en": "Hanamichi Sakuragi",
         "name_jp": "桜木 花道",
@@ -14,6 +15,7 @@
     },
     {
         "id": "kaede-rukawa",
+        "animeId": "slam-dunk",
         "name_ar": "روكاوا كايدي",
         "name_en": "Kaede Rukawa",
         "name_jp": "流川 楓",
@@ -27,6 +29,7 @@
     },
     {
         "id": "takenori-akagi",
+        "animeId": "slam-dunk",
         "name_ar": "أكاجي تاكينوري",
         "name_en": "Takenori Akagi",
         "name_jp": "赤木 剛憲",

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Anime Daze</string>
+    <string name="title_activity_main">Anime Daze</string>
+    <string name="package_name">com.animedaze.app</string>
+    <string name="custom_url_scheme">com.animedaze.app</string>
+</resources>

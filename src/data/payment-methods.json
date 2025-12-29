@@ -1,0 +1,18 @@
+[
+    {
+        "id": "card",
+        "name": "بطاقة ائتمان / خصم مباشر",
+        "type": "card",
+        "instructions": "الدفع الآمن عبر البطاقات البنكية (Visa/Mastercard)",
+        "logoUrl": "",
+        "active": true
+    },
+    {
+        "id": "vodafone_cash",
+        "name": "فودافون كاش",
+        "type": "manual",
+        "instructions": "قم بالتحويل لرقم: 01012345678 \n ثم قم بتأكيد الدفع بإرسال صورة التحويل.",
+        "logoUrl": "",
+        "active": true
+    }
+]

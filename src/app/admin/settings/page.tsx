@@ -1,15 +1,33 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Settings } from "lucide-react";
+import { Save, Settings, Facebook, Twitter, Instagram, Youtube, Send, Film, Image as ImageIcon } from "lucide-react";
+import { Anime } from "@/types";
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [animes, setAnimes] = useState<Anime[]>([]);
     const [settings, setSettings] = useState({
         siteName: "",
         siteDescription: "",
         logoUrl: "",
+        faviconUrl: "",
+        currency: "ج.م",
+        socialLinks: {
+            facebook: "",
+            twitter: "",
+            instagram: "",
+            youtube: "",
+            telegram: "",
+        },
+        sliderAnimeIds: [] as string[],
+        admob: {
+            isEnabled: false,
+            appId: "",
+            bannerId: "",
+            interstitialId: "",
+        },
     });
 
     useEffect(() => {
@@ -18,11 +36,22 @@ export default function SettingsPage() {
 
     const fetchSettings = async () => {
         try {
-            const res = await fetch("/api/settings");
-            const data = await res.json();
-            setSettings(data);
+            const [settingsRes, animesRes] = await Promise.all([
+                fetch("/api/settings"),
+                fetch("/api/admin/animes")
+            ]);
+
+            if (settingsRes.ok) {
+                const data = await settingsRes.json();
+                setSettings(data);
+            }
+
+            if (animesRes.ok) {
+                const data = await animesRes.json();
+                setAnimes(data);
+            }
         } catch (error) {
-            console.error("Failed to fetch settings", error);
+            console.error("Failed to fetch data", error);
         } finally {
             setLoading(false);
         }
@@ -31,6 +60,48 @@ export default function SettingsPage() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setSettings((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSocialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSettings((prev) => ({
+            ...prev,
+            socialLinks: {
+                ...prev.socialLinks,
+                [name]: value
+            }
+        }));
+    };
+
+    const toggleSliderAnime = (id: string) => {
+        setSettings(prev => {
+            const current = prev.sliderAnimeIds || [];
+            const next = current.includes(id)
+                ? current.filter(item => item !== id)
+                : [...current, id];
+            return { ...prev, sliderAnimeIds: next };
+        });
+    };
+
+    const handleAdMobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSettings((prev) => ({
+            ...prev,
+            admob: {
+                ...prev.admob,
+                [name]: value
+            }
+        }));
+    };
+
+    const handleAdMobToggle = () => {
+        setSettings((prev) => ({
+            ...prev,
+            admob: {
+                ...prev.admob,
+                isEnabled: !prev.admob.isEnabled
+            }
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -120,14 +191,206 @@ export default function SettingsPage() {
                     )}
                 </div>
 
+                <div>
+                    <label className="block text-slate-400 text-sm font-medium mb-2">رابط الأيقونة (Favicon URL)</label>
+                    <input
+                        type="text"
+                        name="faviconUrl"
+                        value={settings.faviconUrl}
+                        onChange={handleChange}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
+                        placeholder="/favicon.ico"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">تظهر هذه الأيقونة في لسان المتصفح.</p>
+
+                    {settings.faviconUrl && (
+                        <div className="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-lg inline-block">
+                            <p className="text-xs text-slate-500 mb-2">معاينة الأيقونة:</p>
+                            <img src={settings.faviconUrl} alt="Favicon Preview" className="w-8 h-8 object-contain" />
+                        </div>
+                    )}
+                </div>
+
+                <div>
+                    <label className="block text-slate-400 text-sm font-medium mb-2">العملة (Currency)</label>
+                    <input
+                        type="text"
+                        name="currency"
+                        value={settings.currency}
+                        onChange={handleChange}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
+                        placeholder="ج.م"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">العملة المستخدمة في عرض الخطط والدفع (مثال: ج.م، USD، SAR).</p>
+                </div>
+
+                <div className="pt-6 border-t border-slate-800">
+                    <h3 className="text-xl font-bold text-white mb-4">وسائل التواصل الاجتماعي</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2">
+                            <Facebook className="text-blue-500" size={20} />
+                            <input
+                                type="text"
+                                name="facebook"
+                                value={settings.socialLinks?.facebook}
+                                onChange={handleSocialChange}
+                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
+                                placeholder="رابط فيسبوك"
+                            />
+                        </div>
+                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2">
+                            <Twitter className="text-sky-400" size={20} />
+                            <input
+                                type="text"
+                                name="twitter"
+                                value={settings.socialLinks?.twitter}
+                                onChange={handleSocialChange}
+                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
+                                placeholder="رابط تويتر"
+                            />
+                        </div>
+                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2">
+                            <Instagram className="text-pink-500" size={20} />
+                            <input
+                                type="text"
+                                name="instagram"
+                                value={settings.socialLinks?.instagram}
+                                onChange={handleSocialChange}
+                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
+                                placeholder="رابط إنستجرام"
+                            />
+                        </div>
+                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2">
+                            <Youtube className="text-red-500" size={20} />
+                            <input
+                                type="text"
+                                name="youtube"
+                                value={settings.socialLinks?.youtube}
+                                onChange={handleSocialChange}
+                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
+                                placeholder="رابط يوتيوب"
+                            />
+                        </div>
+                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 md:col-span-2">
+                            <Send className="text-sky-500" size={20} />
+                            <input
+                                type="text"
+                                name="telegram"
+                                value={settings.socialLinks?.telegram}
+                                onChange={handleSocialChange}
+                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
+                                placeholder="رابط تليجرام"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="pt-6 border-t border-slate-800">
+                    <h3 className="text-xl font-bold text-white mb-4">إنيميات السلايدر الرئيسي</h3>
+                    <p className="text-sm text-slate-400 mb-4">اختر الأعمال التي ستظهر في السلايدر العلوي للصفحة الرئيسية.</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {animes.map(anime => (
+                            <button
+                                key={anime.id}
+                                type="button"
+                                onClick={() => toggleSliderAnime(anime.id)}
+                                className={`relative p-2 rounded-xl border transition-all text-right group ${settings.sliderAnimeIds?.includes(anime.id)
+                                    ? 'border-red-600 bg-red-600/10'
+                                    : 'border-slate-800 bg-slate-950 hover:border-slate-700'
+                                    }`}
+                            >
+                                <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2">
+                                    <img src={anime.coverImage} className="w-full h-full object-cover" alt="" />
+                                </div>
+                                <span className={`text-xs font-bold line-clamp-1 ${settings.sliderAnimeIds?.includes(anime.id) ? 'text-red-500' : 'text-slate-400'
+                                    }`}>
+                                    {anime.title}
+                                </span>
+                                {settings.sliderAnimeIds?.includes(anime.id) && (
+                                    <div className="absolute top-4 right-4 bg-red-600 text-white rounded-full p-1 border-2 border-slate-900 shadow-xl">
+                                        <Film size={12} />
+                                    </div>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="pt-6 border-t border-slate-800">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 className="text-xl font-bold text-white">إعلانات AdMob (تطبيق الأندرويد)</h3>
+                            <p className="text-sm text-slate-400 mt-1">تحكم في ظهور الإعلانات داخل تطبيق الأندرويد.</p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleAdMobToggle}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${settings.admob?.isEnabled ? 'bg-green-600' : 'bg-slate-700'
+                                }`}
+                        >
+                            <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.admob?.isEnabled ? 'translate-x-6' : 'translate-x-1'
+                                    }`}
+                            />
+                        </button>
+                    </div>
+
+                    <div className={`space-y-4 transition-all duration-300 ${settings.admob?.isEnabled ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-slate-400 text-xs font-medium mb-1.5 underline decoration-slate-800">App ID</label>
+                                <input
+                                    type="text"
+                                    name="appId"
+                                    value={settings.admob?.appId}
+                                    onChange={handleAdMobChange}
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600 transition-colors"
+                                    placeholder="ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-slate-400 text-xs font-medium mb-1.5 underline decoration-slate-800">Banner Unit ID</label>
+                                <input
+                                    type="text"
+                                    name="bannerId"
+                                    value={settings.admob?.bannerId}
+                                    onChange={handleAdMobChange}
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600 transition-colors"
+                                    placeholder="ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx"
+                                />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="block text-slate-400 text-xs font-medium mb-1.5 underline decoration-slate-800">Interstitial Unit ID</label>
+                                <input
+                                    type="text"
+                                    name="interstitialId"
+                                    value={settings.admob?.interstitialId}
+                                    onChange={handleAdMobChange}
+                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600 transition-colors"
+                                    placeholder="ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx"
+                                />
+                            </div>
+                        </div>
+                        <p className="text-[10px] text-slate-500 bg-slate-900/50 p-2 rounded border border-slate-800">
+                            تنبيه: تأكد من استخدام معرفات صحيحة لتجنب توقف التطبيق أو تقييد الأرباح.
+                        </p>
+                    </div>
+                </div>
+
                 <div className="pt-4 border-t border-slate-800">
                     <button
                         type="submit"
                         disabled={saving}
-                        className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors disabled:opacity-50"
+                        className="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-800 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-red-900/10 active:scale-[0.98]"
                     >
-                        <Save size={20} />
-                        {saving ? "جاري الحفظ..." : "حفظ الإعدادات"}
+                        {saving ? (
+                            <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <>
+                                <Save size={20} />
+                                حفظ جميع التغييرات
+                            </>
+                        )}
                     </button>
                 </div>
             </form>

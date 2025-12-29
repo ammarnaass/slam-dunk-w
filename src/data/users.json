@@ -1,0 +1,13 @@
+[
+  {
+    "id": "08cd9762-8c68-44f1-8dbc-ddc1fa4b0a88",
+    "username": "admin",
+    "email": "amarnaas1981@gmail.com",
+    "password": "$2b$10$46/L4JTb6mHsYpFZwU1ZTOtJ/mw2YxJs4Yg2NoNo5ckZvQeYbD3V6",
+    "role": "ADMIN",
+    "watchlist": [],
+    "createdAt": "2025-12-28T08:29:42.263Z",
+    "gender": "other",
+    "profileImage": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLg6JNKL3cZxeOj-F7SW7gLj9x7iPVm4yGTw&s"
+  }
+]

@@ -1,33 +1,31 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
-
-import fs from "fs";
-import path from "path";
+import { getSettings } from "@/lib/db";
+import AdmobProvider from "@/components/AdmobProvider";
+import BottomNav from "@/components/BottomNav";
 
 const cairo = Cairo({ subsets: ["arabic", "latin"] });
 
-function getSettings() {
-  try {
-    const settingsPath = path.join(process.cwd(), "src/data/settings.json");
-    if (fs.existsSync(settingsPath)) {
-      const jsonData = fs.readFileSync(settingsPath, "utf8");
-      return JSON.parse(jsonData);
-    }
-  } catch (error) {
-    console.error("Failed to load settings", error);
-  }
-  return {
-    siteName: "سلام دانك - Slam Dunk Streaming",
-    siteDescription: "شاهد جميع حلقات أنمي سلام دانك بجودة عالية",
-  };
-}
+export const viewport: Viewport = {
+  themeColor: "#dc2626",
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = getSettings();
   return {
     title: settings.siteName,
     description: settings.siteDescription,
+    manifest: "/manifest.webmanifest",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: settings.siteName,
+    },
+    icons: {
+      icon: settings.faviconUrl || "/favicon.ico",
+      apple: "/icon-192x192.png",
+    },
   };
 }
 
@@ -36,9 +34,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = getSettings();
+
   return (
     <html lang="ar" dir="rtl">
-      <body className={cairo.className}>{children}</body>
+      <body className={`${cairo.className} bg-slate-950 text-slate-200 antialiased`}>
+        <AdmobProvider>
+          {children}
+          <BottomNav />
+        </AdmobProvider>
+      </body>
     </html>
   );
 }

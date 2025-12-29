@@ -1,5 +1,31 @@
 {
-  "siteName": "سلام دانك",
-  "siteDescription": "شاهد جميع حلقات أنمي سلام دانك بجودة عالية",
-  "logoUrl": ""
+  "siteName": "أنمي داز",
+  "siteDescription": "شاهد أحدث حلقات الأنمي بجودة عالية ومجاناً",
+  "logoUrl": "",
+  "faviconUrl": "",
+  "currency": "EUR",
+  "socialLinks": {
+    "facebook": "",
+    "twitter": "",
+    "instagram": "",
+    "youtube": "https://www.youtube.com/@MADARA-YT",
+    "telegram": ""
+  },
+  "sliderAnimeIds": [
+    "slam-dunk",
+    "conan"
+  ],
+  "admob": {
+    "isEnabled": false,
+    "appId": "",
+    "bannerId": "",
+    "interstitialId": ""
+  },
+  "apiApp": {
+    "isMaintenance": false,
+    "maintenanceMessage": "التطبيق في وضع الصيانة حالياً. سنعود قريباً!",
+    "latestVersion": "1.0.0",
+    "updateUrl": "",
+    "apiUrl": "https://slam-dunk-w.vercel.app/api/mobile/v1"
+  }
 }

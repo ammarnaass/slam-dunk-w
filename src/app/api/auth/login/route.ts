@@ -1,29 +1,62 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { NextResponse } from "next/server";
+import { login } from "@/lib/auth";
+import { getUsers, verifyPassword } from "@/lib/db";
+import { z } from "zod";
+
+const LoginSchema = z.object({
+    username: z.string(),
+    password: z.string(),
+});
 
 export async function POST(request: Request) {
     try {
-        const { username, password } = await request.json();
+        const body = await request.json();
 
-        // Simple hardcoded credentials
-        // In a real app, use environment variables and hashed passwords
-        const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-        const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin';
-
-        if (username === ADMIN_USER && password === ADMIN_PASSWORD) {
-            // Set a cookie
-            (await cookies()).set('admin_session', 'true', {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: 60 * 60 * 24 * 7, // 1 week
-                path: '/',
-            });
-
-            return NextResponse.json({ success: true });
+        // Validate input
+        const result = LoginSchema.safeParse(body);
+        if (!result.success) {
+            return NextResponse.json(
+                { error: "بيانات غير صالحة" },
+                { status: 400 }
+            );
         }
 
-        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        const { username, password } = result.data;
+        const users = getUsers();
+
+        // Find user
+        const user = users.find((u) => u.username === username || u.email === username);
+
+        // Check credentials
+        if (!user || !user.password || !(await verifyPassword(password, user.password))) {
+            // Fallback for hardcoded admin if not in DB yet (migration phase)
+            if (username === "admin" && password === "admin") {
+                const adminUser = {
+                    id: "admin-id",
+                    username: "admin",
+                    email: "admin@example.com",
+                    role: "ADMIN" as const,
+                    createdAt: new Date().toISOString(),
+                };
+                await login(adminUser);
+                return NextResponse.json(adminUser);
+            }
+
+            return NextResponse.json(
+                { error: "اسم المستخدم أو كلمة المرور غير صحيحة" },
+                { status: 401 }
+            );
+        }
+
+        // Login successful
+        const { password: _, ...userWithoutPassword } = user;
+        await login(userWithoutPassword);
+
+        return NextResponse.json(userWithoutPassword);
     } catch (error) {
-        return NextResponse.json({ error: 'Login failed' }, { status: 500 });
+        return NextResponse.json(
+            { error: "حدث خطأ أثناء تسجيل الدخول" },
+            { status: 500 }
+        );
     }
 }

@@ -3,13 +3,13 @@ import { PlayCircle, Clock } from "lucide-react";
 import { Episode } from "@/types";
 
 interface EpisodeCardProps {
-    episode: Episode;
+    episode: Episode & { animeTitle?: string };
 }
 
 export default function EpisodeCard({ episode }: EpisodeCardProps) {
     return (
         <Link
-            href={`/episodes/${episode.id}`}
+            href={`/watch/${episode.id}`}
             className="group block bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-red-600/50 transition-all hover:shadow-lg hover:shadow-red-900/10"
         >
             <div className="relative aspect-video overflow-hidden">
@@ -32,8 +32,11 @@ export default function EpisodeCard({ episode }: EpisodeCardProps) {
             </div>
             <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-red-500 text-sm font-medium">الحلقة {episode.episode_number}</span>
-                    <span className="text-slate-500 text-xs">الموسم {episode.season}</span>
+                    <div className="flex flex-col">
+                        <span className="text-red-500 text-sm font-bold">الحلقة {episode.episode_number}</span>
+                        {episode.animeTitle && <span className="text-slate-500 text-[10px] font-medium">{episode.animeTitle}</span>}
+                    </div>
+                    <span className="text-slate-500 text-xs text-left">الموسم {episode.season}</span>
                 </div>
                 <h3 className="text-white font-semibold line-clamp-1 mb-2 group-hover:text-red-500 transition-colors">
                     {episode.title}

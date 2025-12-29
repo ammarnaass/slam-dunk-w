@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Save, ArrowRight } from "lucide-react";
-import { Character } from "@/types";
+import { Character, Anime } from "@/types";
 import Link from "next/link";
 
 interface CharacterFormProps {
@@ -14,7 +14,9 @@ interface CharacterFormProps {
 export default function CharacterForm({ initialData, isEdit = false }: CharacterFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [animes, setAnimes] = useState<Anime[]>([]);
     const [formData, setFormData] = useState<Partial<Character>>({
+        animeId: "",
         name_ar: "",
         name_en: "",
         name_jp: "",
@@ -22,11 +24,26 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
         number: 0,
         height: "",
         weight: "",
-        team: "Shohoku",
+        team: "",
         bio: "",
         image: "/logoep.jpg",
         ...initialData,
     });
+
+    useEffect(() => {
+        const fetchAnimes = async () => {
+            const res = await fetch("/api/admin/animes");
+            if (res.ok) {
+                const data = await res.json();
+                setAnimes(data);
+                // Set default anime if not editing
+                if (!isEdit && data.length > 0 && !formData.animeId) {
+                    setFormData(prev => ({ ...prev, animeId: data[0].id }));
+                }
+            }
+        };
+        fetchAnimes();
+    }, [isEdit]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -89,6 +106,22 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
             </div>
 
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
+                <div>
+                    <label className="block text-slate-400 text-sm font-medium mb-2">العمل (الأنمي)</label>
+                    <select
+                        name="animeId"
+                        value={formData.animeId}
+                        onChange={handleChange}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
+                        required
+                    >
+                        <option value="">اختر الأنمي</option>
+                        {animes.map(anime => (
+                            <option key={anime.id} value={anime.id}>{anime.title}</option>
+                        ))}
+                    </select>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="block text-slate-400 text-sm font-medium mb-2">الاسم (عربي)</label>
