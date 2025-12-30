@@ -81,6 +81,7 @@ class Episode {
 }
 
 class Settings {
+  final String siteName;
   final bool isAdmobEnabled;
   final String? admobAppId;
   final String? bannerId;
@@ -88,6 +89,7 @@ class Settings {
   final ApiAppSettings apiApp;
 
   Settings({
+    required this.siteName,
     required this.isAdmobEnabled,
     this.admobAppId,
     this.bannerId,
@@ -97,6 +99,7 @@ class Settings {
 
   factory Settings.fromJson(Map<String, dynamic> json) {
     return Settings(
+      siteName: json['siteName'] ?? "أنمي داز",
       isAdmobEnabled: json['admob']?['isEnabled'] ?? false,
       admobAppId: json['admob']?['appId'],
       bannerId: json['admob']?['bannerId'],

@@ -1,43 +1,38 @@
-import { NextRequest } from "next/server";
+import { NextRequest } from "next/request";
+import { NextResponse } from "next/server";
 import { mobileSuccess, mobileError } from "@/lib/mobile-api";
-import { getAnimes } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
-        const search = searchParams.get("search")?.toLowerCase();
-        const genre = searchParams.get("genre");
-        const status = searchParams.get("status");
+        const type = searchParams.get('type'); // optional (movie, series)
+        const status = searchParams.get('status'); // optional (ongoing, completed)
+        const genre = searchParams.get('genre');
 
-        let animes = getAnimes();
+        const where: any = {};
+        if (type) where.type = type;
+        if (status) where.status = status;
+        if (genre) where.genres = { has: genre };
 
-        if (search) {
-            animes = animes.filter(a =>
-                a.title.toLowerCase().includes(search) ||
-                (a.description && a.description.toLowerCase().includes(search))
-            );
-        }
+        const animes = await prisma.anime.findMany({
+            where,
+            orderBy: { updatedAt: 'desc' }
+        });
 
-        if (genre && genre !== "الكل") {
-            animes = animes.filter(a => a.genres.includes(genre));
-        }
-
-        if (status) {
-            animes = animes.filter(a => a.status === status);
-        }
-
-        const data = animes.map(a => ({
+        const mappedAnimes = animes.map(a => ({
             id: a.id,
             title: a.title,
             coverImage: a.coverImage,
-            status: a.status,
-            genres: a.genres,
+            rating: a.rating,
             releaseYear: a.releaseYear,
+            type: a.type,
+            status: a.status
         }));
 
-        return mobileSuccess(data);
+        return mobileSuccess(mappedAnimes);
     } catch (error) {
-        console.error("Mobile V1 Animes API Error:", error);
-        return mobileError("Failed to fetch animes", 500);
+        console.error("Mobile V1 Animes GET Error:", error);
+        return mobileError("حدث خطأ أثناء جلب الأنميات", 500);
     }
 }

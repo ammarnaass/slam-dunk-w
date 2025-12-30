@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAnimes, saveAnimes, getEpisodes, saveEpisodes } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 import { verifyAuth } from "@/lib/auth";
 
 // GET /api/admin/animes/[id] - Get single anime
@@ -8,8 +8,18 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const animes = getAnimes();
-    const anime = animes.find(a => a.id === id);
+
+    // Using Prisma to fetch logic
+    const anime = await prisma.anime.findUnique({
+        where: { id: id },
+        include: {
+            // Include counts or minimal info if needed, usually details view needs it
+            // For now just basic fields as per original API
+            _count: {
+                select: { episodes: true }
+            }
+        }
+    });
 
     if (!anime) {
         return NextResponse.json({ error: "Anime not found" }, { status: 404 });
@@ -30,18 +40,29 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const animes = getAnimes();
-    const index = animes.findIndex(a => a.id === id);
 
-    if (index === -1) {
-        return NextResponse.json({ error: "Anime not found" }, { status: 404 });
+    try {
+        const updatedAnime = await prisma.anime.update({
+            where: { id: id },
+            data: {
+                title: body.title,
+                description: body.description,
+                coverImage: body.coverImage,
+                bannerImage: body.bannerImage,
+                type: body.type,
+                status: body.status,
+                releaseYear: body.releaseYear ? Number(body.releaseYear) : undefined,
+                totalEpisodes: body.totalEpisodes ? Number(body.totalEpisodes) : undefined,
+                genres: body.genres
+            }
+        });
+
+        return NextResponse.json(updatedAnime);
+    } catch (error) {
+        // P2025 = Record not found
+        console.error("Admin Anime Update Error:", error);
+        return NextResponse.json({ error: "Anime not found or update failed" }, { status: 404 });
     }
-
-    const updatedAnime = { ...animes[index], ...body, id: id }; // ID cannot be changed
-    animes[index] = updatedAnime;
-    saveAnimes(animes);
-
-    return NextResponse.json(updatedAnime);
 }
 
 // DELETE /api/admin/animes/[id] - Delete anime
@@ -55,19 +76,21 @@ export async function DELETE(
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const animes = getAnimes();
-    const newAnimes = animes.filter(a => a.id !== id);
+    try {
+        // Manual Cascade Delete if not set in DB
+        // Delete episodes first
+        await prisma.episode.deleteMany({
+            where: { animeId: id }
+        });
 
-    if (animes.length === newAnimes.length) {
-        return NextResponse.json({ error: "Anime not found" }, { status: 404 });
+        // Delete anime
+        await prisma.anime.delete({
+            where: { id: id }
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Admin Anime Delete Error:", error);
+        return NextResponse.json({ error: "Failed to delete anime" }, { status: 500 });
     }
-
-    // Cascading delete: Remove episodes associated with this anime
-    const episodes = getEpisodes();
-    const newEpisodes = episodes.filter(ep => ep.animeId !== id);
-
-    saveAnimes(newAnimes);
-    saveEpisodes(newEpisodes);
-
-    return NextResponse.json({ success: true });
 }

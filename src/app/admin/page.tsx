@@ -1,27 +1,25 @@
 import Link from "next/link";
 import { Film, Users, Plus, ArrowRight } from "lucide-react";
-import { Episode, Character, Anime, User, Plan } from "@/types";
-import { getAnimes, getEpisodes, getPlans, getUsers } from "@/lib/db";
-import charactersData from "@/data/characters.json";
+import { prisma } from "@/lib/prismadb";
 
-function getData() {
-    const episodes = getEpisodes();
-    const characters = charactersData as Character[];
-    const animes = getAnimes();
-    const users = getUsers();
-    const plans = getPlans();
-
-    return { episodes, characters, animes, users, plans };
-}
-
-export default function AdminDashboard() {
-    const { episodes, characters, animes, users, plans } = getData();
+export default async function AdminDashboard() {
+    // Fetch statistics using Prisma
+    const [animeCount, episodeCount, characterCount, userCount, latestAnimes] = await Promise.all([
+        prisma.anime.count(),
+        prisma.episode.count(),
+        prisma.character.count(),
+        prisma.user.count(),
+        prisma.anime.findMany({
+            take: 5,
+            orderBy: { updatedAt: 'desc' }
+        })
+    ]);
 
     const stats = [
-        { label: "إجمالي الأنمي", value: animes.length, icon: Film, color: "blue", href: "/admin/animes" },
-        { label: "إجمالي الحلقات", value: episodes.length, icon: Film, color: "red", href: "/admin/animes" },
-        { label: "إجمالي الشخصيات", value: characters.length, icon: Users, color: "green", href: "/admin/characters" },
-        { label: "المشتركون", value: users.length, icon: Users, color: "purple", href: "/admin/users" },
+        { label: "إجمالي الأنمي", value: animeCount, icon: Film, color: "blue", href: "/admin/animes" },
+        { label: "إجمالي الحلقات", value: episodeCount, icon: Film, color: "red", href: "/admin/animes" },
+        { label: "إجمالي الشخصيات", value: characterCount, icon: Users, color: "green", href: "/admin/characters" },
+        { label: "المشتركون", value: userCount, icon: Users, color: "purple", href: "/admin/users" },
     ];
 
     return (
@@ -35,7 +33,7 @@ export default function AdminDashboard() {
                             <div className={`p-3 rounded-lg bg-${stat.color}-600/10 group-hover:scale-110 transition-transform`}>
                                 <stat.icon className={`text-${stat.color}-500`} size={24} />
                             </div>
-                            <span className="text-slate-400 text-xs font-bold font-cairo uppercase tracking-wider">{stat.label}</span>
+                            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">{stat.label}</span>
                         </div>
                         <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
                         <Link
@@ -66,15 +64,15 @@ export default function AdminDashboard() {
                                 </tr>
                             </thead>
                             <tbody className="text-slate-300 divide-y divide-slate-800/50">
-                                {animes.slice(0, 5).map((anime) => (
+                                {latestAnimes.map((anime) => (
                                     <tr key={anime.id} className="hover:bg-slate-800/50 transition-colors">
                                         <td className="py-4 font-medium text-white flex items-center gap-3">
                                             <img src={anime.coverImage} className="w-8 h-10 object-cover rounded" alt="" />
                                             {anime.title}
                                         </td>
-                                        <td className="py-4">{anime.totalEpisodes}</td>
+                                        <td className="py-4">{anime.totalEpisodes || 0}</td>
                                         <td className="py-4">
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${anime.status === 'Ongoing' ? 'bg-green-600/10 text-green-500' : 'bg-blue-600/10 text-blue-500'
+                                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${anime.status === 'ongoing' ? 'bg-green-600/10 text-green-500' : 'bg-blue-600/10 text-blue-500'
                                                 }`}>
                                                 {anime.status}
                                             </span>
@@ -87,7 +85,7 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Sidebar Stats */}
+                {/* Sidebar Shortcuts */}
                 <div className="space-y-6">
                     <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
                         <h2 className="text-xl font-bold text-white mb-4">اختصارات سريعة</h2>
@@ -99,10 +97,10 @@ export default function AdminDashboard() {
                                 <Plus size={18} /> إضافة أنمي جديد
                             </Link>
                             <Link
-                                href="/admin/characters/new"
+                                href="/admin/characters"
                                 className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-lg text-center transition-colors flex items-center justify-center gap-2"
                             >
-                                <Plus size={18} /> إضافة شخصية
+                                <Plus size={18} /> إدارة الشخصيات
                             </Link>
                         </div>
                     </div>

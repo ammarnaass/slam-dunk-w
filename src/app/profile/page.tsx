@@ -35,7 +35,7 @@ export default function ProfilePage() {
                     }
                     setUser(data);
                     setEditForm({
-                        username: data.username,
+                        username: data.name || data.username || "",
                         email: data.email,
                         password: "",
                         phoneNumber: data.phoneNumber || "",
@@ -123,10 +123,10 @@ export default function ProfilePage() {
                     <div className="absolute -bottom-16 right-8">
                         <div className="w-32 h-32 rounded-full bg-slate-900 border-4 border-slate-900 overflow-hidden flex items-center justify-center shadow-xl">
                             {user.profileImage ? (
-                                <img src={user.profileImage} alt={user.username} className="w-full h-full object-cover" />
+                                <img src={user.profileImage} alt={user.name || user.username || "User"} className="w-full h-full object-cover" />
                             ) : (
                                 <span className="text-5xl font-bold text-white">
-                                    {user.username[0].toUpperCase()}
+                                    {(user.name || user.username || user.email || "U")[0].toUpperCase()}
                                 </span>
                             )}
                         </div>
@@ -245,7 +245,7 @@ export default function ProfilePage() {
                     ) : (
                         <>
                             <div className="flex flex-col gap-1 mb-8">
-                                <h1 className="text-4xl font-bold text-white">{user.username}</h1>
+                                <h1 className="text-4xl font-bold text-white">{user.name || user.username || "User"}</h1>
                                 <p className="text-slate-400 text-lg">{user.email}</p>
                             </div>
 

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { login } from "@/lib/auth";
-import { getUsers, saveUsers, hashPassword } from "@/lib/db";
-import { User } from "@/types";
+import { prisma } from "@/lib/prismadb";
+import bcrypt from "bcryptjs";
 
 const RegisterSchema = z.object({
     username: z.string().min(3, "اسم المستخدم يجب أن يكون 3 أحرف على الأقل"),
@@ -24,36 +24,54 @@ export async function POST(request: Request) {
         }
 
         const { username, email, password } = result.data;
-        const users = getUsers();
 
-        // Check if user exists
-        if (users.find((u) => u.email === email || u.username === username)) {
+        // Check if user exists (email or name)
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: email },
+                    { name: username }
+                ]
+            }
+        });
+
+        if (existingUser) {
             return NextResponse.json(
                 { error: "المستخدم موجود بالفعل" },
                 { status: 400 }
             );
         }
 
-        // Create new user
-        const newUser: User = {
-            id: crypto.randomUUID(),
-            username,
-            email,
-            password: await hashPassword(password),
-            role: "USER", // Default role
-            createdAt: new Date().toISOString(),
-        };
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Save user
-        users.push(newUser);
-        saveUsers(users);
+        // Create new user
+        const newUser = await prisma.user.create({
+            data: {
+                // id: uuid auto generated or we can generate manually if we want to match legacy format,
+                // but default(uuid()) in schema handles it.
+                name: username,
+                email: email,
+                password: hashedPassword,
+                role: "user", // Default role lowercase
+                avatar: "" // or default
+            }
+        });
 
         // Auto login
-        const { password: _, ...userWithoutPassword } = newUser;
+        const userWithoutPassword = {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
+            avatar: newUser.avatar
+        };
+
         await login(userWithoutPassword);
 
         return NextResponse.json(userWithoutPassword);
     } catch (error) {
+        console.error("Register API Error:", error);
         return NextResponse.json(
             { error: "حدث خطأ أثناء التسجيل" },
             { status: 500 }

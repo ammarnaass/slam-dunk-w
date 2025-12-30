@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
-import { getAnimes } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 
 export async function GET() {
-    // Public endpoint, no auth required
-    const animes = getAnimes();
-    // Maybe filter out drafts if we had that status
-    return NextResponse.json(animes);
+    try {
+        const animes = await prisma.anime.findMany({
+            orderBy: { updatedAt: 'desc' }
+        });
+        return NextResponse.json(animes);
+    } catch (error) {
+        console.error("Root Animes GET Error:", error);
+        return NextResponse.json({ error: "Failed to fetch animes" }, { status: 500 });
+    }
 }

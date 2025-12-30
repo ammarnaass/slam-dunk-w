@@ -1,14 +1,13 @@
 import PlanForm from "@/components/admin/PlanForm";
 import Link from "next/link";
-import { ArrowRight, Loader2 } from "lucide-react";
-import { use } from "react";
-import { getPlans } from "@/lib/db";
+import { ArrowRight } from "lucide-react";
+import { prisma } from "@/lib/prismadb";
 
-// Since this is a server component, we can fetch data directly
 export default async function EditPlanPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const plans = getPlans();
-    const plan = plans.find(p => p.id === id);
+    const plan = await prisma.plan.findUnique({
+        where: { id }
+    });
 
     if (!plan) {
         return (
@@ -18,6 +17,12 @@ export default async function EditPlanPage({ params }: { params: Promise<{ id: s
             </div>
         );
     }
+
+    // Map to legacy structure for PlanForm if needed
+    const legacyPlan = {
+        ...plan,
+        active: plan.isActive
+    };
 
     return (
         <div>
@@ -31,7 +36,7 @@ export default async function EditPlanPage({ params }: { params: Promise<{ id: s
                 <h1 className="text-3xl font-bold text-white">تعديل الخطة: {plan.name}</h1>
             </div>
 
-            <PlanForm initialData={plan} isEdit={true} />
+            <PlanForm initialData={legacyPlan} isEdit={true} />
         </div>
     );
 }

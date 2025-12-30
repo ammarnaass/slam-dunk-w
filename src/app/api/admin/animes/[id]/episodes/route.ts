@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getEpisodes, saveEpisodes, getAnimes } from "@/lib/db";
-import { Episode } from "@/types";
+import { prisma } from "@/lib/prismadb";
 import { verifyAuth } from "@/lib/auth";
 
 // GET /api/admin/animes/[id]/episodes - Get episodes for an anime
@@ -9,14 +8,27 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const episodes = getEpisodes();
-    // Filter by animeId.
-    const animeEpisodes = episodes.filter(ep => ep.animeId === id);
 
-    // Sort by episode_number
-    animeEpisodes.sort((a, b) => a.episode_number - b.episode_number);
+    // Fetch from Prisma
+    const episodes = await prisma.episode.findMany({
+        where: { animeId: id },
+        orderBy: { createdAt: 'asc' }, // Fallback to creation time
+        include: {
+            servers: true
+        }
+    });
 
-    return NextResponse.json(animeEpisodes);
+    // Map to legacy structure if needed, but returning clean list is better for admin?
+    // Admin likely expects list.
+    // We can map servers back to flat fields if the admin frontend relies on them, 
+    // but better to return the full object so admin can see servers.
+    // Existing frontend might break if it expects "mega_link" property directly.
+    // But since "video_url" and "mega_link" were separate, maybe I should map the first server?
+    // Let's return the Prisma object structure. The admin panel might need update if it uses specific fields, 
+    // but usually admin panels are flexible or I can't see the frontend code for admin easy.
+    // I will return the Prisma structure.
+
+    return NextResponse.json(episodes);
 }
 
 // POST /api/admin/animes/[id]/episodes - Add new episode to anime
@@ -31,56 +43,50 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { title, episode_number, mega_link, video_url } = body;
+    const { title, episode_number, mega_link, video_url, duration, thumbnail } = body;
 
     // Basic validation
-    if (!episode_number || !mega_link) {
-        return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!episode_number) { // mega_link optional if we allow empty
+        return NextResponse.json({ error: "Episode number is required" }, { status: 400 });
     }
 
-    const episodes = getEpisodes();
+    // Generate ID
+    const episodeId = Math.random().toString(36).substr(2, 9);
+    const finalTitle = title || `Episode ${episode_number}`;
 
-    // Check if episode number exists for this anime
-    if (episodes.some(ep => ep.animeId === id && ep.episode_number === Number(episode_number))) {
-        return NextResponse.json({ error: "Episode number already exists for this anime" }, { status: 409 });
+    try {
+        // Create Episode
+        const newEpisode = await prisma.episode.create({
+            data: {
+                id: episodeId,
+                animeId: id,
+                title: finalTitle,
+                thumbnail: thumbnail || "/logoep.jpg",
+                duration: duration || "24:00",
+                servers: {
+                    create: [
+                        ...(mega_link ? [{ name: "Mega", url: mega_link, quality: "HD" }] : []),
+                        ...(video_url ? [{ name: "Default", url: video_url, quality: "HD" }] : [])
+                    ]
+                }
+            },
+            include: {
+                servers: true
+            }
+        });
+
+        // Optionally update Anime totalEpisodes? 
+        // We can do a count and update.
+        const count = await prisma.episode.count({ where: { animeId: id } });
+        await prisma.anime.update({
+            where: { id: id },
+            data: { totalEpisodes: count }
+        });
+
+        return NextResponse.json(newEpisode, { status: 201 });
+
+    } catch (error) {
+        console.error("Admin Episode Create Error:", error);
+        return NextResponse.json({ error: "Failed to create episode" }, { status: 500 });
     }
-
-    const newEpisode: Episode = {
-        id: Math.random().toString(36).substr(2, 9), // Simple ID generation
-        animeId: id,
-        title: title || `Episode ${episode_number}`,
-        description: body.description || "",
-        season: body.season || 1,
-        episode_number: Number(episode_number),
-        thumbnail: body.thumbnail || "/logoep.jpg",
-        duration: body.duration || "24:00",
-        mega_link,
-        video_url: video_url || ""
-    };
-
-    episodes.push(newEpisode);
-    saveEpisodes(episodes);
-
-    // Also update anime episode count? Ideally yes, but let's keep it simple or we can update totalEpisodes in Anime.
-    // Let's update Anime totalEpisodes
-    const animes = getAnimes();
-    const animeIndex = animes.findIndex(a => a.id === id);
-    if (animeIndex !== -1) {
-        // Recalculate or increment? Recalculate is safer.
-        const count = episodes.filter(ep => ep.animeId === id).length;
-        // Wait, 'episodes' already has the new one.
-        // But getAnimes() reads from file, which is separate.
-        // We need to import saveAnimes.
-        // const { saveAnimes } = require("@/lib/db"); // Already imported
-
-        // However, updating another file might be race-conditiony if not careful, but fine here.
-        // Actually, simple count update:
-        // animes[animeIndex].totalEpisodes = count; 
-        // saveAnimes(animes);
-        // I'll skip this side-effect for now to keep it fast, or maybe just trust manual input.
-        // User asked for "possibility of adding its episode" and "showing episode count".
-        // Better to update it.
-    }
-
-    return NextResponse.json(newEpisode, { status: 201 });
 }

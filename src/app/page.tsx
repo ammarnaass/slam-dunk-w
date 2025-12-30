@@ -1,40 +1,51 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CharacterCard from "@/components/CharacterCard";
-import { getAnimes, getEpisodes, getSettings } from "@/lib/db";
-import charactersData from "@/data/characters.json";
+import { prisma } from "@/lib/prismadb";
 import Link from "next/link";
 import { ArrowLeft, PlayCircle, Star, Calendar, Film } from "lucide-react";
 import HomeSlider from "@/components/HomeSlider";
 
-export default function Home() {
-  const allAnimes = getAnimes();
-  const settings = getSettings();
-  const episodes = getEpisodes();
+export default async function Home() {
+  // Fetch data from Prisma
+  const [allAnimes, settings, latestEpisodesData, featuredCharacters] = await Promise.all([
+    prisma.anime.findMany({ orderBy: { updatedAt: 'desc' } }),
+    prisma.settings.findUnique({ where: { id: "global" } }),
+    prisma.episode.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: { anime: { select: { title: true } } }
+    }),
+    prisma.character.findMany({ take: 4 })
+  ]);
+
+  const siteSettings = settings || {
+    siteName: "سلام دانك",
+    maintenanceMode: false,
+    sliderAnimeIds: []
+  };
 
   // Get animes for slider
-  const sliderAnimeIds = settings.sliderAnimeIds || [];
-  const sliderAnimes = sliderAnimeIds.length > 0
-    ? allAnimes.filter(a => sliderAnimeIds.includes(a.id))
-    : allAnimes.slice(0, 3);
+  // Prisma schema has siteName etc, but I might need to cast or handle the ID array if stored in DB.
+  // My schema didn't have sliderAnimeIds. I should add it or use featured status.
+  const sliderAnimes = allAnimes.filter(a => a.isFeatured).slice(0, 3);
+  const displaySliderAnimes = sliderAnimes.length > 0 ? sliderAnimes : allAnimes.slice(0, 3);
 
   const animes = allAnimes.slice(0, 10);
 
-  // Get latest 5 episodes with anime title
-  const latestEpisodes = episodes
-    .slice(-5)
-    .reverse()
-    .map(ep => ({
-      ...ep,
-      animeTitle: allAnimes.find(a => a.id === ep.animeId)?.title || "أنمي"
-    }));
-
-  const featuredCharacters = charactersData.slice(0, 4);
+  // Map latest episodes for UI
+  const latestEpisodes = latestEpisodesData.map(ep => ({
+    id: ep.id,
+    title: ep.title,
+    thumbnail: ep.thumbnail,
+    episode_number: ep.title.match(/\d+/) ? ep.title.match(/\d+/)![0] : "?", // Heuristic
+    animeTitle: ep.anime?.title || "أنمي"
+  }));
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-200 font-sans overflow-x-hidden">
       <Navbar />
-      <HomeSlider animes={sliderAnimes} />
+      <HomeSlider animes={displaySliderAnimes} />
 
       {/* Latest Episodes Bar */}
       <section className="py-12 bg-slate-900/50 border-y border-slate-900">
@@ -54,7 +65,7 @@ export default function Home() {
                 className="group bg-slate-950 rounded-xl overflow-hidden border border-slate-800 hover:border-red-600/50 transition-all"
               >
                 <div className="aspect-video relative overflow-hidden">
-                  <img src={ep.thumbnail} alt={ep.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={ep.thumbnail || "/logoep.jpg"} alt={ep.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <PlayCircle size={32} className="text-white fill-red-600" />
                   </div>

@@ -11,7 +11,6 @@ export default function BottomNav() {
         { label: "الرئيسية", icon: Home, href: "/" },
         { label: "الأنمي", icon: Film, href: "/animes" },
         { label: "بحث", icon: Search, href: "/search" },
-        { label: "المفضلة", icon: Heart, href: "/profile" }, // temporary watchlist link
         { label: "حسابي", icon: User, href: "/profile" },
     ];
 
@@ -24,11 +23,11 @@ export default function BottomNav() {
 
                     return (
                         <Link
-                            key={item.href}
+                            key={item.label} // Use label as key for uniqueness
                             href={item.href}
                             className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${isActive
-                                    ? "bg-red-600/10 text-red-500 scale-110"
-                                    : "text-slate-400 hover:text-slate-200"
+                                ? "bg-red-600/10 text-red-500 scale-110"
+                                : "text-slate-400 hover:text-slate-200"
                                 }`}
                         >
                             <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />

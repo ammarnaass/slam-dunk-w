@@ -72,4 +72,54 @@ class ApiService {
       throw Exception('Search failed');
     }
   }
+
+  Future<void> recordHistory(
+      String animeId, String episodeId, double progress) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/history"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "animeId": animeId,
+        "episodeId": episodeId,
+        "progress": progress,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to record history');
+    }
+  }
+
+  Future<bool> toggleWatchlist(String animeId) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/watchlist"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"animeId": animeId}),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> result = json.decode(response.body);
+      return result['inWatchlist'] ?? false;
+    }
+    throw Exception('Failed to toggle watchlist');
+  }
+
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse("${baseUrl.replaceFirst('/mobile/v1', '')}/auth/login"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "email": email,
+        "password": password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> result = json.decode(response.body);
+      return result['user'];
+    } else {
+      final Map<String, dynamic> result = json.decode(response.body);
+      throw Exception(result['error'] ?? 'Login failed');
+    }
+  }
 }

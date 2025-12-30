@@ -104,9 +104,9 @@ export default function Navbar() {
 
                             <Link href="/profile" className="flex items-center gap-2 text-slate-300 hover:text-white">
                                 <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white font-bold">
-                                    {user.username[0].toUpperCase()}
+                                    {(user.name || user.email || "U")[0].toUpperCase()}
                                 </div>
-                                <span className="hidden sm:inline">{user.username}</span>
+                                <span className="hidden sm:inline">{user.name || user.email}</span>
                             </Link>
 
                             <button

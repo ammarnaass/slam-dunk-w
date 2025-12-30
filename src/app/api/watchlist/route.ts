@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUsers, saveUsers } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 import { getSession } from "@/lib/auth";
 
 async function getAuthUser() {
@@ -20,35 +20,36 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Anime ID is required" }, { status: 400 });
         }
 
-        const users = getUsers();
-        const userIndex = users.findIndex((u) => u.id === user.id);
+        // Fetch user watchlist
+        const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { watchlist: true }
+        });
 
-        if (userIndex === -1) {
+        if (!dbUser) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        const currentUser = users[userIndex];
-        if (!currentUser.watchlist) {
-            currentUser.watchlist = [];
-        }
+        const currentWatchlist = dbUser.watchlist || [];
+        const isInWatchlist = currentWatchlist.includes(animeId);
 
-        const isInWatchlist = currentUser.watchlist.includes(animeId);
-
+        let updatedWatchlist: string[];
         if (isInWatchlist) {
-            // Remove from watchlist
-            currentUser.watchlist = currentUser.watchlist.filter((id) => id !== animeId);
+            updatedWatchlist = currentWatchlist.filter((id) => id !== animeId);
         } else {
-            // Add to watchlist
-            currentUser.watchlist.push(animeId);
+            updatedWatchlist = [...currentWatchlist, animeId];
         }
 
-        users[userIndex] = currentUser;
-        saveUsers(users);
+        // Update user
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { watchlist: updatedWatchlist }
+        });
 
         return NextResponse.json({
             success: true,
             inWatchlist: !isInWatchlist,
-            watchlist: currentUser.watchlist
+            watchlist: updatedWatchlist
         });
     } catch (error) {
         console.error("Watchlist error:", error);
@@ -62,10 +63,17 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const users = getUsers();
-    const currentUser = users.find((u) => u.id === user.id);
+    try {
+        const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { watchlist: true }
+        });
 
-    return NextResponse.json({
-        watchlist: currentUser?.watchlist || []
-    });
+        return NextResponse.json({
+            watchlist: dbUser?.watchlist || []
+        });
+    } catch (error) {
+        console.error("Watchlist GET error:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
 }

@@ -1,16 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { login } from "@/lib/auth";
-import { getUsers, verifyPassword } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 
 const LoginSchema = z.object({
     username: z.string(),
     password: z.string(),
 });
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
+        console.log("Login API: Starting request processing...");
+        // Clone to avoid "Body already disturbed" error if something else touched it
+        const clonedRequest = request.clone();
+        const body = await clonedRequest.json();
+        console.log("Login API: Body parsed successfully");
 
         // Validate input
         const result = LoginSchema.safeParse(body);
@@ -22,24 +27,39 @@ export async function POST(request: Request) {
         }
 
         const { username, password } = result.data;
-        const users = getUsers();
 
-        // Find user
-        const user = users.find((u) => u.username === username || u.email === username);
+        // Find user by email or name
+        // Note: Schema has 'name' and 'email'. Legacy used 'username'.
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: username }, // username field in form might be email
+                    { name: username }
+                ]
+            }
+        });
 
         // Check credentials
-        if (!user || !user.password || !(await verifyPassword(password, user.password))) {
-            // Fallback for hardcoded admin if not in DB yet (migration phase)
+        // Fallback for hardcoded admin if database is empty or explicitly set
+        // But better to stick to DB. If migraton worked, admin should be in DB.
+        // If not, allow hardcoded fallback ONLY if user not found?
+        // Let's rely on DB. If migration ran, existing users are there.
+
+        if (!user || !user.password) {
+            // Admin fallback for initial setup if needed
             if (username === "admin" && password === "admin") {
-                const adminUser = {
+                // Check if admin exists in DB to prevent duplicate/confusion?
+                // If not in DB, maybe we should CREATE it?
+                // Or just allow login.
+                const adminPayload = {
                     id: "admin-id",
-                    username: "admin",
+                    name: "admin",
                     email: "admin@example.com",
-                    role: "ADMIN" as const,
-                    createdAt: new Date().toISOString(),
+                    role: "ADMIN",
+                    avatar: "/logoep.jpg"
                 };
-                await login(adminUser);
-                return NextResponse.json(adminUser);
+                await login(adminPayload);
+                return NextResponse.json(adminPayload);
             }
 
             return NextResponse.json(
@@ -48,12 +68,30 @@ export async function POST(request: Request) {
             );
         }
 
+        const isValid = await bcrypt.compare(password, user.password);
+
+        if (!isValid) {
+            return NextResponse.json(
+                { error: "اسم المستخدم أو كلمة المرور غير صحيحة" },
+                { status: 401 }
+            );
+        }
+
         // Login successful
-        const { password: _, ...userWithoutPassword } = user;
+        // Return user info without password
+        const userWithoutPassword = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            avatar: user.avatar
+        };
+
         await login(userWithoutPassword);
 
         return NextResponse.json(userWithoutPassword);
     } catch (error) {
+        console.error("Login API Error:", error);
         return NextResponse.json(
             { error: "حدث خطأ أثناء تسجيل الدخول" },
             { status: 500 }

@@ -1,65 +1,79 @@
 import { NextResponse } from "next/server";
-import { getPlans, savePlans } from "@/lib/db";
-import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/prismadb";
+import { verifyAuth } from "@/lib/auth";
 
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
-    const plans = getPlans();
-    const plan = plans.find(p => p.id === id);
+    try {
+        const { id } = await params;
+        const plan = await prisma.plan.findUnique({
+            where: { id }
+        });
 
-    if (!plan) {
-        return NextResponse.json({ error: "Plan not found" }, { status: 404 });
+        if (!plan) {
+            return NextResponse.json({ error: "Plan not found" }, { status: 404 });
+        }
+
+        return NextResponse.json(plan);
+    } catch (error) {
+        console.error("Admin Plan GET Error:", error);
+        return NextResponse.json({ error: "Failed to fetch plan" }, { status: 500 });
     }
-
-    return NextResponse.json(plan);
 }
 
 export async function PUT(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const session = await getSession();
-    if (!session || session.user.role !== "ADMIN") {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    try {
+        const auth = await verifyAuth(request);
+        if (!auth || auth.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { id } = await params;
+        const body = await request.json();
+
+        const updatedPlan = await prisma.plan.update({
+            where: { id },
+            data: {
+                name: body.name,
+                price: body.price,
+                duration: String(body.duration),
+                description: body.description,
+                features: body.features,
+                isActive: body.active !== undefined ? body.active : undefined,
+            }
+        });
+
+        return NextResponse.json(updatedPlan);
+    } catch (error) {
+        console.error("Admin Plan PUT Error:", error);
+        return NextResponse.json({ error: "Plan not found or update failed" }, { status: 404 });
     }
-
-    const { id } = await params;
-    const body = await request.json();
-    const plans = getPlans();
-    const index = plans.findIndex(p => p.id === id);
-
-    if (index === -1) {
-        return NextResponse.json({ error: "Plan not found" }, { status: 404 });
-    }
-
-    // Merge updates
-    plans[index] = { ...plans[index], ...body, id }; // Prevent ID change
-    savePlans(plans);
-
-    return NextResponse.json(plans[index]);
 }
 
 export async function DELETE(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const session = await getSession();
-    if (!session || session.user.role !== "ADMIN") {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    try {
+        const auth = await verifyAuth(request);
+        if (!auth || auth.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { id } = await params;
+
+        await prisma.plan.delete({
+            where: { id }
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Admin Plan DELETE Error:", error);
+        return NextResponse.json({ error: "Plan not found or delete failed" }, { status: 404 });
     }
-
-    const { id } = await params;
-    const plans = getPlans();
-    const newPlans = plans.filter(p => p.id !== id);
-
-    if (plans.length === newPlans.length) {
-        return NextResponse.json({ error: "Plan not found" }, { status: 404 });
-    }
-
-    savePlans(newPlans);
-
-    return NextResponse.json({ success: true });
 }

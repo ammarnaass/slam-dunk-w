@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  role          String   @default("user") // admin, user
+  password      String
+  avatar        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  watchlist     String[] // Array of Anime IDs or relation
+  history       History[]
+  reviews       Review[]
+  subscription  UserSubscription?
+}
+
+model UserSubscription {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  planType  String   @default("free") // monthly, quarterly, yearly, free
+  isActive  Boolean  @default(false)
+  startDate DateTime?
+  endDate   DateTime?
+  autoRenew Boolean  @default(false)
+}
+
+model History {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  animeId   String
+  episodeId String
+  watchedAt DateTime @default(now())
+  progress  Float    @default(0)
+
+  @@unique([userId, animeId, episodeId])
+}
+
+model Anime {
+  id            String   @id // Custom ID like 'slam-dunk'
+  title         String
+  description   String
+  coverImage    String
+  bannerImage   String?
+  type          String?
+  status        String   @default("ongoing") // ongoing, completed
+  releaseYear   Int?
+  totalEpisodes Int?
+  genres        String[]
+  rating        Float    @default(0)
+  isFeatured    Boolean  @default(false)
+  isTrending    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  episodes      Episode[]
+  reviews       Review[]
+}
+
+model Episode {
+  id          String   @id // Custom ID or auto
+  animeId     String
+  anime       Anime    @relation(fields: [animeId], references: [id])
+  title       String
+  thumbnail   String?
+  duration    String?
+  createdAt   DateTime @default(now())
+  
+  // Servers
+  servers     Server[]
+}
+
+model Server {
+  id        String  @id @default(uuid())
+  episodeId String
+  episode   Episode @relation(fields: [episodeId], references: [id])
+  name      String
+  url       String
+  quality   String?
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  animeId   String
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model Plan {
+  id          String   @id
+  name        String
+  price       Float
+  duration    String
+  description String?
+  features    String[]
+  isActive    Boolean  @default(true)
+}
+
+model PaymentMethod {
+  id       String  @id
+  name     String
+  type     String
+  details  String?
+  icon     String?
+  isActive Boolean @default(true)
+}
+
+model Settings {
+  id                 String  @id @default("global")
+  siteName           String  @default("Slam Dunk")
+  maintenanceMode    Boolean @default(false)
+  maintenanceMessage String?
+  
+  // Mobile App Settings
+  latestVersion      String?
+  updateUrl          String?
+  
+  // Admob
+  admobEnabled       Boolean @default(false)
+  admobAppId         String?
+  admobBannerId      String?
+  admobInterstitialId String?
+}
+
+model Character {
+  id          String   @id // e.g., 'hanamichi-sakuragi'
+  name        String
+  description String?
+  image       String?
+  role        String?  // 'Main', 'Supporting'
+  team        String?  // 'Shohoku'
+  position    String?  // 'Power Forward'
+  number      String?  // '10'
+  height      String?
+  weight      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

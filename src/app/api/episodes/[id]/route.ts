@@ -1,55 +1,53 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { Episode } from '@/types';
-
-const dataFilePath = path.join(process.cwd(), 'src/data/episodes.json');
-
-function getEpisodes(): Episode[] {
-    const jsonData = fs.readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(jsonData);
-}
-
-function saveEpisodes(episodes: Episode[]) {
-    fs.writeFileSync(dataFilePath, JSON.stringify(episodes, null, 2));
-}
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from "@/lib/prismadb";
+import { verifyAuth } from "@/lib/auth";
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = await params;
-        const updatedData: Partial<Episode> = await request.json();
-        const episodes = getEpisodes();
-
-        const index = episodes.findIndex(e => e.id === id);
-        if (index === -1) {
-            return NextResponse.json({ error: 'Episode not found' }, { status: 404 });
+        const auth = await verifyAuth(request);
+        if (!auth || auth.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        episodes[index] = { ...episodes[index], ...updatedData };
-        saveEpisodes(episodes);
+        const { id } = await params;
+        const body = await request.json();
 
-        return NextResponse.json(episodes[index]);
+        const updatedEpisode = await prisma.episode.update({
+            where: { id },
+            data: {
+                title: body.title,
+                thumbnail: body.thumbnail,
+                duration: body.duration,
+                // Servers are handled in sub-routes usually, but if provided here:
+                // We'd need to clear and recreate or update.
+            }
+        });
+
+        return NextResponse.json(updatedEpisode);
     } catch (error) {
+        console.error("Root Episode PUT Error:", error);
         return NextResponse.json({ error: 'Failed to update episode' }, { status: 500 });
     }
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = await params;
-        let episodes = getEpisodes();
-
-        const initialLength = episodes.length;
-        episodes = episodes.filter(e => e.id !== id);
-
-        if (episodes.length === initialLength) {
-            return NextResponse.json({ error: 'Episode not found' }, { status: 404 });
+        const auth = await verifyAuth(request);
+        if (!auth || auth.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        saveEpisodes(episodes);
+        const { id } = await params;
+
+        // Cascade delete via transaction if manual is needed, 
+        // but Prisma schema should handle it if set.
+        await prisma.episode.delete({
+            where: { id }
+        });
 
         return NextResponse.json({ message: 'Episode deleted' });
     } catch (error) {
+        console.error("Root Episode DELETE Error:", error);
         return NextResponse.json({ error: 'Failed to delete episode' }, { status: 500 });
     }
 }

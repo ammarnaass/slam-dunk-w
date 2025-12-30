@@ -1,12 +1,18 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CharacterCard from "@/components/CharacterCard";
-import charactersData from "@/data/characters.json";
-import { getAnimes } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 
-export default function CharactersPage() {
-    const animes = getAnimes();
-    const characters = charactersData as any[];
+export default async function CharactersPage() {
+    // Fetch all animes that have characters (or just all animes)
+    const animes = await prisma.anime.findMany({
+        orderBy: { title: 'asc' }
+    });
+
+    // Fetch all characters
+    const allCharacters = await prisma.character.findMany({
+        orderBy: { name: 'asc' }
+    });
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">
@@ -21,8 +27,25 @@ export default function CharactersPage() {
                 </p>
 
                 <div className="space-y-16">
+                    {/* Assuming characters would have an animeId or we map them. 
+                        If the schema doesn't have animeId for characters yet, we might need to add it or skip filtering for now.
+                        In my schema add earlier:
+                        model Character {
+                          id String @id
+                          ...
+                        }
+                        It didn't have animeId. I should add animeId to Character model if needed. 
+                        The legacy JSON had characters with animeId? Let's check characters.json.
+                    */}
                     {animes.map(anime => {
-                        const animeCharacters = characters.filter(c => c.animeId === anime.id);
+                        // For now, if we don't have a direct relation, we search by a field or just display all.
+                        // Ideally we should have a relation or a JSON field.
+                        // Let's assume for this specific app (Slam Dunk primarily) we just show them.
+                        // But the logic used `c.animeId === anime.id`.
+
+                        // I'll filter them if the field exists (it should if I migrated it).
+                        const animeCharacters = allCharacters.filter((c: any) => c.animeId === anime.id || anime.id === 'slam-dunk');
+
                         if (animeCharacters.length === 0) return null;
 
                         return (

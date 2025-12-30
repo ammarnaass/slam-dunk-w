@@ -41,7 +41,8 @@ export interface Character {
 
 export interface User {
     id: string;
-    username: string;
+    name?: string;
+    username?: string;
     email: string;
     password?: string; // Hashed
     role: "ADMIN" | "USER";

@@ -1,37 +1,58 @@
 import { NextResponse } from "next/server";
-import { getAnimes, getEpisodes } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 
 export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get("q")?.toLowerCase();
+    try {
+        const { searchParams } = new URL(request.url);
+        const query = searchParams.get("q") || "";
 
-    if (!query) return NextResponse.json({ animes: [], episodes: [] });
+        if (!query || query.length < 2) {
+            return NextResponse.json({ animes: [], episodes: [] });
+        }
 
-    const animes = getAnimes();
-    const episodes = getEpisodes();
+        // Search Animes
+        const animes = await prisma.anime.findMany({
+            where: {
+                OR: [
+                    { title: { contains: query, mode: 'insensitive' } },
+                    { description: { contains: query, mode: 'insensitive' } },
+                    { genres: { hasSome: [query] } }
+                ]
+            },
+            take: 10
+        });
 
-    const filteredAnimes = animes.filter(a =>
-        a.title.toLowerCase().includes(query) ||
-        a.description.toLowerCase().includes(query) ||
-        a.genres.some(g => g.toLowerCase().includes(query))
-    );
+        // Search Episodes
+        const episodes = await prisma.episode.findMany({
+            where: {
+                OR: [
+                    { title: { contains: query, mode: 'insensitive' } }
+                ]
+            },
+            include: {
+                anime: {
+                    select: { title: true }
+                }
+            },
+            take: 10
+        });
 
-    const filteredEpisodes = episodes.filter(e =>
-        e.title.toLowerCase().includes(query) ||
-        e.description.toLowerCase().includes(query)
-    ).slice(0, 10); // Limit episodes for preview
+        const enrichedEpisodes = episodes.map(ep => ({
+            id: ep.id,
+            animeId: ep.animeId,
+            title: ep.title,
+            thumbnail: ep.thumbnail,
+            duration: ep.duration,
+            createdAt: ep.createdAt.toISOString(),
+            animeTitle: ep.anime?.title || "أنمي"
+        }));
 
-    // Enrich episodes with anime title
-    const enrichedEpisodes = filteredEpisodes.map(ep => {
-        const anime = animes.find(a => a.id === ep.animeId);
-        return {
-            ...ep,
-            animeTitle: anime?.title || "أنمي"
-        };
-    });
-
-    return NextResponse.json({
-        animes: filteredAnimes,
-        episodes: enrichedEpisodes
-    });
+        return NextResponse.json({
+            animes: animes,
+            episodes: enrichedEpisodes
+        });
+    } catch (error) {
+        console.error("Root Search GET Error:", error);
+        return NextResponse.json({ error: "Search failed" }, { status: 500 });
+    }
 }

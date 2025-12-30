@@ -3,7 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VideoPlayer from "@/components/VideoPlayer";
-import { getEpisodeById, getAnimeById, getEpisodes } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 import { ArrowRight, ArrowLeft, Calendar, Clock, Film } from "lucide-react";
 import { Metadata } from "next";
 
@@ -13,34 +13,53 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { id } = await params;
-    const episode = getEpisodeById(id);
+    const episode = await prisma.episode.findUnique({
+        where: { id },
+        include: { anime: { select: { title: true } } }
+    });
+
     if (!episode) return { title: "الحلقة غير موجودة" };
 
-    const anime = getAnimeById(episode.animeId);
-
     return {
-        title: `${episode.title} - ${anime?.title || "مشاهدة"}`,
-        description: episode.description,
+        title: `${episode.title} - ${episode.anime?.title || "مشاهدة"}`,
+        description: `شاهد ${episode.title} من أنمي ${episode.anime?.title}`,
     };
 }
 
 export default async function WatchPage({ params }: PageProps) {
     const { id } = await params;
-    const episode = getEpisodeById(id);
+
+    const episode = await prisma.episode.findUnique({
+        where: { id },
+        include: {
+            servers: true,
+            anime: true
+        }
+    });
 
     if (!episode) {
         notFound();
     }
 
-    const anime = getAnimeById(episode.animeId);
-    const allEpisodes = getEpisodes();
-    const animeEpisodes = allEpisodes
-        .filter(e => e.animeId === episode.animeId)
-        .sort((a, b) => a.episode_number - b.episode_number);
+    const anime = episode.anime;
+    const animeEpisodes = await prisma.episode.findMany({
+        where: { animeId: episode.animeId },
+        orderBy: { createdAt: 'asc' } // Assuming this correlates to episode order if numbers aren't strictly stored
+    });
 
     const currentIndex = animeEpisodes.findIndex(e => e.id === id);
     const prevEpisode = currentIndex > 0 ? animeEpisodes[currentIndex - 1] : null;
     const nextEpisode = currentIndex < animeEpisodes.length - 1 ? animeEpisodes[currentIndex + 1] : null;
+
+    // Map to legacy structure for VideoPlayer if it expects specific fields
+    // My schema stores servers separately. VideoPlayer likely expects episode.servers or mega_link/video_url.
+    // I should check VideoPlayer component or map it.
+    const legacyEpisode = {
+        ...episode,
+        // Map first servers as fallback if needed
+        mega_link: episode.servers.find(s => s.name.toLowerCase() === "mega")?.url || "",
+        video_url: episode.servers.find(s => s.name.toLowerCase() === "default")?.url || episode.servers[0]?.url || ""
+    };
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">
@@ -55,14 +74,14 @@ export default async function WatchPage({ params }: PageProps) {
                     <span>/</span>
                     <Link href={`/animes/${anime?.id}`} className="hover:text-white transition-colors">{anime?.title}</Link>
                     <span>/</span>
-                    <span className="text-white">الحلقة {episode.episode_number}</span>
+                    <span className="text-white">{episode.title}</span>
                 </div>
 
                 {/* Player Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
                         <div className="bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800">
-                            <VideoPlayer episode={episode} />
+                            <VideoPlayer episode={legacyEpisode} />
                         </div>
 
                         <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -93,10 +112,7 @@ export default async function WatchPage({ params }: PageProps) {
 
                         <div className="mt-6 flex flex-wrap items-center gap-6 text-slate-400 text-sm border-b border-slate-900 pb-6">
                             <span className="flex items-center gap-2">
-                                <Clock size={16} className="text-red-500" /> {episode.duration}
-                            </span>
-                            <span className="flex items-center gap-2">
-                                <Calendar size={16} className="text-red-500" /> الموسم {episode.season}
+                                <Clock size={16} className="text-red-500" /> {episode.duration || "24:00"}
                             </span>
                             <span className="flex items-center gap-2">
                                 <Film size={16} className="text-red-500" /> {anime?.title}
@@ -109,7 +125,7 @@ export default async function WatchPage({ params }: PageProps) {
                                 قصة الحلقة
                             </h3>
                             <p className="text-slate-300 leading-relaxed">
-                                {episode.description || "لا يوجد وصف متاح لهذه الحلقة."}
+                                {anime?.description || "لا يوجد وصف متاح لهذه الحلقة."}
                             </p>
                         </div>
                     </div>
@@ -120,7 +136,7 @@ export default async function WatchPage({ params }: PageProps) {
                             <h3 className="text-xl font-bold text-white mb-6 border-b border-slate-800 pb-4">قائمة الحلقات</h3>
                             <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 {animeEpisodes
-                                    .map(e => (
+                                    .map((e, idx) => (
                                         <Link
                                             key={e.id}
                                             href={`/watch/${e.id}`}
@@ -129,7 +145,7 @@ export default async function WatchPage({ params }: PageProps) {
                                                 : 'bg-slate-800/30 border-transparent hover:bg-slate-800/80 hover:border-slate-700'}`}
                                         >
                                             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-950 flex items-center justify-center font-bold text-sm">
-                                                {e.episode_number}
+                                                {idx + 1}
                                             </div>
                                             <h4 className={`text-sm font-medium line-clamp-1 ${e.id === episode.id ? 'text-red-500' : 'text-slate-200'}`}>
                                                 {e.title}

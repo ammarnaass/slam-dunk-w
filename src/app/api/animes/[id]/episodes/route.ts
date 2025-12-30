@@ -1,17 +1,28 @@
 import { NextResponse } from "next/server";
-import { getEpisodes } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
-    const episodes = getEpisodes();
-    // Filter by animeId
-    const animeEpisodes = episodes.filter(ep => ep.animeId === id);
+    try {
+        const { id } = await params;
 
-    // Sort
-    animeEpisodes.sort((a, b) => a.episode_number - b.episode_number);
+        const episodes = await prisma.episode.findMany({
+            where: { animeId: id },
+            orderBy: { createdAt: 'asc' } // Heuristic for order if no number exists
+        });
 
-    return NextResponse.json(animeEpisodes);
+        // If your episodes have numeric titles or we need to sort by number:
+        const sortedEpisodes = episodes.sort((a, b) => {
+            const numA = parseInt(a.title.match(/\d+/)?.at(0) || "0");
+            const numB = parseInt(b.title.match(/\d+/)?.at(0) || "0");
+            return numA - numB;
+        });
+
+        return NextResponse.json(sortedEpisodes);
+    } catch (error) {
+        console.error("Root Anime Episodes GET Error:", error);
+        return NextResponse.json({ error: "Failed to fetch episodes" }, { status: 500 });
+    }
 }

@@ -1,12 +1,13 @@
 import PaymentMethodForm from "@/components/admin/PaymentMethodForm";
 import Link from "next/link";
-import { ArrowRight, Loader2 } from "lucide-react";
-import { getPaymentMethods } from "@/lib/db";
+import { ArrowRight } from "lucide-react";
+import { prisma } from "@/lib/prismadb";
 
 export default async function EditPaymentMethodPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const methods = getPaymentMethods();
-    const method = methods.find(p => p.id === id);
+    const method = await prisma.paymentMethod.findUnique({
+        where: { id }
+    });
 
     if (!method) {
         return (
@@ -16,6 +17,14 @@ export default async function EditPaymentMethodPage({ params }: { params: Promis
             </div>
         );
     }
+
+    // Map to legacy structure if needed
+    const legacyMethod = {
+        ...method,
+        active: method.isActive,
+        logoUrl: method.icon,
+        instructions: method.details
+    };
 
     return (
         <div>
@@ -29,7 +38,7 @@ export default async function EditPaymentMethodPage({ params }: { params: Promis
                 <h1 className="text-3xl font-bold text-white">تعديل: {method.name}</h1>
             </div>
 
-            <PaymentMethodForm initialData={method} isEdit={true} />
+            <PaymentMethodForm initialData={legacyMethod} isEdit={true} />
         </div>
     );
 }

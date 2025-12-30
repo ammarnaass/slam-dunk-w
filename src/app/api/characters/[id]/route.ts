@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import { Character } from "@/types";
-
-const dataFilePath = path.join(process.cwd(), "src/data/characters.json");
-
-function getCharacters(): Character[] {
-    const jsonData = fs.readFileSync(dataFilePath, "utf8");
-    return JSON.parse(jsonData);
-}
-
-function saveCharacters(characters: Character[]) {
-    fs.writeFileSync(dataFilePath, JSON.stringify(characters, null, 2));
-}
+import { prisma } from "@/lib/prismadb";
+import { verifyAuth } from "@/lib/auth";
 
 // ==================== PUT ====================
 export async function PUT(
@@ -20,27 +8,35 @@ export async function PUT(
     context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = await context.params;
-        const updatedData: Partial<Character> = await req.json();
-
-        const characters = getCharacters();
-        const index = characters.findIndex((c) => c.id === id);
-
-        if (index === -1) {
-            return NextResponse.json(
-                { error: "Character not found" },
-                { status: 404 }
-            );
+        const auth = await verifyAuth(req);
+        if (!auth || auth.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        characters[index] = { ...characters[index], ...updatedData };
-        saveCharacters(characters);
+        const { id } = await context.params;
+        const body = await req.json();
 
-        return NextResponse.json(characters[index]);
+        const updatedCharacter = await prisma.character.update({
+            where: { id },
+            data: {
+                name: body.name,
+                description: body.description,
+                image: body.image || body.imageProfile,
+                role: body.role,
+                team: body.team,
+                position: body.position,
+                number: body.number,
+                height: body.height,
+                weight: body.weight,
+            }
+        });
+
+        return NextResponse.json(updatedCharacter);
     } catch (error) {
+        console.error("Character PUT Error:", error);
         return NextResponse.json(
-            { error: "Failed to update character" },
-            { status: 500 }
+            { error: "Character not found or update failed" },
+            { status: 404 }
         );
     }
 }
@@ -51,27 +47,23 @@ export async function DELETE(
     context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = await context.params;
-
-        let characters = getCharacters();
-        const initialLength = characters.length;
-
-        characters = characters.filter((c) => c.id !== id);
-
-        if (characters.length === initialLength) {
-            return NextResponse.json(
-                { error: "Character not found" },
-                { status: 404 }
-            );
+        const auth = await verifyAuth(req);
+        if (!auth || auth.role !== "ADMIN") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        saveCharacters(characters);
+        const { id } = await context.params;
+
+        await prisma.character.delete({
+            where: { id }
+        });
 
         return NextResponse.json({ message: "Character deleted" });
     } catch (error) {
+        console.error("Character DELETE Error:", error);
         return NextResponse.json(
-            { error: "Failed to delete character" },
-            { status: 500 }
+            { error: "Character not found or delete failed" },
+            { status: 404 }
         );
     }
 }

@@ -1,76 +1,97 @@
+import { NextResponse } from "next/server";
 import { mobileSuccess, mobileError } from "@/lib/mobile-api";
-import { getAnimes, getEpisodes, getSettings } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 
 export async function GET() {
     try {
-        const animes = getAnimes();
-        const episodes = getEpisodes();
-        const settings = getSettings();
+        const [featuredAnimes, latestEpisodes, settings] = await Promise.all([
+            prisma.anime.findMany({
+                where: { isFeatured: true },
+                take: 5
+            }),
+            prisma.episode.findMany({
+                orderBy: { createdAt: 'desc' },
+                take: 10,
+                include: { anime: true }
+            }),
+            prisma.settings.findUnique({
+                where: { id: "global" }
+            })
+        ]);
 
-        // 1. Slider Animes
-        const sliderAnimes = animes
-            .filter(a => settings.sliderAnimeIds.includes(a.id))
-            .map(a => ({
+        const data = {
+            slider: featuredAnimes.map((a: any) => ({
                 id: a.id,
                 title: a.title,
+                description: a.description,
                 coverImage: a.coverImage,
                 bannerImage: a.bannerImage || a.coverImage,
-            }));
-
-        // 2. Latest Episodes
-        const latestEpisodes = episodes
-            .sort((a, b) => b.id.localeCompare(a.id))
-            .slice(0, 15)
-            .map(ep => {
-                const anime = animes.find(a => a.id === ep.animeId);
-                return {
-                    id: ep.id,
-                    animeId: ep.animeId,
-                    title: ep.title,
-                    thumbnail: ep.thumbnail || anime?.coverImage || "",
-                    animeTitle: anime?.title || "Unknown",
-                    duration: ep.duration || "",
-                    createdAt: ep.id, // Fallback to ID if no date
-                };
-            });
-
-        // 3. Trending/Ongoing
-        const ongoingAnimes = animes
-            .filter(a => a.status === "Ongoing")
-            .slice(0, 10)
-            .map(a => ({
+                type: a.type || "Anime",
+                status: a.status || "Ongoing",
+                totalEpisodes: a.totalEpisodes || 0,
+                releaseYear: a.releaseYear?.toString() || "",
+                genres: a.genres || []
+            })),
+            latest: latestEpisodes.map((ep: any) => ({
+                id: ep.id,
+                animeId: ep.animeId,
+                title: ep.title,
+                description: ep.anime?.description || "",
+                episode_number: parseInt(ep.title.match(/\d+/)?.at(0) || "1"),
+                thumbnail: ep.thumbnail || ep.anime?.coverImage || "",
+                duration: ep.duration || "24:00",
+                mega_link: "", // Fallback or fetch from servers if needed
+                animeTitle: ep.anime?.title || "أنمي",
+                animeCover: ep.anime?.coverImage || ""
+            })),
+            ongoing: featuredAnimes.map((a: any) => ({
                 id: a.id,
                 title: a.title,
+                description: a.description,
                 coverImage: a.coverImage,
-                status: a.status,
-                genres: a.genres,
-            }));
-
-        // 4. Custom Sections
-        const sections = [
-            {
-                title: "أضيف حديثاً",
-                items: animes.slice(-10).reverse().map(a => ({
-                    id: a.id,
-                    title: a.title,
-                    coverImage: a.coverImage,
-                }))
-            }
-        ];
-
-        return mobileSuccess({
-            slider: sliderAnimes,
-            latest: latestEpisodes,
-            ongoing: ongoingAnimes,
-            sections,
+                bannerImage: a.bannerImage || a.coverImage,
+                type: a.type || "Anime",
+                status: a.status || "Ongoing",
+                totalEpisodes: a.totalEpisodes || 0,
+                releaseYear: a.releaseYear?.toString() || "",
+                genres: a.genres || []
+            })),
+            sections: [
+                {
+                    title: "الأنميات المقترحة",
+                    items: featuredAnimes.map((a: any) => ({
+                        id: a.id,
+                        title: a.title,
+                        description: a.description,
+                        coverImage: a.coverImage,
+                        bannerImage: a.bannerImage || a.coverImage,
+                        type: a.type || "Anime",
+                        status: a.status || "Ongoing",
+                        totalEpisodes: a.totalEpisodes || 0,
+                        releaseYear: a.releaseYear?.toString() || "",
+                        genres: a.genres || []
+                    }))
+                }
+            ],
             settings: {
-                siteName: settings.siteName,
-                admob: settings.admob,
-                socialLinks: settings.socialLinks
+                admob: {
+                    isEnabled: settings?.admobEnabled || false,
+                    appId: settings?.admobAppId,
+                    bannerId: settings?.admobBannerId,
+                    interstitialId: settings?.admobInterstitialId
+                },
+                apiApp: {
+                    isMaintenance: settings?.maintenanceMode || false,
+                    maintenanceMessage: settings?.maintenanceMessage || "Maintenance mode...",
+                    latestVersion: settings?.latestVersion || "1.0.0",
+                    updateUrl: settings?.updateUrl || ""
+                }
             }
-        });
+        };
+
+        return mobileSuccess(data);
     } catch (error) {
-        console.error("Mobile V1 Home API Error:", error);
-        return mobileError("Failed to load home data", 500);
+        console.error("Mobile Home API Error:", error);
+        return mobileError("حدث خطأ أثناء جلب بيانات الصفحة الرئيسية", 500);
     }
 }

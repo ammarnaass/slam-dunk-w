@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
-import { getSettings } from "@/lib/db";
+import { prisma } from "@/lib/prismadb";
 import AdmobProvider from "@/components/AdmobProvider";
 import BottomNav from "@/components/BottomNav";
 
@@ -12,32 +12,35 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = getSettings();
+  const settings = await prisma.settings.findUnique({ where: { id: "global" } });
+
+  const siteName = settings?.siteName || "سلام دانك";
+
   return {
-    title: settings.siteName,
-    description: settings.siteDescription,
+    title: siteName,
+    description: "الموقع الرسمي لمشاهدة حلقات سلام دانك بجودة عالية",
     manifest: "/manifest.webmanifest",
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
-      title: settings.siteName,
+      title: siteName,
     },
     icons: {
-      icon: settings.faviconUrl || "/favicon.ico",
+      icon: "/favicon.ico",
       apple: "/icon-192x192.png",
     },
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = getSettings();
+  const settings = await prisma.settings.findUnique({ where: { id: "global" } });
 
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className={`${cairo.className} bg-slate-950 text-slate-200 antialiased`}>
         <AdmobProvider>
           {children}
