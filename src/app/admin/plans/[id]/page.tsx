@@ -21,7 +21,7 @@ export default async function EditPlanPage({ params }: { params: Promise<{ id: s
     // Map to legacy structure for PlanForm if needed
     const legacyPlan = {
         ...plan,
-        active: plan.isActive
+        isPopular: false, // Default if not in DB
     };
 
     return (

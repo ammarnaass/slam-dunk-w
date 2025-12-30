@@ -70,10 +70,11 @@ export interface Plan {
     id: string;
     name: string;
     price: number;
-    duration: number; // in days
+    duration: string;
+    description?: string | null;
     features: string[];
-    isPopular: boolean;
-    active: boolean;
+    isPopular?: boolean;
+    isActive: boolean;
 }
 
 export interface PaymentMethod {
@@ -82,10 +83,9 @@ export interface PaymentMethod {
     type: string;
     instructions?: string | null;
     logoUrl?: string | null;
-    active: boolean;
     details?: string | null;
     icon?: string | null;
-    isActive?: boolean;
+    isActive: boolean;
 }
 
 export interface Settings {

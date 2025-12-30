@@ -18,10 +18,10 @@ export default function PlanForm({ initialData, isEdit = false }: PlanFormProps)
     const [formData, setFormData] = useState<Partial<Plan>>({
         name: initialData?.name || "",
         price: initialData?.price || 0,
-        duration: initialData?.duration || 30,
+        duration: initialData?.duration || "30",
         features: initialData?.features || [""],
         isPopular: initialData?.isPopular || false,
-        active: initialData?.active ?? true,
+        isActive: initialData?.isActive ?? true,
     });
 
     const [currency, setCurrency] = useState("ج.م");
@@ -117,11 +117,11 @@ export default function PlanForm({ initialData, isEdit = false }: PlanFormProps)
                             />
                         </div>
                         <div>
-                            <label className="block text-slate-400 mb-2 text-sm">المدة (بالأيام)</label>
+                            <label className="block text-slate-400 mb-2 text-sm">المدة (أيام أو وصف)</label>
                             <input
-                                type="number"
+                                type="text"
                                 value={formData.duration}
-                                onChange={(e) => setFormData({ ...formData, duration: Number(e.target.value) })}
+                                onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                                 className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
                                 required
                             />
@@ -142,8 +142,8 @@ export default function PlanForm({ initialData, isEdit = false }: PlanFormProps)
                         <label className="flex items-center gap-2 cursor-pointer text-slate-300">
                             <input
                                 type="checkbox"
-                                checked={formData.active}
-                                onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                                checked={formData.isActive}
+                                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                                 className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-red-600 focus:ring-offset-slate-900"
                             />
                             <span>نشطة (Active)</span>

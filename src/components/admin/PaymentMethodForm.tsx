@@ -20,7 +20,7 @@ export default function PaymentMethodForm({ initialData, isEdit = false }: Payme
         type: initialData?.type || "manual",
         instructions: initialData?.instructions || "",
         logoUrl: initialData?.logoUrl || "",
-        active: initialData?.active ?? true,
+        isActive: initialData?.isActive ?? true,
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -116,7 +116,7 @@ export default function PaymentMethodForm({ initialData, isEdit = false }: Payme
                         <div className="flex gap-2">
                             <input
                                 type="text"
-                                value={formData.logoUrl}
+                                value={formData.logoUrl || ""}
                                 onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
                                 className="flex-1 bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600 ltr"
                                 placeholder="https://example.com/logo.png"
@@ -132,7 +132,7 @@ export default function PaymentMethodForm({ initialData, isEdit = false }: Payme
                     <div>
                         <label className="block text-slate-400 mb-2 text-sm">تعليمات الدفع</label>
                         <textarea
-                            value={formData.instructions}
+                            value={formData.instructions || ""}
                             onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
                             className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600 min-h-[100px]"
                             placeholder={formData.type === 'manual' ? "مثال: قم بتحويل المبلغ إلى الرقم 010xxxx ثم أرسل صورة الإيصال." : "سيتم توجيه المستخدم لصفحة الدفع الآمن."}
@@ -145,8 +145,8 @@ export default function PaymentMethodForm({ initialData, isEdit = false }: Payme
                         <label className="flex items-center gap-2 cursor-pointer text-slate-300">
                             <input
                                 type="checkbox"
-                                checked={formData.active}
-                                onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                                checked={formData.isActive}
+                                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                                 className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-red-600 focus:ring-offset-slate-900"
                             />
                             <span>نشطة (Active)</span>
