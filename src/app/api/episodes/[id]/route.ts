@@ -18,8 +18,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
                 title: body.title,
                 thumbnail: body.thumbnail,
                 duration: body.duration,
-                // Servers are handled in sub-routes usually, but if provided here:
-                // We'd need to clear and recreate or update.
+                episodeNumber: body.episodeNumber,
+                seasonNumber: body.seasonNumber,
+                description: body.description,
             }
         });
 

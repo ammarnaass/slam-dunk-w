@@ -21,6 +21,8 @@ export async function GET() {
             title: ep.title,
             thumbnail: ep.thumbnail,
             duration: ep.duration,
+            episodeNumber: ep.episodeNumber,
+            seasonNumber: ep.seasonNumber,
             createdAt: ep.createdAt.toISOString(),
             animeTitle: ep.anime?.title || "أنمي غير معروف"
         }));

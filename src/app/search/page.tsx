@@ -123,7 +123,7 @@ export default function SearchPage() {
                                             className="flex items-center gap-4 p-3 bg-slate-900/50 hover:bg-slate-900 rounded-2xl border border-slate-800 hover:border-red-600/30 transition-all group"
                                         >
                                             <div className="w-24 md:w-32 aspect-video relative rounded-lg overflow-hidden flex-shrink-0">
-                                                <img src={ep.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
+                                                <img src={ep.thumbnail || "/logoep.jpg"} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
                                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <PlayCircle size={24} className="text-white fill-red-600" />
                                                 </div>
@@ -131,7 +131,7 @@ export default function SearchPage() {
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="text-sm md:text-base font-bold text-white line-clamp-1 group-hover:text-red-500 transition-colors">{ep.title}</h3>
                                                 <div className="flex items-center gap-3 mt-1.5 overflow-hidden">
-                                                    <span className="text-[10px] md:text-xs text-red-500 font-bold bg-red-500/10 px-2 py-0.5 rounded whitespace-nowrap">حلقة {ep.episode_number}</span>
+                                                    <span className="text-[10px] md:text-xs text-red-500 font-bold bg-red-500/10 px-2 py-0.5 rounded whitespace-nowrap">حلقة {ep.episodeNumber}</span>
                                                     <span className="text-[10px] md:text-xs text-slate-500 line-clamp-1 truncate">{ep.animeTitle}</span>
                                                 </div>
                                             </div>

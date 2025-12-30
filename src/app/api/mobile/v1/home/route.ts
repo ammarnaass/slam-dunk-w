@@ -37,7 +37,8 @@ export async function GET() {
                 animeId: ep.animeId,
                 title: ep.title,
                 description: ep.anime?.description || "",
-                episode_number: parseInt(ep.title.match(/\d+/)?.at(0) || "1"),
+                episode_number: ep.episodeNumber || 1,
+                season_number: ep.seasonNumber || 1,
                 thumbnail: ep.thumbnail || ep.anime?.coverImage || "",
                 duration: ep.duration || "24:00",
                 mega_link: "", // Fallback or fetch from servers if needed

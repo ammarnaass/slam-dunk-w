@@ -43,16 +43,15 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { title, episode_number, mega_link, video_url, duration, thumbnail } = body;
+    const { title, episodeNumber, mega_link, video_url, duration, thumbnail, seasonNumber } = body;
 
     // Basic validation
-    if (!episode_number) { // mega_link optional if we allow empty
+    if (!episodeNumber) { // mega_link optional if we allow empty
         return NextResponse.json({ error: "Episode number is required" }, { status: 400 });
     }
 
     // Generate ID
     const episodeId = Math.random().toString(36).substr(2, 9);
-    const finalTitle = title || `Episode ${episode_number}`;
 
     try {
         // Create Episode
@@ -60,7 +59,9 @@ export async function POST(
             data: {
                 id: episodeId,
                 animeId: id,
-                title: finalTitle,
+                title: title || `Episode ${episodeNumber}`,
+                episodeNumber: Number(episodeNumber),
+                seasonNumber: Number(seasonNumber || 1),
                 thumbnail: thumbnail || "/logoep.jpg",
                 duration: duration || "24:00",
                 servers: {

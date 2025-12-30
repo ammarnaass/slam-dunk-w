@@ -40,7 +40,7 @@ export default function CharactersAdmin() {
     };
 
     const filteredCharacters = characters.filter((char) =>
-        char.name_ar.toLowerCase().includes(searchTerm.toLowerCase())
+        (char.name_ar || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (loading) return <div className="text-white text-center p-8">جاري التحميل...</div>;
@@ -87,9 +87,9 @@ export default function CharactersAdmin() {
                             {filteredCharacters.map((char) => (
                                 <tr key={char.id} className="hover:bg-slate-800/50 transition-colors">
                                     <td className="p-4">
-                                        <img src={char.image} alt={char.name_ar} className="w-12 h-12 object-cover rounded-full" />
+                                        <img src={char.image || "/favicon.png"} alt={char.name_ar || "character"} className="w-12 h-12 object-cover rounded-full" />
                                     </td>
-                                    <td className="p-4 font-medium text-white">{char.name_ar}</td>
+                                    <td className="p-4 font-medium text-white">{char.name_ar || char.name}</td>
                                     <td className="p-4">{char.number}</td>
                                     <td className="p-4 text-slate-500">{char.role}</td>
                                     <td className="p-4">
