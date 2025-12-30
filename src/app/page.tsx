@@ -34,11 +34,11 @@ export default async function Home() {
   const animes = allAnimes.slice(0, 10);
 
   // Map latest episodes for UI
-  const latestEpisodes = latestEpisodesData.map(ep => ({
+  const latestEpisodes = latestEpisodesData.map((ep: any) => ({
     id: ep.id,
     title: ep.title,
     thumbnail: ep.thumbnail,
-    episode_number: ep.title.match(/\d+/) ? ep.title.match(/\d+/)![0] : "?", // Heuristic
+    episodeNumber: ep.episodeNumber || (ep.title.match(/\d+/) ? ep.title.match(/\d+/)![0] : "?"),
     animeTitle: ep.anime?.title || "أنمي"
   }));
 
@@ -70,7 +70,7 @@ export default async function Home() {
                     <PlayCircle size={32} className="text-white fill-red-600" />
                   </div>
                   <div className="absolute bottom-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    الحلقة {ep.episode_number}
+                    الحلقة {ep.episodeNumber}
                   </div>
                 </div>
                 <div className="p-3">

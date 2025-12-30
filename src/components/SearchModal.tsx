@@ -135,7 +135,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                                                         <Film size={12} className="text-red-600" />
                                                         <span>{ep.animeTitle}</span>
                                                         <span>•</span>
-                                                        <span>الحلقة {ep.episode_number}</span>
+                                                        <span>الحلقة {ep.episodeNumber || ep.episode_number}</span>
                                                     </div>
                                                 </div>
                                             </Link>

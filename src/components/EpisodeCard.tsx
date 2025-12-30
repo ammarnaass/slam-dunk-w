@@ -14,13 +14,13 @@ export default function EpisodeCard({ episode }: EpisodeCardProps) {
         >
             <div className="relative aspect-video overflow-hidden">
                 <img
-                    src={episode.thumbnail}
+                    src={episode.thumbnail || "/logoep.jpg"}
                     alt={episode.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 {/* رقم الحلقة الكبير */}
                 <div className="absolute top-3 left-3 bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-2xl shadow-xl">
-                    {episode.episode_number}
+                    {episode.episodeNumber}
                 </div>
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <PlayCircle size={48} className="text-white drop-shadow-lg" />
@@ -33,10 +33,10 @@ export default function EpisodeCard({ episode }: EpisodeCardProps) {
             <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex flex-col">
-                        <span className="text-red-500 text-sm font-bold">الحلقة {episode.episode_number}</span>
+                        <span className="text-red-500 text-sm font-bold">الحلقة {episode.episodeNumber}</span>
                         {episode.animeTitle && <span className="text-slate-500 text-[10px] font-medium">{episode.animeTitle}</span>}
                     </div>
-                    <span className="text-slate-500 text-xs text-left">الموسم {episode.season}</span>
+                    <span className="text-slate-500 text-xs text-left">الموسم {episode.seasonNumber || 1}</span>
                 </div>
                 <h3 className="text-white font-semibold line-clamp-1 mb-2 group-hover:text-red-500 transition-colors">
                     {episode.title}

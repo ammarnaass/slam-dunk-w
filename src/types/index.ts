@@ -1,42 +1,47 @@
 export interface Episode {
     id: string;
-    animeId: string; // Foreign key to Anime
+    animeId: string;
     title: string;
-    description: string;
-    season: number;
-    episode_number: number;
-    thumbnail: string;
-    duration: string;
-    mega_link: string;
+    description: string | null;
+    seasonNumber: number;
+    episodeNumber: number;
+    thumbnail: string | null;
+    duration: string | null;
+    mega_link?: string;
     video_url?: string;
+    servers?: { name: string; url: string; quality?: string }[];
 }
 
 export interface Anime {
     id: string;
     title: string;
     description: string;
-    coverImage: string; // Portrait image
-    bannerImage?: string; // Landscape image
-    type: string; // e.g. "TV", "Movie", "OVA"
-    status: "Ongoing" | "Completed" | "Coming Soon";
-    totalEpisodes: number;
-    releaseYear?: string;
+    coverImage: string;
+    bannerImage?: string | null;
+    type?: string | null;
+    status: string;
+    totalEpisodes?: number | null;
+    releaseYear?: number | null;
     genres: string[];
+    rating?: number;
+    isFeatured?: boolean;
+    isTrending?: boolean;
 }
 
 export interface Character {
     id: string;
-    animeId: string; // Foreign key to Anime
-    name_ar: string;
-    name_en?: string;
-    name_jp?: string;
-    role: string; // e.g. "Main", "Supporting"
-    height?: string;
-    weight?: string;
-    team?: string; // Specific to sports anime
-    number?: number; // Specific to sports anime
-    bio: string;
-    image: string;
+    name: string;
+    name_ar?: string | null;
+    name_en?: string | null;
+    name_jp?: string | null;
+    role?: string | null;
+    height?: string | null;
+    weight?: string | null;
+    team?: string | null;
+    number?: string | null;
+    bio?: string | null;
+    image?: string | null;
+    animeId?: string | null;
 }
 
 export interface User {
@@ -74,10 +79,13 @@ export interface Plan {
 export interface PaymentMethod {
     id: string;
     name: string;
-    type: "card" | "manual";
-    instructions: string;
-    logoUrl?: string;
+    type: string;
+    instructions?: string | null;
+    logoUrl?: string | null;
     active: boolean;
+    details?: string | null;
+    icon?: string | null;
+    isActive?: boolean;
 }
 
 export interface Settings {
