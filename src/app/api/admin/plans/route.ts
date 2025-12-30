@@ -35,7 +35,7 @@ export async function POST(request: Request) {
                 duration: String(body.duration || 30),
                 description: body.description || "",
                 features: body.features || [],
-                isActive: body.active !== undefined ? body.active : true,
+                isActive: body.isActive !== undefined ? body.isActive : (body.active !== undefined ? body.active : true),
             }
         });
 

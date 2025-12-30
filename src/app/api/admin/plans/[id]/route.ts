@@ -44,7 +44,7 @@ export async function PUT(
                 duration: String(body.duration),
                 description: body.description,
                 features: body.features,
-                isActive: body.active !== undefined ? body.active : undefined,
+                isActive: body.isActive !== undefined ? body.isActive : (body.active !== undefined ? body.active : undefined),
             }
         });
 

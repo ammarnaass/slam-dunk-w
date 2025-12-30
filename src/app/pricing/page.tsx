@@ -24,7 +24,7 @@ export default function PricingPage() {
                 const res = await fetch("/api/admin/plans");
                 if (res.ok) {
                     const data = await res.json();
-                    setPlans(data.filter((p: Plan) => p.active));
+                    setPlans(data.filter((p: Plan) => p.isActive));
                 }
             } catch (error) {
                 console.error("Failed to fetch plans");

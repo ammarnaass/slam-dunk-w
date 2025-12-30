@@ -43,7 +43,7 @@ export async function PUT(
                 type: body.type,
                 details: body.instructions || body.details,
                 icon: body.logoUrl || body.icon,
-                isActive: body.active !== undefined ? body.active : undefined,
+                isActive: body.isActive !== undefined ? body.isActive : (body.active !== undefined ? body.active : undefined),
             }
         });
 

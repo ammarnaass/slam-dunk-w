@@ -71,8 +71,8 @@ export default function PaymentMethodsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {methods.map((method) => (
-                    <div key={method.id} className={`bg-slate-900 border rounded-xl p-6 relative transition-all hover:-translate-y-1 ${method.active ? 'border-green-500/50' : 'border-slate-800 opacity-70'}`}>
-                        {!method.active && (
+                    <div key={method.id} className={`bg-slate-900 border rounded-xl p-6 relative transition-all hover:-translate-y-1 ${method.isActive ? 'border-green-500/50' : 'border-slate-800 opacity-70'}`}>
+                        {!method.isActive && (
                             <div className="absolute top-0 right-0 bg-slate-700 text-slate-300 px-3 py-1 rounded-bl-xl rounded-tr-xl font-bold text-xs">
                                 غير نشط
                             </div>

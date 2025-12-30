@@ -9,7 +9,7 @@ export interface Episode {
     duration: string | null;
     mega_link?: string;
     video_url?: string;
-    servers?: { name: string; url: string; quality?: string }[];
+    servers?: { name: string; url: string; quality?: string | null }[];
 }
 
 export interface Anime {
@@ -39,7 +39,7 @@ export interface Character {
     weight?: string | null;
     team?: string | null;
     number?: string | null;
-    bio?: string | null;
+    description?: string | null;
     image?: string | null;
     animeId?: string | null;
 }

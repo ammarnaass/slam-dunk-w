@@ -1,4 +1,3 @@
-import { NextRequest } from "next/request";
 import { NextResponse } from "next/server";
 import { mobileSuccess, mobileError } from "@/lib/mobile-api";
 import { prisma } from "@/lib/prismadb";

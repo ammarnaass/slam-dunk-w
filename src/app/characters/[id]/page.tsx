@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     return {
         title: `${character.name_ar} - شخصيات سلام دانك`,
-        description: character.bio,
+        description: character.description || "",
     };
 }
 
@@ -91,7 +91,7 @@ export default async function CharacterPage({ params }: PageProps) {
                         <div className="bg-slate-900/30 p-6 rounded-xl border border-slate-800/50">
                             <h3 className="text-xl font-bold text-white mb-4 border-r-4 border-red-600 pr-4">نبذة عن الشخصية</h3>
                             <p className="text-slate-300 leading-relaxed text-lg">
-                                {character.bio}
+                                {character.description}
                             </p>
                         </div>
                     </div>

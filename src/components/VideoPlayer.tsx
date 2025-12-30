@@ -24,13 +24,13 @@ export default function VideoPlayer({ episode }: VideoPlayerProps) {
         return null;
     };
 
-    const embedUrl = getMegaEmbedUrl(episode.mega_link);
+    const embedUrl = episode.mega_link ? getMegaEmbedUrl(episode.mega_link) : null;
 
     // إذا كان هناك رابط فيديو مباشر
-    if (hasDirectVideo) {
+    if (episode.video_url) {
         return (
             <div className="aspect-video bg-slate-950 rounded-xl overflow-hidden shadow-2xl border border-slate-900">
-                <video className="w-full h-full" controls poster={episode.thumbnail}>
+                <video className="w-full h-full" controls poster={episode.thumbnail || undefined}>
                     <source src={episode.video_url} type="video/mp4" />
                     المتصفح لا يدعم تشغيل الفيديو.
                 </video>

@@ -22,7 +22,7 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
         type: initialData?.type || "TV Series",
         status: initialData?.status || "Ongoing",
         totalEpisodes: initialData?.totalEpisodes || 0,
-        releaseYear: initialData?.releaseYear || "",
+        releaseYear: initialData?.releaseYear || null,
         genres: initialData?.genres || [],
     });
 
@@ -115,7 +115,7 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
                                 <div>
                                     <label className="block text-slate-400 mb-2 text-sm">النوع</label>
                                     <select
-                                        value={formData.type}
+                                        value={formData.type || "TV Series"}
                                         onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                                         className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
                                     >
@@ -128,7 +128,7 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
                                 <div>
                                     <label className="block text-slate-400 mb-2 text-sm">الحالة</label>
                                     <select
-                                        value={formData.status}
+                                        value={formData.status || "Ongoing"}
                                         onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
                                         className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
                                     >
@@ -144,7 +144,7 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
                                     <label className="block text-slate-400 mb-2 text-sm">عدد الحلقات</label>
                                     <input
                                         type="number"
-                                        value={formData.totalEpisodes}
+                                        value={formData.totalEpisodes || 0}
                                         onChange={(e) => setFormData({ ...formData, totalEpisodes: Number(e.target.value) })}
                                         className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
                                     />
@@ -153,8 +153,8 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
                                     <label className="block text-slate-400 mb-2 text-sm">سنة الإصدار</label>
                                     <input
                                         type="text"
-                                        value={formData.releaseYear}
-                                        onChange={(e) => setFormData({ ...formData, releaseYear: e.target.value })}
+                                        value={formData.releaseYear || ""}
+                                        onChange={(e) => setFormData({ ...formData, releaseYear: e.target.value ? Number(e.target.value) : null })}
                                         className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
                                         placeholder="YYYY"
                                     />

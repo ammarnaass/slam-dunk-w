@@ -31,7 +31,7 @@ export async function POST(request: Request) {
                 type: body.type, // 'card' or 'manual'
                 details: body.instructions || "",
                 icon: body.logoUrl || "",
-                isActive: body.active !== undefined ? body.active : true,
+                isActive: body.isActive !== undefined ? body.isActive : (body.active !== undefined ? body.active : true),
             }
         });
 

@@ -76,10 +76,15 @@ export default function PlansPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {plans.map((plan) => (
-                    <div key={plan.id} className={`bg-slate-900 border rounded-xl p-6 relative transition-all hover:-translate-y-1 ${plan.isPopular ? 'border-yellow-500 shadow-yellow-900/10 shadow-lg' : 'border-slate-800'}`}>
+                    <div key={plan.id} className={`bg-slate-900 border rounded-2xl p-6 relative transition-all hover:-translate-y-1 ${plan.isActive ? 'border-red-600/50 shadow-lg shadow-red-900/10' : 'border-slate-800 opacity-70'}`}>
                         {plan.isPopular && (
-                            <div className="absolute top-0 right-0 bg-yellow-500 text-black px-3 py-1 rounded-bl-xl rounded-tr-xl font-bold text-xs">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                                 الأكثر طلباً
+                            </div>
+                        )}
+                        {!plan.isActive && (
+                            <div className="absolute top-0 right-0 bg-slate-700 text-slate-300 px-3 py-1 rounded-bl-xl rounded-tr-xl font-bold text-xs">
+                                غير نشط
                             </div>
                         )}
 
@@ -91,7 +96,7 @@ export default function PlansPage() {
                                 </div>
                             </div>
                             <div className="bg-slate-800 px-3 py-1 rounded-lg">
-                                <span className={`font-bold ${plan.active ? 'text-green-500' : 'text-red-500'}`}>
+                                <span className={`font-bold ${plan.isActive ? 'text-green-500' : 'text-red-500'}`}>
                                     {plan.price} {currency}
                                 </span>
                             </div>

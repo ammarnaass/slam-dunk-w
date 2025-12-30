@@ -21,11 +21,11 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
         name_en: "",
         name_jp: "",
         role: "",
-        number: 0,
+        number: "0",
         height: "",
         weight: "",
         team: "",
-        bio: "",
+        description: "",
         image: "/logoep.jpg",
         ...initialData,
     });
@@ -110,7 +110,7 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
                     <label className="block text-slate-400 text-sm font-medium mb-2">العمل (الأنمي)</label>
                     <select
                         name="animeId"
-                        value={formData.animeId}
+                        value={formData.animeId || ""}
                         onChange={handleChange}
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
                         required
@@ -128,7 +128,7 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
                         <input
                             type="text"
                             name="name_ar"
-                            value={formData.name_ar}
+                            value={formData.name_ar || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
                             required
@@ -140,7 +140,7 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
                         <input
                             type="text"
                             name="name_en"
-                            value={formData.name_en}
+                            value={formData.name_en || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
                         />
@@ -151,7 +151,7 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
                         <input
                             type="text"
                             name="role"
-                            value={formData.role}
+                            value={formData.role || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
                         />
@@ -162,7 +162,7 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
                         <input
                             type="text"
                             name="height"
-                            value={formData.height}
+                            value={formData.height || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
                         />
@@ -173,7 +173,7 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
                         <input
                             type="text"
                             name="weight"
-                            value={formData.weight}
+                            value={formData.weight || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
                         />
@@ -181,10 +181,9 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
                 </div>
 
                 <div>
-                    <label className="block text-slate-400 text-sm font-medium mb-2">الوصف (Bio)</label>
                     <textarea
-                        name="bio"
-                        value={formData.bio}
+                        name="description"
+                        value={formData.description || ""}
                         onChange={handleChange}
                         rows={4}
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
@@ -196,7 +195,7 @@ export default function CharacterForm({ initialData, isEdit = false }: Character
                     <input
                         type="text"
                         name="image"
-                        value={formData.image}
+                        value={formData.image || ""}
                         onChange={handleChange}
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-600 transition-colors"
                     />

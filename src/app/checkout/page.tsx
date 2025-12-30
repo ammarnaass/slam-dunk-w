@@ -44,7 +44,12 @@ function CheckoutForm() {
                 // Fetch Plan
                 const planRes = await fetch(`/api/admin/plans/${planId}`);
                 if (planRes.ok) {
-                    setPlan(await planRes.json());
+                    const fetchedPlan = await planRes.json();
+                    if (fetchedPlan && fetchedPlan.isActive) {
+                        setPlan(fetchedPlan);
+                    } else {
+                        setPlan(null); // Plan not found or not active
+                    }
                 } else {
                     setPlan(null); // Plan not found
                 }
@@ -53,7 +58,7 @@ function CheckoutForm() {
                 const methodsRes = await fetch("/api/admin/payment-methods");
                 if (methodsRes.ok) {
                     const methodsData = await methodsRes.json();
-                    const activeMethods = methodsData.filter((m: PaymentMethod) => m.active);
+                    const activeMethods = methodsData.filter((m: PaymentMethod) => m.isActive);
                     setPaymentMethods(activeMethods);
                     if (activeMethods.length > 0) {
                         setSelectedMethod(activeMethods[0].id);
