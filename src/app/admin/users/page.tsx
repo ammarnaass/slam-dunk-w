@@ -33,7 +33,7 @@ export default function UsersPage() {
 
     useEffect(() => {
         const results = users.filter(user =>
-            user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (user.name || user.username || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredUsers(results);
@@ -105,15 +105,15 @@ export default function UsersPage() {
                                 <tr key={user.id} className="text-slate-300 hover:bg-slate-800/50 transition-colors">
                                     <td className="px-6 py-4 font-medium flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold shrink-0">
-                                            {user.username[0].toUpperCase()}
+                                            {(user.name || user.username || user.email || "U")[0].toUpperCase()}
                                         </div>
-                                        {user.username}
+                                        {user.name || user.username || user.email}
                                     </td>
                                     <td className="px-6 py-4 font-mono text-sm hidden md:table-cell">{user.email}</td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded text-xs font-bold flex w-fit items-center gap-1 ${user.role === 'ADMIN'
-                                                ? 'bg-red-500/10 text-red-500 border border-red-500/20'
-                                                : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
+                                            ? 'bg-red-500/10 text-red-500 border border-red-500/20'
+                                            : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
                                             }`}>
                                             {user.role === 'ADMIN' && <Shield size={12} />}
                                             {user.role}
@@ -121,8 +121,8 @@ export default function UsersPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded text-xs font-bold flex w-fit items-center gap-1 ${user.subscription?.status === 'ACTIVE'
-                                                ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
-                                                : 'bg-slate-700/50 text-slate-400'
+                                            ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
+                                            : 'bg-slate-700/50 text-slate-400'
                                             }`}>
                                             {user.subscription?.status === 'ACTIVE' && <Star size={12} />}
                                             {user.subscription?.status === 'ACTIVE' ? 'Premium' : 'Free'}

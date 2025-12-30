@@ -36,7 +36,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
                 const data = await res.json();
 
                 setFormData({
-                    username: data.username,
+                    username: data.name || data.username || "",
                     email: data.email,
                     role: data.role,
                     password: "",
