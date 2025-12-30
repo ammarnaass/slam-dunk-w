@@ -3,7 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VideoPlayer from "@/components/VideoPlayer";
-import episodesData from "@/data/episodes.json";
+import { prisma } from "@/lib/prismadb";
 import { ArrowRight, ArrowLeft, Calendar, Clock } from "lucide-react";
 import { Metadata } from "next";
 
@@ -12,33 +12,58 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-    return episodesData.map((episode) => ({
+    const episodes = await prisma.episode.findMany({ select: { id: true } });
+    return episodes.map((episode) => ({
         id: episode.id,
     }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { id } = await params;
-    const episode = episodesData.find((e) => e.id === id);
+    const episode = await prisma.episode.findUnique({ where: { id } });
     if (!episode) return { title: "الحلقة غير موجودة" };
 
     return {
-        title: `${episode.title} - سلام دانك الحلقة ${episode.episode_number}`,
+        title: `${episode.title} - سلام دانك الحلقة ${episode.episodeNumber}`,
         description: episode.description,
     };
 }
 
 export default async function EpisodePage({ params }: PageProps) {
     const { id } = await params;
-    const episode = episodesData.find((e) => e.id === id);
+    const episode: any = await prisma.episode.findUnique({
+        where: { id },
+        include: { anime: true }
+    });
 
     if (!episode) {
         notFound();
     }
 
-    const currentIndex = episodesData.findIndex(e => e.id === id);
-    const prevEpisode = currentIndex > 0 ? episodesData[currentIndex - 1] : null;
-    const nextEpisode = currentIndex < episodesData.length - 1 ? episodesData[currentIndex + 1] : null;
+    const [prevEpisode, nextEpisode, otherEpisodes]: any = await Promise.all([
+        prisma.episode.findFirst({
+            where: {
+                animeId: episode.animeId,
+                episodeNumber: { lt: episode.episodeNumber }
+            },
+            orderBy: { episodeNumber: 'desc' }
+        }),
+        prisma.episode.findFirst({
+            where: {
+                animeId: episode.animeId,
+                episodeNumber: { gt: episode.episodeNumber }
+            },
+            orderBy: { episodeNumber: 'asc' }
+        }),
+        prisma.episode.findMany({
+            where: {
+                animeId: episode.animeId,
+                id: { not: episode.id }
+            },
+            take: 5,
+            orderBy: { episodeNumber: 'asc' }
+        })
+    ]);
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">
@@ -51,7 +76,7 @@ export default async function EpisodePage({ params }: PageProps) {
                     <span>/</span>
                     <Link href="/episodes" className="hover:text-white">الحلقات</Link>
                     <span>/</span>
-                    <span className="text-white">الحلقة {episode.episode_number}</span>
+                    <span className="text-white">الحلقة {episode.episodeNumber}</span>
                 </div>
 
                 {/* Player Section */}
@@ -90,7 +115,7 @@ export default async function EpisodePage({ params }: PageProps) {
                                 <Clock size={16} /> {episode.duration}
                             </span>
                             <span className="flex items-center gap-2">
-                                <Calendar size={16} /> الموسم {episode.season}
+                                <Calendar size={16} /> الموسم {episode.seasonNumber || 1}
                             </span>
                         </div>
 
@@ -107,26 +132,23 @@ export default async function EpisodePage({ params }: PageProps) {
                         <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
                             <h3 className="text-lg font-bold text-white mb-4">حلقات أخرى</h3>
                             <div className="space-y-4">
-                                {episodesData
-                                    .filter(e => e.id !== episode.id)
-                                    .slice(0, 5)
-                                    .map(e => (
-                                        <Link
-                                            key={e.id}
-                                            href={`/episodes/${e.id}`}
-                                            className="flex gap-3 group hover:bg-slate-800 p-2 rounded-lg transition-colors"
-                                        >
-                                            <div className="relative w-24 aspect-video rounded overflow-hidden flex-shrink-0">
-                                                <img src={e.thumbnail} alt={e.title} className="w-full h-full object-cover" />
-                                            </div>
-                                            <div>
-                                                <span className="text-xs text-red-500 block mb-1">الحلقة {e.episode_number}</span>
-                                                <h4 className="text-sm text-white font-medium line-clamp-2 group-hover:text-red-400 transition-colors">
-                                                    {e.title}
-                                                </h4>
-                                            </div>
-                                        </Link>
-                                    ))}
+                                {otherEpisodes.map((e: any) => (
+                                    <Link
+                                        key={e.id}
+                                        href={`/episodes/${e.id}`}
+                                        className="flex gap-3 group hover:bg-slate-800 p-2 rounded-lg transition-colors"
+                                    >
+                                        <div className="relative w-24 aspect-video rounded overflow-hidden flex-shrink-0">
+                                            <img src={e.thumbnail} alt={e.title} className="w-full h-full object-cover" />
+                                        </div>
+                                        <div>
+                                            <span className="text-xs text-red-500 block mb-1">الحلقة {e.episodeNumber}</span>
+                                            <h4 className="text-sm text-white font-medium line-clamp-2 group-hover:text-red-400 transition-colors">
+                                                {e.title}
+                                            </h4>
+                                        </div>
+                                    </Link>
+                                ))}
                             </div>
                         </div>
                     </div>

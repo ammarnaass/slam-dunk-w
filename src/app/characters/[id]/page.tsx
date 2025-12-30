@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import charactersData from "@/data/characters.json";
+import { prisma } from "@/lib/prismadb";
 import { Metadata } from "next";
 
 interface PageProps {
@@ -9,14 +9,15 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-    return charactersData.map((character) => ({
+    const characters = await prisma.character.findMany({ select: { id: true } });
+    return characters.map((character) => ({
         id: character.id,
     }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { id } = await params;
-    const character = charactersData.find((c) => c.id === id);
+    const character = await prisma.character.findUnique({ where: { id } });
     if (!character) return { title: "الشخصية غير موجودة" };
 
     return {
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CharacterPage({ params }: PageProps) {
     const { id } = await params;
-    const character = charactersData.find((c) => c.id === id);
+    const character: any = await prisma.character.findUnique({ where: { id } });
 
     if (!character) {
         notFound();

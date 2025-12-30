@@ -70,13 +70,16 @@ model Anime {
 }
 
 model Episode {
-  id          String   @id // Custom ID or auto
-  animeId     String
-  anime       Anime    @relation(fields: [animeId], references: [id])
-  title       String
-  thumbnail   String?
-  duration    String?
-  createdAt   DateTime @default(now())
+  id            String   @id
+  animeId       String
+  anime         Anime    @relation(fields: [animeId], references: [id])
+  title         String
+  description   String?
+  thumbnail     String?
+  duration      String?
+  episodeNumber Int      @default(1)
+  seasonNumber  Int      @default(1)
+  createdAt     DateTime @default(now())
   
   // Servers
   servers     Server[]
@@ -141,14 +144,18 @@ model Settings {
 model Character {
   id          String   @id // e.g., 'hanamichi-sakuragi'
   name        String
+  name_ar     String?
+  name_jp     String?
+  name_en     String?
   description String?
   image       String?
-  role        String?  // 'Main', 'Supporting'
-  team        String?  // 'Shohoku'
-  position    String?  // 'Power Forward'
-  number      String?  // '10'
+  role        String?
+  team        String?
+  position    String?
+  number      String?
   height      String?
   weight      String?
+  animeId     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

@@ -185,20 +185,29 @@ async function migrate() {
                             where: { id: ep.id.toString() },
                             update: {
                                 title: ep.title,
+                                description: ep.description || "",
                                 thumbnail: ep.thumbnail,
-                                duration: ep.duration
+                                duration: ep.duration,
+                                episodeNumber: parseInt(ep.episode_number?.toString() || (ep.title.match(/\d+/)?.at(0) || "1")),
+                                seasonNumber: parseInt(ep.season?.toString() || "1")
                             },
                             create: {
                                 id: ep.id.toString(),
                                 animeId: anime.id,
                                 title: ep.title,
+                                description: ep.description || "",
                                 thumbnail: ep.thumbnail,
-                                duration: ep.duration
+                                duration: ep.duration,
+                                episodeNumber: parseInt(ep.episode_number?.toString() || (ep.title.match(/\d+/)?.at(0) || "1")),
+                                seasonNumber: parseInt(ep.season?.toString() || "1")
                             }
                         });
 
                         // Add Servers if any
                         if (ep.servers && Array.isArray(ep.servers)) {
+                            // Cleanup old servers first if upserting (optional, but prevents duplicates if ID changes)
+                            await prisma.server.deleteMany({ where: { episodeId: ep.id.toString() } });
+
                             for (const srv of ep.servers) {
                                 await prisma.server.create({
                                     data: {
@@ -212,6 +221,51 @@ async function migrate() {
                         }
                     }
                 }
+            }
+        }
+
+        // 5. Migrate Characters
+        const charactersPath = path.join(dataDir, 'characters.json');
+        if (fs.existsSync(charactersPath)) {
+            const charactersData = JSON.parse(fs.readFileSync(charactersPath, 'utf-8'));
+            const charactersList = Array.isArray(charactersData) ? charactersData : (charactersData.characters || []);
+            console.log(`Migrating ${charactersList.length} characters...`);
+
+            for (const char of charactersList) {
+                await prisma.character.upsert({
+                    where: { id: char.id },
+                    update: {
+                        name: char.name_ar || char.name || "",
+                        name_ar: char.name_ar,
+                        name_jp: char.name_jp,
+                        name_en: char.name_en,
+                        description: char.bio || char.description,
+                        image: char.image,
+                        role: char.role,
+                        team: char.team,
+                        position: char.position,
+                        number: char.number?.toString(),
+                        height: char.height,
+                        weight: char.weight,
+                        animeId: char.animeId
+                    },
+                    create: {
+                        id: char.id,
+                        name: char.name_ar || char.name || "",
+                        name_ar: char.name_ar,
+                        name_jp: char.name_jp,
+                        name_en: char.name_en,
+                        description: char.bio || char.description,
+                        image: char.image,
+                        role: char.role,
+                        team: char.team,
+                        position: char.position,
+                        number: char.number?.toString(),
+                        height: char.height,
+                        weight: char.weight,
+                        animeId: char.animeId
+                    }
+                });
             }
         }
 
