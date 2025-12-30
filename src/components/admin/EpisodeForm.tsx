@@ -17,8 +17,8 @@ export default function EpisodeForm({ initialData, isEdit = false }: EpisodeForm
     const [formData, setFormData] = useState<Partial<Episode>>({
         title: "",
         description: "",
-        season: 1,
-        episode_number: 0,
+        seasonNumber: 1,
+        episodeNumber: 0,
         thumbnail: "/logoep.jpg",
         duration: "23:30",
         mega_link: "",
@@ -30,7 +30,7 @@ export default function EpisodeForm({ initialData, isEdit = false }: EpisodeForm
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [name]: name === "season" || name === "episode_number" ? Number(value) : value,
+            [name]: name === "seasonNumber" || name === "episodeNumber" ? Number(value) : value,
         }));
     };
 
@@ -104,8 +104,8 @@ export default function EpisodeForm({ initialData, isEdit = false }: EpisodeForm
                         <label className="block text-slate-400 text-sm font-medium mb-2">رقم الحلقة</label>
                         <input
                             type="number"
-                            name="episode_number"
-                            value={formData.episode_number}
+                            name="episodeNumber"
+                            value={formData.episodeNumber}
                             onChange={handleChange}
                             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
                             required
@@ -115,8 +115,8 @@ export default function EpisodeForm({ initialData, isEdit = false }: EpisodeForm
                     <div>
                         <label className="block text-slate-400 text-sm font-medium mb-2">الموسم</label>
                         <select
-                            name="season"
-                            value={formData.season}
+                            name="seasonNumber"
+                            value={formData.seasonNumber}
                             onChange={handleChange}
                             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
                         >
@@ -130,7 +130,7 @@ export default function EpisodeForm({ initialData, isEdit = false }: EpisodeForm
                         <input
                             type="text"
                             name="duration"
-                            value={formData.duration}
+                            value={formData.duration || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
                             placeholder="23:30"
@@ -142,7 +142,7 @@ export default function EpisodeForm({ initialData, isEdit = false }: EpisodeForm
                     <label className="block text-slate-400 text-sm font-medium mb-2">الوصف</label>
                     <textarea
                         name="description"
-                        value={formData.description}
+                        value={formData.description || ""}
                         onChange={handleChange}
                         rows={4}
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
@@ -180,7 +180,7 @@ export default function EpisodeForm({ initialData, isEdit = false }: EpisodeForm
                     <input
                         type="text"
                         name="thumbnail"
-                        value={formData.thumbnail}
+                        value={formData.thumbnail || ""}
                         onChange={handleChange}
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
                     />

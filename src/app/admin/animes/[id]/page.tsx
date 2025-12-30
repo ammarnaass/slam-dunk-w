@@ -18,7 +18,7 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
     const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
     const [epFormData, setEpFormData] = useState({
         title: "",
-        episode_number: "",
+        episodeNumber: "",
         mega_link: "",
         video_url: "",
     });
@@ -71,11 +71,11 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                 if (editingEpisode) {
                     setEpisodes(prev => prev.map(ep => ep.id === newEp.id ? newEp : ep));
                 } else {
-                    setEpisodes(prev => [...prev, newEp].sort((a, b) => a.episode_number - b.episode_number));
+                    setEpisodes(prev => [...prev, newEp].sort((a, b) => a.episodeNumber - b.episodeNumber));
                 }
                 setShowEpisodeForm(false);
                 setEditingEpisode(null);
-                setEpFormData({ title: "", episode_number: "", mega_link: "", video_url: "" });
+                setEpFormData({ title: "", episodeNumber: "", mega_link: "", video_url: "" });
             } else {
                 alert("حدث خطأ");
             }
@@ -102,8 +102,8 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
         setEditingEpisode(ep);
         setEpFormData({
             title: ep.title,
-            episode_number: ep.episode_number.toString(),
-            mega_link: ep.mega_link,
+            episodeNumber: ep.episodeNumber.toString(),
+            mega_link: ep.mega_link || "",
             video_url: ep.video_url || "",
         });
         setShowEpisodeForm(true);
@@ -162,7 +162,7 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                         <button
                             onClick={() => {
                                 setEditingEpisode(null);
-                                setEpFormData({ title: "", episode_number: (episodes.length + 1).toString(), mega_link: "", video_url: "" });
+                                setEpFormData({ title: "", episodeNumber: (episodes.length + 1).toString(), mega_link: "", video_url: "" });
                                 setShowEpisodeForm(true);
                             }}
                             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2"
@@ -189,8 +189,8 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                                     <label className="block text-slate-400 mb-2 text-sm">رقم الحلقة</label>
                                     <input
                                         type="number"
-                                        value={epFormData.episode_number}
-                                        onChange={e => setEpFormData({ ...epFormData, episode_number: e.target.value })}
+                                        value={epFormData.episodeNumber}
+                                        onChange={e => setEpFormData({ ...epFormData, episodeNumber: e.target.value })}
                                         className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white"
                                         required
                                     />
@@ -238,7 +238,7 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                             <tbody className="divide-y divide-slate-800 text-slate-300">
                                 {episodes.map((ep) => (
                                     <tr key={ep.id} className="hover:bg-slate-800/50 transition-colors">
-                                        <td className="p-4 font-bold">{ep.episode_number}</td>
+                                        <td className="p-4 font-bold">{ep.episodeNumber}</td>
                                         <td className="p-4 flex items-center gap-2">
                                             <PlayCircle size={16} className="text-red-500" />
                                             {ep.title}

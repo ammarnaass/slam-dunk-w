@@ -18,7 +18,7 @@ export default function EpisodesAdmin() {
         try {
             const res = await fetch("/api/episodes");
             const data = await res.json();
-            setEpisodes(data.sort((a: Episode, b: Episode) => a.episode_number - b.episode_number));
+            setEpisodes(data.sort((a: Episode, b: Episode) => (a.episodeNumber || 0) - (b.episodeNumber || 0)));
         } catch (error) {
             console.error("Failed to fetch episodes", error);
         } finally {
@@ -87,12 +87,12 @@ export default function EpisodesAdmin() {
                         <tbody className="text-slate-300 divide-y divide-slate-800">
                             {filteredEpisodes.map((ep) => (
                                 <tr key={ep.id} className="hover:bg-slate-800/50 transition-colors">
-                                    <td className="p-4">{ep.episode_number}</td>
+                                    <td className="p-4">{ep.episodeNumber}</td>
                                     <td className="p-4">
-                                        <img src={ep.thumbnail} alt={ep.title} className="w-16 h-9 object-cover rounded" />
+                                        <img src={ep.thumbnail || "/logoep.jpg"} alt={ep.title} className="w-16 h-9 object-cover rounded" />
                                     </td>
                                     <td className="p-4 font-medium text-white">{ep.title}</td>
-                                    <td className="p-4">{ep.season}</td>
+                                    <td className="p-4">{ep.seasonNumber || 1}</td>
                                     <td className="p-4 text-slate-500">{ep.duration}</td>
                                     <td className="p-4">
                                         <div className="flex items-center justify-center gap-2">
