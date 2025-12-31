@@ -43,12 +43,20 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { title, episodeNumber, mega_link, video_url, duration, thumbnail, seasonNumber } = body;
+    const { title, episodeNumber, servers, mega_link, video_url, duration, thumbnail, seasonNumber } = body;
 
     // Basic validation
-    if (!episodeNumber) { // mega_link optional if we allow empty
+    if (!episodeNumber) {
         return NextResponse.json({ error: "Episode number is required" }, { status: 400 });
     }
+
+    // Prepare servers data
+    const serversToCreate = Array.isArray(servers) && servers.length > 0
+        ? servers.map((s: any) => ({ name: s.name, url: s.url, quality: s.quality || "HD" }))
+        : [
+            ...(mega_link ? [{ name: "Mega", url: mega_link, quality: "HD" }] : []),
+            ...(video_url ? [{ name: "Default", url: video_url, quality: "HD" }] : [])
+        ];
 
     // Generate ID
     const episodeId = Math.random().toString(36).substr(2, 9);
@@ -65,10 +73,7 @@ export async function POST(
                 thumbnail: thumbnail || "/logoep.jpg",
                 duration: duration || "24:00",
                 servers: {
-                    create: [
-                        ...(mega_link ? [{ name: "Mega", url: mega_link, quality: "HD" }] : []),
-                        ...(video_url ? [{ name: "Default", url: video_url, quality: "HD" }] : [])
-                    ]
+                    create: serversToCreate
                 }
             },
             include: {

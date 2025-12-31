@@ -14,42 +14,37 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, episode_number, mega_link, video_url, duration, thumbnail } = body;
+    const { title, episodeNumber, servers, mega_link, video_url, duration, thumbnail } = body;
 
     try {
-        // Use transaction or simple update + server replacement
-        // Since we need to update episode fields AND replace servers based on legacy fields
-
         const updatedEpisode = await prisma.$transaction(async (tx) => {
             // 1. Update Episode basic fields
             const ep = await tx.episode.update({
                 where: { id: id },
                 data: {
                     title: title,
+                    episodeNumber: episodeNumber ? Number(episodeNumber) : undefined,
                     duration: duration,
                     thumbnail: thumbnail
-                    // episode_number is not in schema, so we rely on title or migrate schema later.
                 }
             });
 
-            // 2. Replace Serves
-            // Delete all existing servers
+            // 2. Replace Servers
             await tx.server.deleteMany({
                 where: { episodeId: id }
             });
 
-            // Create new servers
-            const newServers = [];
-            if (mega_link) {
-                newServers.push({ name: "Mega", url: mega_link, quality: "HD", episodeId: id });
-            }
-            if (video_url) {
-                newServers.push({ name: "Default", url: video_url, quality: "HD", episodeId: id });
-            }
+            // Prepare new servers
+            const serversToCreate = Array.isArray(servers) && servers.length > 0
+                ? servers.map((s: any) => ({ name: s.name, url: s.url, quality: s.quality || "HD", episodeId: id }))
+                : [
+                    ...(mega_link ? [{ name: "Mega", url: mega_link, quality: "HD", episodeId: id }] : []),
+                    ...(video_url ? [{ name: "Default", url: video_url, quality: "HD", episodeId: id }] : [])
+                ];
 
-            if (newServers.length > 0) {
+            if (serversToCreate.length > 0) {
                 await tx.server.createMany({
-                    data: newServers
+                    data: serversToCreate
                 });
             }
 

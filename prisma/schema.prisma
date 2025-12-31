@@ -127,6 +127,8 @@ model PaymentMethod {
 model Settings {
   id                 String  @id @default("global")
   siteName           String  @default("Slam Dunk")
+  logoUrl            String?
+  faviconUrl         String?
   maintenanceMode    Boolean @default(false)
   maintenanceMessage String?
   

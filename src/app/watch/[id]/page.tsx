@@ -51,16 +51,6 @@ export default async function WatchPage({ params }: PageProps) {
     const prevEpisode = currentIndex > 0 ? animeEpisodes[currentIndex - 1] : null;
     const nextEpisode = currentIndex < animeEpisodes.length - 1 ? animeEpisodes[currentIndex + 1] : null;
 
-    // Map to legacy structure for VideoPlayer if it expects specific fields
-    // My schema stores servers separately. VideoPlayer likely expects episode.servers or mega_link/video_url.
-    // I should check VideoPlayer component or map it.
-    const legacyEpisode = {
-        ...episode,
-        // Map first servers as fallback if needed
-        mega_link: episode.servers.find(s => s.name.toLowerCase() === "mega")?.url || "",
-        video_url: episode.servers.find(s => s.name.toLowerCase() === "default")?.url || episode.servers[0]?.url || ""
-    };
-
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">
             <Navbar />
@@ -80,8 +70,8 @@ export default async function WatchPage({ params }: PageProps) {
                 {/* Player Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
-                        <div className="bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800">
-                            <VideoPlayer episode={legacyEpisode} />
+                        <div className="rounded-2xl overflow-hidden shadow-2xl">
+                            <VideoPlayer episode={episode as any} />
                         </div>
 
                         <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">

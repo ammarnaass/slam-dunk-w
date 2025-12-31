@@ -19,8 +19,7 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
     const [epFormData, setEpFormData] = useState({
         title: "",
         episodeNumber: "",
-        mega_link: "",
-        video_url: "",
+        servers: [{ name: "Mega", url: "", quality: "HD" }],
     });
     const [epSaving, setEpSaving] = useState(false);
 
@@ -75,7 +74,7 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                 }
                 setShowEpisodeForm(false);
                 setEditingEpisode(null);
-                setEpFormData({ title: "", episodeNumber: "", mega_link: "", video_url: "" });
+                setEpFormData({ title: "", episodeNumber: "", servers: [{ name: "Mega", url: "", quality: "HD" }] });
             } else {
                 alert("حدث خطأ");
             }
@@ -103,10 +102,31 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
         setEpFormData({
             title: ep.title,
             episodeNumber: ep.episodeNumber.toString(),
-            mega_link: ep.mega_link || "",
-            video_url: ep.video_url || "",
+            servers: ep.servers && ep.servers.length > 0
+                ? ep.servers.map(s => ({ name: s.name, url: s.url, quality: s.quality || "HD" }))
+                : [{ name: "Mega", url: ep.mega_link || "", quality: "HD" }],
         });
         setShowEpisodeForm(true);
+    };
+
+    const addServerField = () => {
+        setEpFormData({
+            ...epFormData,
+            servers: [...epFormData.servers, { name: "", url: "", quality: "HD" }]
+        });
+    };
+
+    const removeServerField = (index: number) => {
+        setEpFormData({
+            ...epFormData,
+            servers: epFormData.servers.filter((_, i) => i !== index)
+        });
+    };
+
+    const updateServerField = (index: number, field: string, value: string) => {
+        const nextServers = [...epFormData.servers];
+        nextServers[index] = { ...nextServers[index], [field]: value };
+        setEpFormData({ ...epFormData, servers: nextServers });
     };
 
     if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin text-red-600" /></div>;
@@ -162,7 +182,7 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                         <button
                             onClick={() => {
                                 setEditingEpisode(null);
-                                setEpFormData({ title: "", episodeNumber: (episodes.length + 1).toString(), mega_link: "", video_url: "" });
+                                setEpFormData({ title: "", episodeNumber: (episodes.length + 1).toString(), servers: [{ name: "Mega", url: "", quality: "HD" }] });
                                 setShowEpisodeForm(true);
                             }}
                             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2"
@@ -195,28 +215,86 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                                         required
                                     />
                                 </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-slate-400 mb-2 text-sm">رابط Mega</label>
-                                    <input
-                                        type="text"
-                                        value={epFormData.mega_link}
-                                        onChange={e => setEpFormData({ ...epFormData, mega_link: e.target.value })}
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white font-mono text-sm"
-                                        required
-                                    />
+
+                                <div className="md:col-span-2 border-t border-slate-800 pt-4 mt-2">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <label className="text-white font-bold text-sm flex items-center gap-2">
+                                            <Video size={16} className="text-red-500" /> سيرفرات المشاهدة
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={addServerField}
+                                            className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors flex items-center gap-1"
+                                        >
+                                            <Plus size={14} /> إضافة سيرفر
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {epFormData.servers.map((server, index) => (
+                                            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-slate-800/30 p-4 rounded-xl border border-slate-800 relative group">
+                                                <div className="md:col-span-1">
+                                                    <label className="block text-slate-500 mb-1 text-[10px] uppercase">اسم السيرفر (مثل Mega)</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Mega, 4shared..."
+                                                        value={server.name}
+                                                        onChange={e => updateServerField(index, "name", e.target.value)}
+                                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-slate-500 mb-1 text-[10px] uppercase">رابط الفيديو / Embed</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="رابط السيرفر..."
+                                                        value={server.url}
+                                                        onChange={e => updateServerField(index, "url", e.target.value)}
+                                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white font-mono"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="md:col-span-1 flex items-end gap-2">
+                                                    <div className="flex-1">
+                                                        <label className="block text-slate-500 mb-1 text-[10px] uppercase">الجودة</label>
+                                                        <select
+                                                            value={server.quality || "HD"}
+                                                            onChange={e => updateServerField(index, "quality", e.target.value)}
+                                                            className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white"
+                                                        >
+                                                            <option value="FHD">FHD</option>
+                                                            <option value="HD">HD</option>
+                                                            <option value="SD">SD</option>
+                                                        </select>
+                                                    </div>
+                                                    {epFormData.servers.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeServerField(index)}
+                                                            className="p-2 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white rounded-lg transition-all"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2 md:col-span-2 mt-4">
+
+                                <div className="flex items-center gap-2 md:col-span-2 mt-6 border-t border-slate-800 pt-6">
                                     <button
                                         type="submit"
                                         disabled={epSaving}
-                                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2"
+                                        className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-red-600/20"
                                     >
-                                        {epSaving ? <Loader2 className="animate-spin" /> : <Save size={18} />} حفظ
+                                        {epSaving ? <Loader2 className="animate-spin" /> : <Save size={18} />} {editingEpisode ? "حفظ التعديلات" : "إضافة الحلقة"}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setShowEpisodeForm(false)}
-                                        className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded-lg font-bold"
+                                        className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-8 py-3 rounded-xl font-bold transition-colors"
                                     >
                                         إلغاء
                                     </button>
@@ -231,7 +309,7 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                                 <tr>
                                     <th className="p-4">#</th>
                                     <th className="p-4">العنوان</th>
-                                    <th className="p-4">رابط Mega</th>
+                                    <th className="p-4">السيرفرات</th>
                                     <th className="p-4">الإجراءات</th>
                                 </tr>
                             </thead>
@@ -243,7 +321,11 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                                             <PlayCircle size={16} className="text-red-500" />
                                             {ep.title}
                                         </td>
-                                        <td className="p-4 font-mono text-xs text-slate-500 truncate max-w-[200px]">{ep.mega_link}</td>
+                                        <td className="p-4 text-xs">
+                                            <span className="bg-slate-800 px-2 py-1 rounded text-slate-400 border border-slate-700">
+                                                {ep.servers?.length || 0} سيرفرات
+                                            </span>
+                                        </td>
                                         <td className="p-4">
                                             <div className="flex gap-2">
                                                 <button
