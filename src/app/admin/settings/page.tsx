@@ -64,31 +64,39 @@ export default function SettingsPage() {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Limit file size (e.g., 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert("حجم الملف كبير جداً. يرجى اختيار صورة أقل من 2 ميجابايت.");
+            return;
+        }
+
         if (type === 'logo') setUploadingLogo(true);
         else setUploadingFavicon(true);
 
-        const formData = new FormData();
-        formData.append("file", file);
-
         try {
-            const res = await fetch("/api/admin/upload", {
-                method: "POST",
-                body: formData,
-            });
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64String = reader.result as string;
 
-            if (res.ok) {
-                const data = await res.json();
+                // Update local state for preview
                 setSettings(prev => ({
                     ...prev,
-                    [type === 'logo' ? 'logoUrl' : 'faviconUrl']: data.url
+                    [type === 'logo' ? 'logoUrl' : 'faviconUrl']: base64String
                 }));
-            } else {
-                alert("فشل رفع الملف");
-            }
+
+                if (type === 'logo') setUploadingLogo(false);
+                else setUploadingFavicon(false);
+            };
+            reader.onerror = (error) => {
+                console.error("FileReader error", error);
+                alert("حدث خطأ أثناء قراءة الملف");
+                if (type === 'logo') setUploadingLogo(false);
+                else setUploadingFavicon(false);
+            };
         } catch (error) {
-            console.error("Upload error", error);
-            alert("حدث خطأ أثناء الرفع");
-        } finally {
+            console.error("Upload process error", error);
+            alert("حدث خطأ غير متوقع");
             if (type === 'logo') setUploadingLogo(false);
             else setUploadingFavicon(false);
         }
