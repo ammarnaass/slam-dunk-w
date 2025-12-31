@@ -65,7 +65,7 @@ export async function POST(request: Request) {
                 admobEnabled: newSettings.admob?.isEnabled,
                 admobAppId: newSettings.admob?.appId,
                 admobBannerId: newSettings.admob?.bannerId,
-                interstitialId: newSettings.admob?.interstitialId
+                admobInterstitialId: newSettings.admob?.interstitialId
             },
             create: {
                 id: "global",
