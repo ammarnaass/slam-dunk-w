@@ -19,19 +19,9 @@ async function fixSingle(query, label) {
     }
 }
 
-async function runAll() {
-    await fixSingle('SELECT * FROM "Settings"', 'Check Settings');
-    await fixSingle('UPDATE "Anime" SET "isFeatured" = true', 'Feature All');
-    await fixSingle('UPDATE "Anime" SET "bannerImage" = "coverImage" WHERE "bannerImage" LIKE \'%hero-bg.jpg%\'', 'Replace hero-bg');
-    await fixSingle('UPDATE "Anime" SET "bannerImage" = "coverImage" WHERE "bannerImage" IS NULL', 'Ensure Banners');
-    const finalRows = await fixSingle('SELECT id, title, "isFeatured", "bannerImage" FROM "Anime"', 'Final Check');
-
-    if (finalRows) {
-        console.log('\n--- Final Data State ---');
-        finalRows.forEach(r => {
-            console.log(`[${r.id}] ${r.title} | Featured: ${r.isFeatured} | Banner: ${r.bannerImage ? r.bannerImage.substring(0, 50) + '...' : 'NULL'}`);
-        });
-    }
+async function finalAudit() {
+    await fixSingle('SELECT id, name, email, gender, "phoneNumber", "birthDate", avatar FROM "User" LIMIT 5', 'Audit Users');
+    await fixSingle('SELECT id, title, "isFeatured", "bannerImage" FROM "Anime" LIMIT 5', 'Audit Animes');
 }
 
-runAll();
+finalAudit();
