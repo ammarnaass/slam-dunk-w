@@ -53,7 +53,8 @@ export async function PUT(
                 status: body.status,
                 releaseYear: body.releaseYear ? Number(body.releaseYear) : undefined,
                 totalEpisodes: body.totalEpisodes ? Number(body.totalEpisodes) : undefined,
-                genres: body.genres
+                genres: body.genres,
+                isFeatured: body.isFeatured
             }
         });
 

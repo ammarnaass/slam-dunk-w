@@ -59,7 +59,9 @@ export async function POST(request: Request) {
                 status: status || "ongoing", // Schema default lower
                 totalEpisodes: Number(totalEpisodes) || 0,
                 releaseYear: releaseYear ? Number(releaseYear) : null,
-                genres: genres || []
+                genres: genres || [],
+                isFeatured: body.isFeatured || false,
+                bannerImage: body.bannerImage || null
             }
         });
 
