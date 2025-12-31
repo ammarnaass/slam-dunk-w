@@ -10,6 +10,12 @@ interface AuthFormProps {
     type: "login" | "register";
 }
 
+declare global {
+    interface Window {
+        google: any;
+    }
+}
+
 export default function AuthForm({ type }: AuthFormProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -37,7 +43,46 @@ export default function AuthForm({ type }: AuthFormProps) {
             }
         };
         fetchSettings();
+
+        // Initialize Google Sign-In
+        if (window.google) {
+            window.google.accounts.id.initialize({
+                client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+                callback: handleGoogleResponse,
+            });
+            window.google.accounts.id.renderButton(
+                document.getElementById("googleSignInDiv"),
+                { theme: "outline", size: "large", width: "100%", text: "continue_with", shape: "pill" }
+            );
+        }
     }, []);
+
+    const handleGoogleResponse = async (response: any) => {
+        setLoading(true);
+        setError("");
+        try {
+            const res = await fetch("/api/auth/google", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ credential: response.credential }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "فشل تسجيل الدخول بجوجل");
+
+            setAuthUser(data);
+            if (data.role === "ADMIN") {
+                router.push("/admin");
+            } else {
+                router.push(callbackUrl);
+            }
+            router.refresh();
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const callbackUrl = searchParams.get("callbackUrl") || "/";
 
@@ -108,6 +153,18 @@ export default function AuthForm({ type }: AuthFormProps) {
                         {error}
                     </div>
                 )}
+
+                {/* Google Sign In */}
+                <div id="googleSignInDiv" className="mb-6 w-full flex justify-center"></div>
+
+                <div className="relative mb-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-800"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-[#0f172a] px-2 text-slate-500">أو عبر البريد</span>
+                    </div>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Username Field */}

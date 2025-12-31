@@ -47,6 +47,7 @@ export default async function RootLayout({
           <AdmobProvider>
             {children}
             <BottomNav />
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
           </AdmobProvider>
         </AuthProvider>
       </body>

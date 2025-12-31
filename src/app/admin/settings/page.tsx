@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Settings, Facebook, Twitter, Instagram, Youtube, Send, Film, Image as ImageIcon } from "lucide-react";
+import { Save, Settings, Facebook, Twitter, Instagram, Youtube, Send, Film, Image as ImageIcon, Loader2 } from "lucide-react";
 import { Anime } from "@/types";
 
 export default function SettingsPage() {
@@ -30,6 +30,9 @@ export default function SettingsPage() {
         },
     });
 
+    const [uploadingLogo, setUploadingLogo] = useState(false);
+    const [uploadingFavicon, setUploadingFavicon] = useState(false);
+
     useEffect(() => {
         fetchSettings();
     }, []);
@@ -54,6 +57,40 @@ export default function SettingsPage() {
             console.error("Failed to fetch data", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'favicon') => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (type === 'logo') setUploadingLogo(true);
+        else setUploadingFavicon(true);
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const res = await fetch("/api/admin/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setSettings(prev => ({
+                    ...prev,
+                    [type === 'logo' ? 'logoUrl' : 'faviconUrl']: data.url
+                }));
+            } else {
+                alert("فشل رفع الملف");
+            }
+        } catch (error) {
+            console.error("Upload error", error);
+            alert("حدث خطأ أثناء الرفع");
+        } finally {
+            if (type === 'logo') setUploadingLogo(false);
+            else setUploadingFavicon(false);
         }
     };
 
@@ -173,15 +210,32 @@ export default function SettingsPage() {
 
                 <div>
                     <label className="block text-slate-400 text-sm font-medium mb-2">رابط الشعار (Logo URL)</label>
-                    <input
-                        type="text"
-                        name="logoUrl"
-                        value={settings.logoUrl}
-                        onChange={handleChange}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
-                        placeholder="/logo.png"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">رابط الصورة التي ستظهر كشعار للموقع.</p>
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            name="logoUrl"
+                            value={settings.logoUrl}
+                            onChange={handleChange}
+                            className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
+                            placeholder="/logo.png"
+                        />
+                        <div className="relative">
+                            <input
+                                type="file"
+                                id="logo-upload"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => handleFileUpload(e, 'logo')}
+                            />
+                            <label
+                                htmlFor="logo-upload"
+                                className="h-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-lg cursor-pointer transition-colors border border-slate-700"
+                            >
+                                {uploadingLogo ? <Loader2 className="animate-spin w-5 h-5" /> : <ImageIcon size={20} />}
+                            </label>
+                        </div>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">يمكنك إدخال رابط مباشر أو رفع صورة من جهازك.</p>
 
                     {settings.logoUrl && (
                         <div className="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-lg inline-block">
@@ -193,14 +247,31 @@ export default function SettingsPage() {
 
                 <div>
                     <label className="block text-slate-400 text-sm font-medium mb-2">رابط الأيقونة (Favicon URL)</label>
-                    <input
-                        type="text"
-                        name="faviconUrl"
-                        value={settings.faviconUrl}
-                        onChange={handleChange}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
-                        placeholder="/favicon.ico"
-                    />
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            name="faviconUrl"
+                            value={settings.faviconUrl}
+                            onChange={handleChange}
+                            className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
+                            placeholder="/favicon.ico"
+                        />
+                        <div className="relative">
+                            <input
+                                type="file"
+                                id="favicon-upload"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => handleFileUpload(e, 'favicon')}
+                            />
+                            <label
+                                htmlFor="favicon-upload"
+                                className="h-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-lg cursor-pointer transition-colors border border-slate-700"
+                            >
+                                {uploadingFavicon ? <Loader2 className="animate-spin w-5 h-5" /> : <ImageIcon size={20} />}
+                            </label>
+                        </div>
+                    </div>
                     <p className="text-xs text-slate-500 mt-1">تظهر هذه الأيقونة في لسان المتصفح.</p>
 
                     {settings.faviconUrl && (
