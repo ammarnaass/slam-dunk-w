@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Film, Users, Plus, ArrowRight } from "lucide-react";
+import { Film, Users, Plus, ArrowRight, Star, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prismadb";
 
 export default async function AdminDashboard() {
     // Fetch statistics using Prisma
-    const [animeCount, episodeCount, characterCount, userCount, latestAnimes] = await Promise.all([
+    const [animeCount, episodeCount, characterCount, userCount, latestAnimes, featuredCount] = await Promise.all([
         prisma.anime.count(),
         prisma.episode.count(),
         prisma.character.count(),
@@ -12,13 +12,14 @@ export default async function AdminDashboard() {
         prisma.anime.findMany({
             take: 5,
             orderBy: { updatedAt: 'desc' }
-        })
+        }),
+        prisma.anime.count({ where: { isFeatured: true } })
     ]);
 
     const stats = [
         { label: "إجمالي الأنمي", value: animeCount, icon: Film, color: "blue", href: "/admin/animes" },
         { label: "إجمالي الحلقات", value: episodeCount, icon: Film, color: "red", href: "/admin/animes" },
-        { label: "إجمالي الشخصيات", value: characterCount, icon: Users, color: "green", href: "/admin/characters" },
+        { label: "الأعمال المميزة", value: featuredCount, icon: Star, color: "amber", href: "/admin/slider" },
         { label: "المشتركون", value: userCount, icon: Users, color: "purple", href: "/admin/users" },
     ];
 
@@ -95,6 +96,12 @@ export default async function AdminDashboard() {
                                 className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-center transition-colors flex items-center justify-center gap-2"
                             >
                                 <Plus size={18} /> إضافة أنمي جديد
+                            </Link>
+                            <Link
+                                href="/admin/slider"
+                                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg text-center transition-colors flex items-center justify-center gap-2"
+                            >
+                                <Sparkles size={18} /> إدارة السلايدر
                             </Link>
                             <Link
                                 href="/admin/characters"

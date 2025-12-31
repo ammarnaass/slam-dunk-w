@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Settings, Facebook, Twitter, Instagram, Youtube, Send, Film, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Save, Settings, Facebook, Twitter, Instagram, Youtube, Send, Film, Image as ImageIcon, Loader2, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { Anime } from "@/types";
 
 export default function SettingsPage() {
@@ -21,7 +22,6 @@ export default function SettingsPage() {
             youtube: "",
             telegram: "",
         },
-        sliderAnimeIds: [] as string[],
         admob: {
             isEnabled: false,
             appId: "",
@@ -118,15 +118,6 @@ export default function SettingsPage() {
         }));
     };
 
-    const toggleSliderAnime = (id: string) => {
-        setSettings(prev => {
-            const current = prev.sliderAnimeIds || [];
-            const next = current.includes(id)
-                ? current.filter(item => item !== id)
-                : [...current, id];
-            return { ...prev, sliderAnimeIds: next };
-        });
-    };
 
     const handleAdMobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -365,33 +356,20 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="pt-6 border-t border-slate-800">
-                    <h3 className="text-xl font-bold text-white mb-4">إنيميات السلايدر الرئيسي</h3>
-                    <p className="text-sm text-slate-400 mb-4">اختر الأعمال التي ستظهر في السلايدر العلوي للصفحة الرئيسية.</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        {animes.map(anime => (
-                            <button
-                                key={anime.id}
-                                type="button"
-                                onClick={() => toggleSliderAnime(anime.id)}
-                                className={`relative p-2 rounded-xl border transition-all text-right group ${settings.sliderAnimeIds?.includes(anime.id)
-                                    ? 'border-red-600 bg-red-600/10'
-                                    : 'border-slate-800 bg-slate-950 hover:border-slate-700'
-                                    }`}
-                            >
-                                <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2">
-                                    <img src={anime.coverImage} className="w-full h-full object-cover" alt="" />
-                                </div>
-                                <span className={`text-xs font-bold line-clamp-1 ${settings.sliderAnimeIds?.includes(anime.id) ? 'text-red-500' : 'text-slate-400'
-                                    }`}>
-                                    {anime.title}
-                                </span>
-                                {settings.sliderAnimeIds?.includes(anime.id) && (
-                                    <div className="absolute top-4 right-4 bg-red-600 text-white rounded-full p-1 border-2 border-slate-900 shadow-xl">
-                                        <Film size={12} />
-                                    </div>
-                                )}
-                            </button>
-                        ))}
+                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <Film className="text-red-500" size={24} /> إدارة السلايدر الرئيسي
+                    </h3>
+                    <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="space-y-1">
+                            <p className="text-white font-bold">تحكم في الأعمال المميزة</p>
+                            <p className="text-slate-400 text-sm">تم نقل إعدادات السلايدر إلى قسم منفصل لتوفير تحكم أدق ومعاينة أسرع.</p>
+                        </div>
+                        <Link
+                            href="/admin/slider"
+                            className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-red-900/20 whitespace-nowrap"
+                        >
+                            انتقل إلى إدارة السلايدر
+                        </Link>
                     </div>
                 </div>
 
