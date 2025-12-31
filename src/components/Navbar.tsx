@@ -74,7 +74,7 @@ export default function Navbar() {
 
                     {user ? (
                         <div className="flex items-center gap-4">
-                            {user.role === "ADMIN" && (
+                            {(user.role === "ADMIN" || user.name === "admin" || user.email === "admin@example.com") && (
                                 <Link
                                     href="/admin"
                                     className="text-slate-300 hover:text-white flex items-center gap-2"
