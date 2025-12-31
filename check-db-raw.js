@@ -15,10 +15,11 @@ async function checkRaw() {
         const featuredRes = await pool.query('SELECT count(*) FROM "Anime" WHERE "isFeatured" = true');
         console.log(`Featured animes (Raw SQL): ${featuredRes.rows[0].count}`);
 
-        const sample = await pool.query('SELECT id, title, "isFeatured", "coverImage", "bannerImage" FROM "Anime" LIMIT 5');
-        console.log('Sample animes:');
+        const sample = await pool.query('SELECT * FROM "Anime"');
+        console.log(`Total animes: ${sample.rows.length}`);
         sample.rows.forEach(r => {
-            console.log(`- ${r.title} (ID: ${r.id}, Featured: ${r.isFeatured})`);
+            console.log(`[${r.id}] ${r.title}`);
+            console.log(`  Featured: ${r.isFeatured}`);
             console.log(`  Cover: ${r.coverImage}`);
             console.log(`  Banner: ${r.bannerImage}`);
         });

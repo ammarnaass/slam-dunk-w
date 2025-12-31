@@ -8,8 +8,9 @@ const UpdateProfileSchema = z.object({
     username: z.string().min(3, "اسم المستخدم يجب أن يكون 3 أحرف على الأقل"),
     email: z.string().email("البريد الإلكتروني غير صحيح"),
     password: z.string().optional().or(z.literal("")),
-    gender: z.string().optional(), // Removed strict enum to allow flexibility or match schema
+    gender: z.string().optional(),
     phoneNumber: z.string().optional(),
+    birthDate: z.string().optional(),
     profileImage: z.string().optional(),
 });
 
@@ -30,7 +31,7 @@ export async function PUT(request: Request) {
             );
         }
 
-        const { username, email, password, gender, phoneNumber, profileImage } = result.data;
+        const { username, email, password, gender, phoneNumber, birthDate, profileImage } = result.data;
 
         // Check availability if changing username/email
         const existingUser = await prisma.user.findFirst({
@@ -62,21 +63,9 @@ export async function PUT(request: Request) {
         const updateData: any = {
             name: username,
             email: email,
-            // Schema might not have gender/phoneNumber if I didn't add them.
-            // My schema in 3800 had:
-            // name, email, role, password, avatar, createdAt, updatedAt, watchlist, history, reviews, subscription
-            // NO gender, NO phoneNumber.
-            // If the app expects them, I should add them to schema or ignore.
-            // Previous JSON had them.
-            // If I ignore them, they won't be saved.
-            // Migration script did NOT migrate gender/phone? 
-            // Step 3804 migration script:
-            // `update: { name, password, role, avatar, watchlist }`
-            // It DROPPED gender.
-            // This is a regression if the app uses gender.
-            // But existing schema definition didn't include it. 
-            // I will ignore them for now to avoid Prisma validation error "Unknown argument".
-            // However, `avatar` maps to `profileImage`.
+            gender: gender || null,
+            phoneNumber: phoneNumber || null,
+            birthDate: birthDate ? new Date(birthDate) : null,
             avatar: profileImage
         };
 

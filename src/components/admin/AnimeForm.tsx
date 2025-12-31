@@ -24,6 +24,8 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
         totalEpisodes: initialData?.totalEpisodes || 0,
         releaseYear: initialData?.releaseYear || null,
         genres: initialData?.genres || [],
+        isFeatured: initialData?.isFeatured || false,
+        bannerImage: initialData?.bannerImage || "",
     });
 
     const handleGenreChange = (index: number, value: string) => {
@@ -200,9 +202,23 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
                 <div className="space-y-6">
                     <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg">
                         <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 border-b border-slate-800 pb-4">
-                            <ImageIcon size={20} className="text-blue-500" /> الصور
+                            <ImageIcon size={20} className="text-blue-500" /> الصور والسلايدر
                         </h2>
-                        <div className="space-y-4">
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                <div className="space-y-1">
+                                    <label className="block text-white font-bold text-sm">عرض في السلايدر الرئيسي</label>
+                                    <p className="text-slate-400 text-xs">سيظهر هذا الأنمي في واجهة الموقع الرئيسية</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, isFeatured: !formData.isFeatured })}
+                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${formData.isFeatured ? 'bg-red-600' : 'bg-slate-700'}`}
+                                >
+                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isFeatured ? 'translate-x-6' : 'translate-x-1'}`} />
+                                </button>
+                            </div>
+
                             <div>
                                 <label className="block text-slate-400 mb-2 text-sm">صورة الغلاف (Portrait)</label>
                                 <input
@@ -210,12 +226,28 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
                                     value={formData.coverImage}
                                     onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
                                     className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                    placeholder="URL"
+                                    placeholder="https://example.com/cover.jpg"
                                     required
                                 />
                                 {formData.coverImage && (
-                                    <div className="mt-2 rounded-lg overflow-hidden border border-slate-700 max-w-[150px] mx-auto">
+                                    <div className="mt-2 rounded-lg overflow-hidden border border-slate-700 max-w-[120px] mx-auto">
                                         <img src={formData.coverImage} alt="Cover" className="w-full h-auto" />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="block text-slate-400 mb-2 text-sm">صورة السلايدر (Banner/Landscape)</label>
+                                <input
+                                    type="text"
+                                    value={formData.bannerImage || ""}
+                                    onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
+                                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
+                                    placeholder="https://example.com/banner.jpg"
+                                />
+                                {formData.bannerImage && (
+                                    <div className="mt-2 rounded-lg overflow-hidden border border-slate-700 w-full">
+                                        <img src={formData.bannerImage} alt="Banner" className="w-full h-auto aspect-video object-cover" />
                                     </div>
                                 )}
                             </div>

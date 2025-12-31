@@ -18,7 +18,10 @@ export default function ProfilePage() {
         username: "",
         email: "",
         password: "",
-        profileImage: ""
+        profileImage: "",
+        gender: "",
+        phoneNumber: "",
+        birthDate: ""
     });
     const [msg, setMsg] = useState({ type: "", text: "" });
     const [saving, setSaving] = useState(false);
@@ -38,7 +41,10 @@ export default function ProfilePage() {
                     username: data.name || "",
                     email: data.email || "",
                     password: "",
-                    profileImage: data.profileImage || ""
+                    profileImage: data.avatar || data.profileImage || "",
+                    gender: data.gender || "",
+                    phoneNumber: data.phoneNumber || "",
+                    birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split('T')[0] : ""
                 });
 
                 // Fetch watchlist animes
@@ -63,6 +69,21 @@ export default function ProfilePage() {
     useEffect(() => {
         fetchUser();
     }, [router]);
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                setMsg({ type: "error", text: "حجم الصورة يجب أن يكون أقل من 2 ميجابايت" });
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setEditForm(prev => ({ ...prev, profileImage: reader.result as string }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -124,14 +145,20 @@ export default function ProfilePage() {
                         {/* Profile Image */}
                         <div className="relative group">
                             <div className="w-32 h-32 rounded-full border-4 border-white/20 overflow-hidden shadow-2xl bg-slate-900 group-hover:scale-105 transition-transform duration-500">
-                                {user.profileImage ? (
-                                    <img src={user.profileImage} alt={user.name || "User"} className="w-full h-full object-cover" />
+                                {user.avatar || user.profileImage ? (
+                                    <img src={user.avatar || user.profileImage} alt={user.name || "User"} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-white text-5xl font-bold">
                                         {(user.name || user.email || "U")[0].toUpperCase()}
                                     </div>
                                 )}
                             </div>
+                            {isEditing && (
+                                <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                                    <Camera className="w-8 h-8" />
+                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                                </label>
+                            )}
                             {user.subscription?.isActive && (
                                 <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg border-2 border-slate-900">
                                     <Star className="w-3 h-3 fill-current" />
@@ -232,17 +259,71 @@ export default function ProfilePage() {
                                         />
                                     </div>
 
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                        <div>
+                                            <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">الجنس</label>
+                                            <select
+                                                value={editForm.gender}
+                                                onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
+                                                className="w-full bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-3.5 text-white focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all appearance-none"
+                                            >
+                                                <option value="" disabled className="bg-slate-900">اختر الجنس</option>
+                                                <option value="male" className="bg-slate-900">ذكر</option>
+                                                <option value="female" className="bg-slate-900">أنثى</option>
+                                                <option value="other" className="bg-slate-900">أخرى</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">رقم الهاتف</label>
+                                            <div className="relative">
+                                                <Phone className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
+                                                <input
+                                                    type="tel"
+                                                    value={editForm.phoneNumber}
+                                                    onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
+                                                    className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pr-12 pl-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all text-left"
+                                                    dir="ltr"
+                                                    placeholder="+966 50 000 0000"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">رابط الصورة الشخصية</label>
+                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">تاريخ الميلاد</label>
+                                        <div className="relative">
+                                            <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
+                                            <input
+                                                type="date"
+                                                value={editForm.birthDate}
+                                                onChange={(e) => setEditForm({ ...editForm, birthDate: e.target.value })}
+                                                className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pr-12 pl-4 py-3.5 text-white focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all text-right"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">رابط الصورة الشخصية (اختياري)</label>
                                         <div className="relative">
                                             <Camera className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
                                             <input
                                                 type="url"
-                                                value={editForm.profileImage}
+                                                value={editForm.profileImage.startsWith('data:') ? 'صورة مرفوعة' : editForm.profileImage}
+                                                disabled={editForm.profileImage.startsWith('data:')}
                                                 onChange={(e) => setEditForm({ ...editForm, profileImage: e.target.value })}
-                                                className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pr-12 pl-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all"
+                                                className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pr-12 pl-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all disabled:opacity-50"
                                                 placeholder="https://example.com/image.jpg"
                                             />
+                                            {editForm.profileImage.startsWith('data:') && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setEditForm({ ...editForm, profileImage: "" })}
+                                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500 text-xs font-bold"
+                                                >
+                                                    إزالة
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
 

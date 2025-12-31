@@ -52,8 +52,10 @@ export interface User {
     password?: string; // Hashed
     role: "ADMIN" | "USER";
     createdAt: string;
+    avatar?: string;
     gender?: "male" | "female" | "other";
     phoneNumber?: string;
+    birthDate?: string | Date;
     profileImage?: string;
     watchlist?: string[];
     subscription?: {

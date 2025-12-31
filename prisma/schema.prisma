@@ -14,6 +14,9 @@ model User {
   role          String   @default("user") // admin, user
   password      String
   avatar        String?
+  gender        String? // male, female, other
+  phoneNumber   String?
+  birthDate     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
