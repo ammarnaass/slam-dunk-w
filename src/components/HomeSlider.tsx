@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronRight, ChevronLeft, Play, Info } from "lucide-react";
+import { ChevronRight, ChevronLeft, Play, Info, Film } from "lucide-react";
 import Link from "next/link";
 import { Anime } from "@/types";
 
@@ -34,14 +34,24 @@ export default function HomeSlider({ animes }: HomeSliderProps) {
                         }`}
                 >
                     {/* Background Image */}
-                    <div className="absolute inset-0">
-                        <img
-                            src={anime.bannerImage || anime.coverImage}
-                            alt={anime.title}
-                            className="h-full w-full object-cover object-center scale-105 animate-slow-zoom"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent" />
-                        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-slate-950 to-transparent" />
+                    <div className="absolute inset-0 bg-slate-900">
+                        {(anime.bannerImage || anime.coverImage) ? (
+                            <img
+                                src={anime.bannerImage || anime.coverImage}
+                                alt={anime.title}
+                                className="h-full w-full object-cover object-center scale-105 animate-slow-zoom opacity-60"
+                                onError={(e) => {
+                                    (e.target as HTMLImageElement).src = "/logoep.jpg";
+                                    (e.target as HTMLImageElement).classList.add('opacity-30');
+                                }}
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-slate-900 flex items-center justify-center">
+                                <Film size={64} className="text-slate-800" />
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
                     </div>
 
                     {/* Content */}

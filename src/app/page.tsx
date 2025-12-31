@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ArrowLeft, PlayCircle, Star, Calendar, Film } from "lucide-react";
 import HomeSlider from "@/components/HomeSlider";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   // Fetch data from Prisma
   const [allAnimes, settings, latestEpisodesData, featuredCharacters] = await Promise.all([

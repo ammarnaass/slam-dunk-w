@@ -9,12 +9,7 @@ interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-export async function generateStaticParams() {
-    const characters = await prisma.character.findMany({ select: { id: true } });
-    return characters.map((character) => ({
-        id: character.id,
-    }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { id } = await params;

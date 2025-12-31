@@ -11,12 +11,7 @@ interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-export async function generateStaticParams() {
-    const episodes = await prisma.episode.findMany({ select: { id: true } });
-    return episodes.map((episode) => ({
-        id: episode.id,
-    }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { id } = await params;
