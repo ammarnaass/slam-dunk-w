@@ -57,12 +57,11 @@ export interface User {
     profileImage?: string;
     watchlist?: string[];
     subscription?: {
-        type: "FREE" | "PREMIUM";
-        startDate?: string;
-        endDate?: string;
-        status: "ACTIVE" | "EXPIRED";
-        planId?: string; // Link to the specific plan
-        paymentMethodId?: string;
+        planType: string;
+        startDate?: string | Date;
+        endDate?: string | Date;
+        isActive: boolean;
+        autoRenew?: boolean;
     };
 }
 

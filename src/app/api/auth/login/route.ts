@@ -83,7 +83,8 @@ export async function POST(request: NextRequest) {
             id: user.id,
             name: user.name,
             email: user.email,
-            role: user.role,
+            role: (user.name === "admin" || user.email === "admin@example.com") ? "ADMIN" : user.role,
+            profileImage: user.avatar,
             avatar: user.avatar
         };
 

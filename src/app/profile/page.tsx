@@ -133,13 +133,22 @@ export default function ProfilePage() {
                     </div>
 
                     {!isEditing && (
-                        <button
-                            onClick={() => setIsEditing(true)}
-                            className="absolute top-4 left-4 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full backdrop-blur-sm transition-colors"
-                            title="تعديل الملف الشخصي"
-                        >
-                            <Edit size={20} />
-                        </button>
+                        <div className="absolute top-4 left-4 flex gap-2">
+                            <Link
+                                href="/"
+                                className="bg-black/30 hover:bg-black/50 text-white p-2 rounded-full backdrop-blur-sm transition-colors"
+                                title="العودة للرئيسية"
+                            >
+                                <Home size={20} />
+                            </Link>
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="bg-black/30 hover:bg-black/50 text-white p-2 rounded-full backdrop-blur-sm transition-colors"
+                                title="تعديل الملف الشخصي"
+                            >
+                                <Edit size={20} />
+                            </button>
+                        </div>
                     )}
                 </div>
 

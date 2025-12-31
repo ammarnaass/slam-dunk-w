@@ -101,6 +101,7 @@ export async function PUT(request: Request) {
             name: updatedUser.name,
             email: updatedUser.email,
             role: updatedUser.role,
+            profileImage: updatedUser.avatar,
             avatar: updatedUser.avatar
         };
 

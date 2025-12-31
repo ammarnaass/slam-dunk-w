@@ -120,12 +120,12 @@ export default function UsersPage() {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 rounded text-xs font-bold flex w-fit items-center gap-1 ${user.subscription?.status === 'ACTIVE'
+                                        <span className={`px-2 py-1 rounded text-xs font-bold flex w-fit items-center gap-1 ${user.subscription?.isActive
                                             ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
                                             : 'bg-slate-700/50 text-slate-400'
                                             }`}>
-                                            {user.subscription?.status === 'ACTIVE' && <Star size={12} />}
-                                            {user.subscription?.status === 'ACTIVE' ? 'Premium' : 'Free'}
+                                            {user.subscription?.isActive && <Star size={12} />}
+                                            {user.subscription?.isActive ? 'Premium' : 'Free'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-slate-400 hidden sm:table-cell">
