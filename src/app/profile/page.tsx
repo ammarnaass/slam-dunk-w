@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { User, Anime } from "@/types";
 import { useRouter } from "next/navigation";
-import { Loader2, User as UserIcon, Calendar, Shield, Edit, Save, X, Phone, UserCircle, Star, Sparkles, Film, Heart } from "lucide-react";
+import { Loader2, User as UserIcon, Calendar, Shield, Edit, Save, X, Phone, UserCircle, Star, Sparkles, Film, Heart, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function ProfilePage() {
@@ -114,7 +114,7 @@ export default function ProfilePage() {
 
                 {/* Header / Cover */}
                 <div className="bg-gradient-to-r from-red-600 to-red-900 h-40 relative">
-                    {user.subscription?.status === "ACTIVE" && (
+                    {user.subscription?.isActive && (
                         <div className="absolute top-4 right-4 bg-yellow-500 text-black font-bold px-3 py-1 rounded-full flex items-center gap-2 shadow-lg animate-pulse">
                             <Sparkles size={16} /> مميز (VIP)
                         </div>
@@ -316,17 +316,17 @@ export default function ProfilePage() {
                                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                                         <Star className="text-yellow-500" /> حالة الاشتراك
                                     </h3>
-                                    <span className={`px-4 py-1 rounded-full text-sm font-bold ${user.subscription?.status === "ACTIVE"
+                                    <span className={`px-4 py-1 rounded-full text-sm font-bold ${user.subscription?.isActive
                                         ? "bg-green-500/20 text-green-500"
                                         : "bg-slate-600/20 text-slate-400"
                                         }`}>
-                                        {user.subscription?.status === "ACTIVE" ? "اشتراك فعال" : "حساب مجاني"}
+                                        {user.subscription?.isActive ? "اشتراك فعال" : "حساب مجاني"}
                                     </span>
                                 </div>
 
-                                {user.subscription?.status === "ACTIVE" ? (
+                                {user.subscription?.isActive ? (
                                     <div className="text-slate-300">
-                                        <p>أنت تستمتع بمميزات العضوية المميزة حتى {user.subscription.endDate}</p>
+                                        <p>أنت تستمتع بمميزات العضوية المميزة حتى {user.subscription.endDate ? new Date(user.subscription.endDate).toLocaleDateString('ar-EG') : ''}</p>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
