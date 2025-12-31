@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Eye, EyeOff, User, Mail, Lock, Sparkles } from "lucide-react";
@@ -22,6 +22,22 @@ export default function AuthForm({ type }: AuthFormProps) {
         email: "",
         password: "",
     });
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch("/api/settings");
+                if (res.ok) {
+                    const data = await res.json();
+                    setLogoUrl(data.logoUrl || "");
+                }
+            } catch (error) {
+                console.error("Failed to fetch settings", error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const callbackUrl = searchParams.get("callbackUrl") || "/";
 
@@ -68,8 +84,14 @@ export default function AuthForm({ type }: AuthFormProps) {
         <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
             {/* Header with gradient */}
             <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-red-700 mb-4 shadow-lg shadow-red-500/50">
-                    <Sparkles className="w-8 h-8 text-white" />
+                <div className="inline-flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                    {logoUrl ? (
+                        <img src={logoUrl} alt="Logo" className="h-16 w-auto object-contain drop-shadow-xl" />
+                    ) : (
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/50 flex items-center justify-center">
+                            <Sparkles className="w-8 h-8 text-white" />
+                        </div>
+                    )}
                 </div>
                 <h2 className="text-3xl font-bold text-white mb-2">
                     {type === "login" ? "مرحباً بعودتك" : "انضم إلينا"}

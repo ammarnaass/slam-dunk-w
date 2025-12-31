@@ -5,6 +5,8 @@ import { Anime, Episode } from "@/types";
 import { Loader2, PlayCircle, Clock, Calendar, Film, Heart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Toast, { ToastType } from "@/components/Toast";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function PublicAnimePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -13,6 +15,7 @@ export default function PublicAnimePage({ params }: { params: Promise<{ id: stri
     const [loading, setLoading] = useState(true);
     const [isInWatchlist, setIsInWatchlist] = useState(false);
     const [toggling, setToggling] = useState(false);
+    const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -54,10 +57,17 @@ export default function PublicAnimePage({ params }: { params: Promise<{ id: stri
             });
             if (res.ok) {
                 const data = await res.json();
-                setIsInWatchlist(data.inWatchlist);
+                setIsInWatchlist(data.action === "added");
+                setToast({
+                    message: data.action === "added" ? "تمت الإضافة للمفضلة ❤️" : "تمت الإزالة من المفضلة",
+                    type: "success"
+                });
+            } else if (res.status === 401) {
+                setToast({ message: "يرجى تسجيل الدخول أولاً", type: "warning" });
             }
         } catch (error) {
             console.error("Watchlist toggle failed", error);
+            setToast({ message: "فشلت العملية، حاول لاحقاً", type: "error" });
         } finally {
             setToggling(false);
         }
@@ -99,8 +109,8 @@ export default function PublicAnimePage({ params }: { params: Promise<{ id: stri
                                 onClick={handleWatchlistToggle}
                                 disabled={toggling}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all ${isInWatchlist
-                                        ? "bg-red-600 border-red-500 text-white shadow-lg shadow-red-900/20"
-                                        : "bg-white/10 border-white/10 text-white hover:bg-white/20"
+                                    ? "bg-red-600 border-red-500 text-white shadow-lg shadow-red-900/20"
+                                    : "bg-white/10 border-white/10 text-white hover:bg-white/20"
                                     }`}
                             >
                                 <Heart size={20} className={isInWatchlist ? "fill-white" : ""} />
@@ -199,6 +209,13 @@ export default function PublicAnimePage({ params }: { params: Promise<{ id: stri
                     </div>
                 </div>
             </div>
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
         </div>
     );
 }
