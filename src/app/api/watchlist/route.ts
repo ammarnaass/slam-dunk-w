@@ -1,79 +1,57 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prismadb";
+import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/prismadb";
 
-async function getAuthUser() {
-    const session = await getSession();
-    if (!session || !session.user) return null;
-    return session.user;
-}
-
-export async function POST(req: NextRequest) {
-    const user = await getAuthUser();
-    if (!user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+// Toggle anime in user's watchlist
+export async function POST(request: Request) {
     try {
-        const { animeId } = await req.json();
+        const session = await getSession();
+
+        if (!session || !session.user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { animeId } = await request.json();
+
         if (!animeId) {
             return NextResponse.json({ error: "Anime ID is required" }, { status: 400 });
         }
 
-        // Fetch user watchlist
-        const dbUser = await prisma.user.findUnique({
-            where: { id: user.id },
-            select: { watchlist: true }
+        // Get current user
+        const user = await prisma.user.findUnique({
+            where: { id: session.user.id }
         });
 
-        if (!dbUser) {
+        if (!user) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        const currentWatchlist = dbUser.watchlist || [];
-        const isInWatchlist = currentWatchlist.includes(animeId);
-
+        const currentWatchlist = user.watchlist || [];
         let updatedWatchlist: string[];
-        if (isInWatchlist) {
-            updatedWatchlist = currentWatchlist.filter((id) => id !== animeId);
+        let action: string;
+
+        // Toggle: if anime is in watchlist, remove it; otherwise, add it
+        if (currentWatchlist.includes(animeId)) {
+            updatedWatchlist = currentWatchlist.filter((id: string) => id !== animeId);
+            action = "removed";
         } else {
             updatedWatchlist = [...currentWatchlist, animeId];
+            action = "added";
         }
 
-        // Update user
+        // Update user watchlist
         await prisma.user.update({
-            where: { id: user.id },
+            where: { id: session.user.id },
             data: { watchlist: updatedWatchlist }
         });
 
         return NextResponse.json({
             success: true,
-            inWatchlist: !isInWatchlist,
+            action,
             watchlist: updatedWatchlist
         });
     } catch (error) {
-        console.error("Watchlist error:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-    }
-}
-
-export async function GET(req: NextRequest) {
-    const user = await getAuthUser();
-    if (!user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    try {
-        const dbUser = await prisma.user.findUnique({
-            where: { id: user.id },
-            select: { watchlist: true }
-        });
-
-        return NextResponse.json({
-            watchlist: dbUser?.watchlist || []
-        });
-    } catch (error) {
-        console.error("Watchlist GET error:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        console.error("Watchlist API error:", error);
+        return NextResponse.json({ error: "Failed to update watchlist" }, { status: 500 });
     }
 }
