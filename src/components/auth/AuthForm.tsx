@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/providers/AuthProvider";
 
 interface AuthFormProps {
     type: "login" | "register";
@@ -11,6 +12,8 @@ interface AuthFormProps {
 
 export default function AuthForm({ type }: AuthFormProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const { login: setAuthUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [formData, setFormData] = useState({
@@ -18,6 +21,8 @@ export default function AuthForm({ type }: AuthFormProps) {
         email: "", // Register only
         password: "",
     });
+
+    const callbackUrl = searchParams.get("callbackUrl") || "/";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,14 +44,17 @@ export default function AuthForm({ type }: AuthFormProps) {
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.error || "Something went wrong");
+                throw new Error(data.error || "اسم المستخدم أو كلمة المرور غير صحيحة");
             }
 
             // Successful auth
-            if (data.role === "ADMIN") {
+            setAuthUser(data);
+
+            // Redirect based on role or callbackUrl
+            if (data.role === "ADMIN" && callbackUrl === "/") {
                 router.push("/admin");
             } else {
-                router.push("/");
+                router.push(callbackUrl);
             }
             router.refresh();
 

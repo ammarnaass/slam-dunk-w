@@ -1,0 +1,202 @@
+
+> slam@0.1.0 build
+> next build
+
+??? Next.js 16.1.1 (Turbopack)
+- Environments: .env.local, .env
+
+  Creating an optimized production build ...
+??? Compiled successfully in 33.0s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+node.exe : 
+(node:6616) 
+Warning: Setting 
+the NODE_TLS_REJECT
+_UNAUTHORIZED 
+environment 
+variable to '0' 
+makes TLS 
+connections and 
+HTTPS requests 
+insecure by 
+disabling 
+certificate 
+verification.
+At C:\Program Files
+\nodejs\npm.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
+    + CategoryInfo 
+         : 
+NotSpecified: 
+((node:6616) 
+War...e veri    
+fication.:String) 
+[], RemoteException
+    + FullyQualifie
+dErrorId : 
+NativeCommandError
+ 
+(Use `node 
+--trace-warnings 
+...` to show where 
+the warning was 
+created)
+(node:9236) 
+Warning: Setting 
+the NODE_TLS_REJECT
+_UNAUTHORIZED 
+environment 
+variable to '0' 
+makes TLS 
+connections and 
+HTTPS requests 
+insecure by 
+disabling 
+certificate 
+verification.
+(Use `node 
+--trace-warnings 
+...` to show where 
+the warning was 
+created)
+prisma:query SELECT "public"."Character"."id" FROM "public"."Character" WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."Episode"."id" FROM "public"."Episode" WHERE 1=1 OFFSET $1
+  Generating static pages using 3 workers (0/153) ...
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+(node:12852) 
+Warning: Setting 
+the NODE_TLS_REJECT
+_UNAUTHORIZED 
+environment 
+variable to '0' 
+makes TLS 
+connections and 
+HTTPS requests 
+insecure by 
+disabling 
+certificate 
+verification.
+(Use `node 
+--trace-warnings 
+...` to show where 
+the warning was 
+created)
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Episode"."id", "public"."Episode"."animeId", "public"."Episode"."title", "public"."Episode"."description", "public"."Episode"."thumbnail", "public"."Episode"."duration", "public"."Episode"."episodeNumber", "public"."Episode"."seasonNumber", "public"."Episode"."createdAt" FROM "public"."Episode" WHERE ("public"."Episode"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Settings"."id", "public"."Settings"."siteName", "public"."Settings"."maintenanceMode", "public"."Settings"."maintenanceMessage", "public"."Settings"."latestVersion", "public"."Settings"."updateUrl", "public"."Settings"."admobEnabled", "public"."Settings"."admobAppId", "public"."Settings"."admobBannerId", "public"."Settings"."admobInterstitialId" FROM "public"."Settings" WHERE "public"."Settings"."id" IN ($1,$2) OFFSET $3
+??? 
+useSearchParams() 
+should be wrapped 
+in a suspense 
+boundary at page 
+"/register". Read 
+more: https://nextj
+s.org/docs/messages
+/missing-suspense-w
+ith-csr-bailout
+    at Q (C:\Users\
+amarn\Documents\sla
+m\.next\server\chun
+ks\ssr\node_modules
+_next_920e7746._.js
+:2:2111)
+    at o (C:\Users\
+amarn\Documents\sla
+m\.next\server\chun
+ks\ssr\node_modules
+_next_920e7746._.js
+:4:5284)
+    at h (C:\Users\
+amarn\Documents\sla
+m\.next\server\chun
+ks\ssr\_b00a26ec._.
+js:1:346)
+    at an (C:\Users
+\amarn\Documents\sl
+am\node_modules\nex
+t\dist\compiled\nex
+t-server\app-page-t
+urbo.runtime.prod.j
+s:2:84360)
+    at ai (C:\Users
+\amarn\Documents\sl
+am\node_modules\nex
+t\dist\compiled\nex
+t-server\app-page-t
+urbo.runtime.prod.j
+s:2:86179)
+    at ai (C:\Users
+\amarn\Documents\sl
+am\node_modules\nex
+t\dist\compiled\nex
+t-server\app-page-t
+urbo.runtime.prod.j
+s:2:104708)
+    at al (C:\Users
+\amarn\Documents\sl
+am\node_modules\nex
+t\dist\compiled\nex
+t-server\app-page-t
+urbo.runtime.prod.j
+s:2:107953)
+    at as (C:\Users
+\amarn\Documents\sl
+am\node_modules\nex
+t\dist\compiled\nex
+t-server\app-page-t
+urbo.runtime.prod.j
+s:2:105368)
+    at am (C:\Users
+\amarn\Documents\sl
+am\node_modules\nex
+t\dist\compiled\nex
+t-server\app-page-t
+urbo.runtime.prod.j
+s:2:112882)
+    at ai (C:\Users
+\amarn\Documents\sl
+am\node_modules\nex
+t\dist\compiled\nex
+t-server\app-page-t
+urbo.runtime.prod.j
+s:2:98808)
+Error occurred 
+prerendering page 
+"/register". Read 
+more: https://nextj
+s.org/docs/messages
+/prerender-error
+Export encountered 
+an error on /(auth)
+/register/page: 
+/register, exiting 
+the build.
+prisma:query SELECT "public"."Anime"."id", "public"."Anime"."title", "public"."Anime"."description", "public"."Anime"."coverImage", "public"."Anime"."bannerImage", "public"."Anime"."type", "public"."Anime"."status", "public"."Anime"."releaseYear", "public"."Anime"."totalEpisodes", "public"."Anime"."genres", "public"."Anime"."rating", "public"."Anime"."isFeatured", "public"."Anime"."isTrending", "public"."Anime"."createdAt", "public"."Anime"."updatedAt" FROM "public"."Anime" WHERE "public"."Anime"."id" = $1 OFFSET $2
+??? Next.js build 
+worker exited with 
+code: 1 and 
+signal: null

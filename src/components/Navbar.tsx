@@ -7,13 +7,15 @@ import { User } from "@/types";
 import { useRouter } from "next/navigation";
 import SearchModal from "@/components/SearchModal";
 
+import { useAuth } from "@/providers/AuthProvider";
+
 export default function Navbar() {
     const router = useRouter();
+    const { user, logout } = useAuth();
     const [settings, setSettings] = useState({
         siteName: "سلام دانك",
         logoUrl: "",
     });
-    const [user, setUser] = useState<User | null>(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     useEffect(() => {
@@ -29,31 +31,11 @@ export default function Navbar() {
             }
         };
 
-        const fetchUser = async () => {
-            try {
-                const res = await fetch("/api/auth/me");
-                if (res.ok) {
-                    const data = await res.json();
-                    setUser(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch user");
-            }
-        }
-
         fetchSettings();
-        fetchUser();
     }, []);
 
     const handleLogout = async () => {
-        try {
-            await fetch("/api/auth/logout", { method: "POST" });
-            setUser(null);
-            router.push("/");
-            router.refresh();
-        } catch (error) {
-            console.error("Logout failed");
-        }
+        await logout();
     };
 
     return (

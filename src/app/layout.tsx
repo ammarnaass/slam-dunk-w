@@ -4,6 +4,7 @@ import "./globals.css";
 import { prisma } from "@/lib/prismadb";
 import AdmobProvider from "@/components/AdmobProvider";
 import BottomNav from "@/components/BottomNav";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 const cairo = Cairo({ subsets: ["arabic", "latin"] });
 
@@ -42,10 +43,12 @@ export default async function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className={`${cairo.className} bg-slate-950 text-slate-200 antialiased`}>
-        <AdmobProvider>
-          {children}
-          <BottomNav />
-        </AdmobProvider>
+        <AuthProvider>
+          <AdmobProvider>
+            {children}
+            <BottomNav />
+          </AdmobProvider>
+        </AuthProvider>
       </body>
     </html>
   );
