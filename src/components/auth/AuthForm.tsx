@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff, User, Mail, Lock, Sparkles } from "lucide-react";
 import { useAuth } from "@/providers/AuthProvider";
 
 interface AuthFormProps {
@@ -16,9 +16,10 @@ export default function AuthForm({ type }: AuthFormProps) {
     const { login: setAuthUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         username: "",
-        email: "", // Register only
+        email: "",
         password: "",
     });
 
@@ -47,10 +48,8 @@ export default function AuthForm({ type }: AuthFormProps) {
                 throw new Error(data.error || "اسم المستخدم أو كلمة المرور غير صحيحة");
             }
 
-            // Successful auth
             setAuthUser(data);
 
-            // Redirect based on role or callbackUrl
             if (data.role === "ADMIN" && callbackUrl === "/") {
                 router.push("/admin");
             } else {
@@ -66,89 +65,136 @@ export default function AuthForm({ type }: AuthFormProps) {
     };
 
     return (
-        <div className="w-full max-w-md p-8 bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 shadow-2xl">
-            <h2 className="text-3xl font-bold text-center text-white mb-8">
-                {type === "login" ? "تسجيل الدخول" : "إنشاء حساب جديد"}
-            </h2>
-
-            {error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg mb-4 text-center">
-                    {error}
+        <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
+            {/* Header with gradient */}
+            <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-red-700 mb-4 shadow-lg shadow-red-500/50">
+                    <Sparkles className="w-8 h-8 text-white" />
                 </div>
-            )}
+                <h2 className="text-3xl font-bold text-white mb-2">
+                    {type === "login" ? "مرحباً بعودتك" : "انضم إلينا"}
+                </h2>
+                <p className="text-slate-400">
+                    {type === "login" ? "سجل دخولك للاستمرار" : "أنشئ حساباً جديداً للبدء"}
+                </p>
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">
-                        اسم المستخدم
-                    </label>
-                    <input
-                        type="text"
-                        required
-                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-red-500 transition-colors"
-                        value={formData.username}
-                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    />
-                </div>
-
-                {type === "register" && (
-                    <div>
-                        <label className="block text-gray-300 text-sm font-medium mb-1">
-                            البريد الإلكتروني
-                        </label>
-                        <input
-                            type="email"
-                            required
-                            className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-red-500 transition-colors"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        />
+            {/* Main Card */}
+            <div className="bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-slate-800 shadow-2xl p-8">
+                {error && (
+                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl mb-6 text-center text-sm animate-in slide-in-from-top duration-300">
+                        {error}
                     </div>
                 )}
 
-                <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">
-                        كلمة المرور
-                    </label>
-                    <input
-                        type="password"
-                        required
-                        minLength={6}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-red-500 transition-colors"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    />
-                </div>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    {/* Username Field */}
+                    <div className="group">
+                        <label className="block text-slate-300 text-sm font-medium mb-2">
+                            اسم المستخدم
+                        </label>
+                        <div className="relative">
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-red-500 transition-colors">
+                                <User className="w-5 h-5" />
+                            </div>
+                            <input
+                                type="text"
+                                required
+                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pr-11 pl-4 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
+                                placeholder="أدخل اسم المستخدم"
+                                value={formData.username}
+                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                            />
+                        </div>
+                    </div>
 
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {loading ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                        type === "login" ? "دخول" : "تسجيل"
+                    {/* Email Field (Register only) */}
+                    {type === "register" && (
+                        <div className="group">
+                            <label className="block text-slate-300 text-sm font-medium mb-2">
+                                البريد الإلكتروني
+                            </label>
+                            <div className="relative">
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-red-500 transition-colors">
+                                    <Mail className="w-5 h-5" />
+                                </div>
+                                <input
+                                    type="email"
+                                    required
+                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pr-11 pl-4 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
+                                    placeholder="example@domain.com"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                />
+                            </div>
+                        </div>
                     )}
-                </button>
-            </form>
 
-            <div className="mt-6 text-center text-gray-400 text-sm">
-                {type === "login" ? (
-                    <>
-                        ليس لديك حساب؟{" "}
-                        <Link href="/register" className="text-red-400 hover:text-red-300">
-                            انشئ حساب الآن
-                        </Link>
-                    </>
-                ) : (
-                    <>
-                        لديك حساب بالفعل؟{" "}
-                        <Link href="/login" className="text-red-400 hover:text-red-300">
-                            سجل دخولك
-                        </Link>
-                    </>
-                )}
+                    {/* Password Field */}
+                    <div className="group">
+                        <label className="block text-slate-300 text-sm font-medium mb-2">
+                            كلمة المرور
+                        </label>
+                        <div className="relative">
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-red-500 transition-colors">
+                                <Lock className="w-5 h-5" />
+                            </div>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                required
+                                minLength={6}
+                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pr-11 pl-11 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
+                                placeholder="••••••"
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                            >
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            </button>
+                        </div>
+                        {type === "register" && (
+                            <p className="text-xs text-slate-500 mt-1.5">يجب أن تكون 6 أحرف على الأقل</p>
+                        )}
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] mt-6"
+                    >
+                        {loading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            type === "login" ? "تسجيل الدخول" : "إنشاء الحساب"
+                        )}
+                    </button>
+                </form>
+
+                {/* Footer Link */}
+                <div className="mt-6 text-center">
+                    <p className="text-slate-400 text-sm">
+                        {type === "login" ? (
+                            <>
+                                ليس لديك حساب؟{" "}
+                                <Link href="/register" className="text-red-400 hover:text-red-300 font-medium hover:underline transition-colors">
+                                    انشئ حساب الآن
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                لديك حساب بالفعل؟{" "}
+                                <Link href="/login" className="text-red-400 hover:text-red-300 font-medium hover:underline transition-colors">
+                                    سجل دخولك
+                                </Link>
+                            </>
+                        )}
+                    </p>
+                </div>
             </div>
         </div>
     );
