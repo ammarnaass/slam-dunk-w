@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prismadb";
-import { getServerSession } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 
 export async function PUT(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const session = await getServerSession();
-        if (!session || session.role !== "ADMIN") {
+        const session = await getSession();
+        if (!session || !session.user || session.user.role !== "ADMIN") {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
@@ -39,8 +39,8 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const session = await getServerSession();
-        if (!session || session.role !== "ADMIN") {
+        const session = await getSession();
+        if (!session || !session.user || session.user.role !== "ADMIN") {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
