@@ -1,121 +1,111 @@
-# 🏀 موقع سلام دانك - Slam Dunk Streaming
+# 🏀 Slam Dunk Ultimate - Streaming & Community Platform
 
-موقع ويب متكامل لمشاهدة جميع حلقات أنمي سلام دانك مع لوحة تحكم إدارية كاملة.
+A professional, full-stack streaming platform for the "Slam Dunk" anime series, featuring advanced user management, interactive content, and a companion mobile application.
 
-![Next.js](https://img.shields.io/badge/Next.js-15-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-38bdf8)
+![Platform Banner](https://slam-dunk-w.vercel.app/og-image.jpg)
 
-## ✨ المميزات
+## 🌟 Overview
 
-### 🎬 للزوار
-- **101 حلقة كاملة** من أنمي سلام دانك
-- **مشغل فيديو متقدم** يدعم روابط Mega.nz مع iframe
-- **صفحات الشخصيات** مع معلومات تفصيلية عن كل شخصية
-- **بحث وفلترة** للحلقات حسب الموسم
-- **تصميم عصري** مع دعم كامل للغة العربية (RTL)
-- **واجهة متجاوبة** تعمل على جميع الأجهزة
+This project provides a premium streaming experience tailored for anime fans. It combines a high-performance **Next.js 15 Web App** with a **Flutter Mobile App**, all powered by a robust **Prisma + PostgreSQL** backend.
 
-### ⚙️ لوحة التحكم الإدارية
-- 🔐 **نظام تسجيل دخول آمن**
-- 📝 **إدارة الحلقات**: إضافة، تعديل، وحذف
-- 👥 **إدارة الشخصيات**: تحكم كامل في بيانات الشخصيات
-- 🎨 **إعدادات الموقع**: تغيير الاسم، الوصف، والشعار
-- 💾 **حفظ تلقائي** في ملفات JSON
-
-## 🛠️ التقنيات المستخدمة
-
-- **Frontend**: Next.js 15 (App Router) + TypeScript
-- **Styling**: Tailwind CSS + Lucide Icons
-- **Authentication**: Cookie-based sessions
-- **Data Storage**: JSON files
-- **Deployment Ready**: Vercel
-
-## 🚀 التشغيل المحلي
-
-### المتطلبات
-- Node.js 18+ و npm
-
-### الخطوات
-
-1. **استنساخ المشروع**
-```bash
-git clone https://github.com/ammarnaass/slam-dunk-w.git
-cd slam-dunk-w
-```
-
-2. **تثبيت المكتبات**
-```bash
-npm install
-```
-
-3. **تشغيل المشروع**
-```bash
-npm run dev
-```
-
-4. **فتح المتصفح**
-افتح [http://localhost:3000](http://localhost:3000)
-
-## 🔑 الدخول للوحة التحكم
-
-- **الرابط**: `/admin`
-- **اسم المستخدم**: `admin`
-- **كلمة المرور**: `admin`
-
-> ⚠️ **تذكير**: غيّر كلمة المرور في `src/app/api/auth/login/route.ts` قبل النشر!
-
-## 📁 هيكل المشروع
-
-```
-slam-dunk-w/
-├── src/
-│   ├── app/              # صفحات Next.js
-│   │   ├── admin/        # لوحة التحكم
-│   │   ├── api/          # API Routes
-│   │   ├── episodes/     # صفحات الحلقات
-│   │   └── characters/   # صفحات الشخصيات
-│   ├── components/       # React Components
-│   ├── data/            # ملفات JSON
-│   │   ├── episodes.json
-│   │   ├── characters.json
-│   │   └── settings.json
-│   └── types/           # TypeScript Types
-├── public/              # ملفات ثابتة
-└── README.md
-```
-
-## 🌐 النشر على Vercel
-
-### الطريقة السريعة
-
-1. اذهب إلى [vercel.com](https://vercel.com)
-2. سجل دخول بحساب GitHub
-3. اضغط "New Project"
-4. اختر `slam-dunk-w` repository
-5. اضغط "Deploy"
-
-### عبر سطر الأوامر
-
-```bash
-npm install -g vercel
-vercel
-```
-
-## 📝 ملاحظات مهمة
-
-- **البيانات**: يتم تخزين جميع البيانات في ملفات JSON في `src/data/`
-- **الصور**: يفضل استخدام روابط خارجية (Imgur, Unsplash)
-- **الأمان**: غيّر بيانات الدخول قبل النشر للعامة
-
-## 🤝 المساهمة
-
-المساهمات مرحب بها! افتح issue أو pull request
-
-## 📄 الترخيص
-
-هذا المشروع مفتوح المصدر - استخدمه بحرية!
+### 🌐 Live Web App
+[https://slam-dunk-w.vercel.app](https://slam-dunk-w.vercel.app)
 
 ---
 
-صُنع بـ ❤️ لمحبي أنمي سلام دانك
+## ✨ Core Features
+
+### 🎞️ Streaming Experience
+- **Complete Library**: All 101 episodes of Slam Dunk in various qualities.
+- **Smart Player**: Fast-loading video player with support for Mega.nz and server switching.
+- **Progress Tracking**: Automatic history tracking and "Continue Watching" functionality.
+- **Watchlist**: Save your favorite episodes and movies to your personal list.
+
+### 🍱 Content & Community
+- **Character Database**: Detailed profiles of players, teams, and staff with stats and positions.
+- **Latest News**: Real-time updates on the Slam Dunk world.
+- **Comments & Reviews**: Share your thoughts on episodes and characters.
+
+### 👤 User Profiles
+- **Personalized Space**: Manage your profile picture (Base64), gender, birthdate, and contact info.
+- **Auth Integration**: Secure login via email/password or **Google Sign-In**.
+- **Role Awareness**: Dedicated badges for premium members and administrators.
+
+### ⚙️ Admin Dashboard (The Control Center)
+- **Slider Management**: Fully dedicated interface for managing the homepage hero slider with visual previews.
+- **User & Subscriber Management**: Monitor registrations, manage user roles, and track subscriptions.
+- **Content Management**: Effortlessly add, update, or remove animes, episodes, and characters.
+- **Site Branding**: Update logos, favicons, and site settings directly via Base64 (optimized for Vercel persistence).
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend (Web)** | Next.js 15 (App Router), TypeScript, Tailwind CSS, Lucide Icons |
+| **Mobile App** | Flutter, Dart |
+| **Backend / API** | Next.js API Routes, Server Actions |
+| **Database** | Prisma ORM, PostgreSQL |
+| **Authentication** | JWT (Jose), Bcrypt, Google Cloud Console (OAuth 2.0) |
+| **Styling** | Vanilla CSS Animations, Framer Motion (Subtle) |
+| **Infrastructure** | Vercel (Production), GitHub (CI/CD) |
+
+---
+
+## 📱 Mobile Integration (Flutter)
+
+The project includes a native Flutter application (`/flutter_app`) that syncs perfectly with the web backend.
+- **Unified Auth**: Same account works on web and mobile.
+- **Cross-Platform Sync**: Watchlist and History sync across devices.
+- **Premium Design**: Material Design 3 implementation for a modern feel.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Node.js 20+
+- PostgreSQL Database
+- Google Cloud Console Project (for OAuth)
+
+### 2. Environment Variables
+Create a `.env` file in the root:
+```env
+DATABASE_URL="your_postgresql_url"
+JWT_SECRET="your_secret"
+NEXT_PUBLIC_GOOGLE_CLIENT_ID="your_google_id"
+```
+
+### 3. Installation
+```bash
+# Install dependencies
+npm install
+
+# Push database schema
+npx prisma db push
+
+# Run development server
+npm run dev
+```
+
+---
+
+## 🔑 Admin Access
+
+Administrators can access the control panel at `/admin`.
+- **Default Login**: Provided during the first setup (contact developer for staging creds).
+- **Google Admin**: Users with emails matching the admin configuration are automatically granted elevated permissions.
+
+---
+
+## 🤝 Contribution & Support
+
+Contributions are welcome! If you're looking to help improve the basketball streaming experience, feel free to fork and PR.
+
+## 📄 License
+
+Open source under the [MIT License](LICENSE).
+
+---
+Developed with ❤️ for the Slam Dunk community.
