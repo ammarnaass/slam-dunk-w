@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import { Search as SearchIcon, PlayCircle, Film, Hash, Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Anime, Episode } from "@/types";
 
 export default function SearchPage() {
@@ -42,8 +40,6 @@ export default function SearchPage() {
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200 font-sans pb-24">
-            <Navbar />
-
             <div className="container mx-auto px-4 py-8 md:py-12">
                 <div className="max-w-3xl mx-auto space-y-8">
                     {/* Header */}
@@ -145,7 +141,6 @@ export default function SearchPage() {
                 </div>
             </div>
 
-            <Footer />
         </main>
     );
 }

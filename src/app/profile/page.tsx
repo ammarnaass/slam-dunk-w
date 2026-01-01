@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Loader2, User as UserIcon, Calendar, Shield, Edit, Save, X, Phone, UserCircle, Star, Sparkles, Film, Heart, Home, Mail, Camera } from "lucide-react";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import Navbar from "@/components/Navbar";
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -119,7 +118,6 @@ export default function ProfilePage() {
     if (loading) {
         return (
             <div className="min-h-screen">
-                <Navbar />
                 <div className="flex items-center justify-center p-20">
                     <Loader2 className="w-8 h-8 animate-spin text-red-600" />
                 </div>
@@ -131,7 +129,6 @@ export default function ProfilePage() {
 
     return (
         <div className="min-h-screen">
-            <Navbar />
             <Breadcrumbs />
 
             <div className="container mx-auto px-4 py-10 max-w-6xl">

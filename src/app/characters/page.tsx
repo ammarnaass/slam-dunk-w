@@ -1,5 +1,3 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import CharacterCard from "@/components/CharacterCard";
 import { prisma } from "@/lib/prismadb";
 
@@ -16,7 +14,7 @@ export default async function CharactersPage() {
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">
-            <Navbar />
+
 
             <div className="container mx-auto px-4 py-12">
                 <h1 className="text-4xl font-bold text-white mb-4 border-r-4 border-red-600 pr-4">
@@ -65,7 +63,7 @@ export default async function CharactersPage() {
                 </div>
             </div>
 
-            <Footer />
+
         </main>
     );
 }

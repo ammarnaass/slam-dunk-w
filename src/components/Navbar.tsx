@@ -6,32 +6,21 @@ import { useState, useEffect } from "react";
 import { User } from "@/types";
 import { useRouter } from "next/navigation";
 import SearchModal from "@/components/SearchModal";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuth } from "@/providers/AuthProvider";
 
-export default function Navbar() {
-    const router = useRouter();
+export default function Navbar({ settings }: { settings: any }) {
     const { user, logout } = useAuth();
-    const [settings, setSettings] = useState({
-        siteName: "سلام دانك",
-        logoUrl: "",
-    });
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [showLogo, setShowLogo] = useState(false);
 
     useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const res = await fetch("/api/settings");
-                if (res.ok) {
-                    const data = await res.json();
-                    setSettings(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch settings", error);
-            }
-        };
-
-        fetchSettings();
+        // Animation sequence: Text (2s) -> Fade out -> Image Fade in
+        const timer = setTimeout(() => {
+            setShowLogo(true);
+        }, 2000);
+        return () => clearTimeout(timer);
     }, []);
 
     const handleLogout = async () => {
@@ -41,12 +30,33 @@ export default function Navbar() {
     return (
         <nav className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2">
-                    {settings.logoUrl ? (
-                        <img src={settings.logoUrl} alt={settings.siteName} className="h-10 object-contain" />
-                    ) : (
-                        <span className="text-2xl font-bold text-red-600">{settings.siteName}</span>
-                    )}
+                <Link href="/" className="flex items-center gap-2 overflow-hidden h-10 w-40 relative">
+                    <AnimatePresence mode="wait">
+                        {!showLogo ? (
+                            <motion.span
+                                key="text"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className="text-2xl font-bold text-red-600 absolute left-0"
+                            >
+                                {settings?.siteName || "سلام دانك"}
+                            </motion.span>
+                        ) : (
+                            <motion.div
+                                key="logo"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="absolute left-0"
+                            >
+                                {settings?.logoUrl ? (
+                                    <img src={settings.logoUrl} alt={settings?.siteName} className="h-10 object-contain" />
+                                ) : (
+                                    <span className="text-2xl font-bold text-red-600">{settings?.siteName || "سلام دانك"}</span>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8 text-slate-300">

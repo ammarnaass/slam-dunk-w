@@ -1,19 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Facebook, Twitter, Instagram, Youtube, Send } from "lucide-react";
 import { Settings } from "@/types";
 
-export default function Footer() {
-    const [settings, setSettings] = useState<Settings | null>(null);
+export default function Footer({ settings }: { settings: any }) {
 
-    useEffect(() => {
-        fetch("/api/settings")
-            .then(res => res.json())
-            .then(data => setSettings(data))
-            .catch(err => console.error("Failed to fetch settings for footer", err));
-    }, []);
+    // Removed client-side fetch, now using DB data passed from Layout
 
     const social = settings?.socialLinks;
 

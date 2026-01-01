@@ -1,7 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import VideoPlayer from "@/components/VideoPlayer";
 import { prisma } from "@/lib/prismadb";
 import { ArrowRight, ArrowLeft, Calendar, Clock, Film } from "lucide-react";
@@ -53,7 +51,7 @@ export default async function WatchPage({ params }: PageProps) {
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">
-            <Navbar />
+
 
             <div className="container mx-auto px-4 py-8">
                 {/* Breadcrumb */}
@@ -148,7 +146,6 @@ export default async function WatchPage({ params }: PageProps) {
                 </div>
             </div>
 
-            <Footer />
         </main>
     );
 }

@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
+import NextTopLoader from "nextjs-toploader";
 import { prisma } from "@/lib/prismadb";
 import AdmobProvider from "@/components/AdmobProvider";
 import BottomNav from "@/components/BottomNav";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { AuthProvider } from "@/providers/AuthProvider";
 
 const cairo = Cairo({ subsets: ["arabic", "latin"] });
@@ -45,7 +48,12 @@ export default async function RootLayout({
       <body className={`${cairo.className} bg-slate-950 text-slate-200 antialiased`}>
         <AuthProvider>
           <AdmobProvider>
-            {children}
+            <NextTopLoader color="#dc2626" showSpinner={false} />
+            <Navbar settings={settings || {}} />
+            <div className="min-h-screen">
+              {children}
+            </div>
+            <Footer settings={settings || {}} />
             <BottomNav />
             <script src="https://accounts.google.com/gsi/client" async defer></script>
           </AdmobProvider>

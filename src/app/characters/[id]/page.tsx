@@ -1,6 +1,4 @@
 import { notFound } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { prisma } from "@/lib/prismadb";
 import { Metadata } from "next";
@@ -32,7 +30,7 @@ export default async function CharacterPage({ params }: PageProps) {
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">
-            <Navbar />
+
             <Breadcrumbs customLabels={{ [id]: character.name_ar }} />
 
             <div className="relative h-[400px] overflow-hidden">
@@ -95,7 +93,7 @@ export default async function CharacterPage({ params }: PageProps) {
                 </div>
             </div>
 
-            <Footer />
+
         </main>
     );
 }

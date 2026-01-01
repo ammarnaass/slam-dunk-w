@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 export const dynamic = "force-dynamic";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import EpisodeCard from "@/components/EpisodeCard";
 import { Search, Loader2 } from "lucide-react";
 
@@ -38,18 +36,14 @@ export default function EpisodesPage() {
 
     if (loading) return (
         <div className="min-h-screen bg-slate-950 flex flex-col">
-            <Navbar />
             <div className="flex-1 flex items-center justify-center">
                 <Loader2 className="animate-spin text-red-600 w-10 h-10" />
             </div>
-            <Footer />
         </div>
     );
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">
-            <Navbar />
-
             <div className="container mx-auto px-4 py-12">
                 <h1 className="text-4xl font-bold text-white mb-8 border-r-4 border-red-600 pr-4">
                     اكتشف الحلقات
@@ -94,8 +88,6 @@ export default function EpisodesPage() {
                     </div>
                 )}
             </div>
-
-            <Footer />
         </main>
     );
 }

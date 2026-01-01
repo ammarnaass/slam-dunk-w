@@ -1,5 +1,3 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import CharacterCard from "@/components/CharacterCard";
 import { prisma } from "@/lib/prismadb";
 import Link from "next/link";
@@ -46,7 +44,6 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-200 font-sans overflow-x-hidden">
-      <Navbar />
       <HomeSlider animes={displaySliderAnimes} />
 
       {/* Latest Episodes Bar */}
@@ -164,7 +161,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <Footer />
     </main>
   );
 }
