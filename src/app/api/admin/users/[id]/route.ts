@@ -86,17 +86,18 @@ export async function PUT(
             });
 
             if (subscription) {
+                const isActive = subscription.status.toLowerCase() === 'active';
                 await tx.userSubscription.upsert({
                     where: { userId: id },
                     update: {
-                        type: subscription.type.toLowerCase(),
-                        status: subscription.status.toLowerCase(),
+                        planType: subscription.type.toLowerCase(),
+                        isActive: isActive,
                         endDate: subscription.endDate ? new Date(subscription.endDate) : null
                     },
                     create: {
                         userId: id,
-                        type: subscription.type.toLowerCase(),
-                        status: subscription.status.toLowerCase(),
+                        planType: subscription.type.toLowerCase(),
+                        isActive: isActive,
                         endDate: subscription.endDate ? new Date(subscription.endDate) : null
                     }
                 });

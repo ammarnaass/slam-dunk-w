@@ -41,9 +41,9 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
                     role: data.role,
                     password: "",
                     subscription: {
-                        type: data.subscription?.type || "FREE",
-                        status: data.subscription?.status || "EXPIRED",
-                        endDate: data.subscription?.endDate || "",
+                        type: data.subscription?.planType?.toUpperCase() || "FREE",
+                        status: data.subscription?.isActive ? "ACTIVE" : "EXPIRED",
+                        endDate: data.subscription?.endDate ? new Date(data.subscription.endDate).toISOString().split('T')[0] : "",
                     }
                 });
             } catch (error) {
