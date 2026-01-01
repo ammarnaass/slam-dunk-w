@@ -19,7 +19,7 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const auth = await verifyAuth(request);
-        if (!auth || auth.role !== "ADMIN") {
+        if (!auth || auth.role?.toUpperCase() !== "ADMIN") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 

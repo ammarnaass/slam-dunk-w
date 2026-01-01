@@ -111,11 +111,11 @@ export default function UsersPage() {
                                     </td>
                                     <td className="px-6 py-4 font-mono text-sm hidden md:table-cell">{user.email}</td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 rounded text-xs font-bold flex w-fit items-center gap-1 ${user.role === 'ADMIN'
+                                        <span className={`px-2 py-1 rounded text-xs font-bold flex w-fit items-center gap-1 ${user.role?.toUpperCase() === 'ADMIN'
                                             ? 'bg-red-500/10 text-red-500 border border-red-500/20'
                                             : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
                                             }`}>
-                                            {user.role === 'ADMIN' && <Shield size={12} />}
+                                            {user.role?.toUpperCase() === 'ADMIN' && <Shield size={12} />}
                                             {user.role}
                                         </span>
                                     </td>

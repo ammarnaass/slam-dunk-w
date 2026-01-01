@@ -7,7 +7,7 @@ export async function GET() {
         const session = await getSession();
 
         // Check if user is logged in and is an admin
-        if (!session || !session.user || session.user.role !== "ADMIN") {
+        if (!session || !session.user || session.user.role?.toUpperCase() !== "ADMIN") {
             console.warn("Unauthorized access attempt to Admin Users API");
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
