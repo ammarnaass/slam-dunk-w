@@ -191,6 +191,7 @@ function CheckoutForm() {
                                 : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500'
                                 }`}
                         >
+                            {method.icon ? <img src={method.icon} alt="" className="w-5 h-5 object-contain" /> : method.type === 'card' ? <CreditCard size={18} /> : <div className="w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center text-[10px]">$</div>}
                             {method.name}
                         </button>
                     ))}
@@ -260,7 +261,7 @@ function CheckoutForm() {
                     {activeMethod?.type === 'manual' && (
                         <div className="space-y-4 animate-in fade-in">
                             <div className="p-4 bg-slate-800 rounded-lg border border-slate-700 text-slate-300 whitespace-pre-line text-sm leading-relaxed">
-                                {activeMethod.instructions}
+                                {activeMethod.details || activeMethod.instructions}
                             </div>
 
                             <div>

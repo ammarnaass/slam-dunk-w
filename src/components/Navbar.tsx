@@ -30,7 +30,7 @@ export default function Navbar({ settings }: { settings: any }) {
     return (
         <nav className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2 overflow-hidden h-10 w-40 relative">
+                <Link href="/" className="flex items-center gap-2 h-14 min-w-[120px] relative">
                     <AnimatePresence mode="wait">
                         {!showLogo ? (
                             <motion.span
@@ -38,21 +38,21 @@ export default function Navbar({ settings }: { settings: any }) {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
-                                className="text-2xl font-bold text-red-600 absolute left-0"
+                                className="text-2xl font-bold text-red-600 absolute left-0 whitespace-nowrap"
                             >
-                                {settings?.siteName || "سلام دانك"}
+                                {settings?.siteName}
                             </motion.span>
                         ) : (
                             <motion.div
                                 key="logo"
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="absolute left-0"
+                                className="absolute left-0 h-full flex items-center"
                             >
                                 {settings?.logoUrl ? (
-                                    <img src={settings.logoUrl} alt={settings?.siteName} className="h-10 object-contain" />
+                                    <img src={settings.logoUrl} alt={settings?.siteName} className="h-12 w-auto object-contain" />
                                 ) : (
-                                    <span className="text-2xl font-bold text-red-600">{settings?.siteName || "سلام دانك"}</span>
+                                    <span className="text-2xl font-bold text-red-600 whitespace-nowrap">{settings?.siteName || "سلام دانك"}</span>
                                 )}
                             </motion.div>
                         )}

@@ -1,43 +1,61 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prismadb";
-import { verifyAuth } from "@/lib/auth";
+import { getServerSession } from "@/lib/auth";
 
 export async function GET() {
     try {
-        const methods = await prisma.paymentMethod.findMany();
+        const session = await getServerSession();
+        if (!session || session.role !== "ADMIN") {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const methods = await prisma.paymentMethod.findMany({
+            orderBy: { name: 'asc' }
+        });
+
         return NextResponse.json(methods);
     } catch (error) {
-        console.error("Admin Payment Methods GET Error:", error);
-        return NextResponse.json({ error: "Failed to fetch payment methods" }, { status: 500 });
+        console.error("[PAYMENT_METHODS_GET]", error);
+        return new NextResponse("Internal Error", { status: 500 });
     }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
     try {
-        const auth = await verifyAuth(request);
-        if (!auth || auth.role !== "ADMIN") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const session = await getServerSession();
+        if (!session || session.role !== "ADMIN") {
+            return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const body = await request.json();
-        if (!body.name || !body.type) {
-            return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+        const body = await req.json();
+        const { id, name, type, details, icon, isActive } = body;
+
+        if (!id || !name || !type) {
+            return new NextResponse("Missing required fields", { status: 400 });
         }
 
-        const newMethod = await prisma.paymentMethod.create({
+        const existing = await prisma.paymentMethod.findUnique({
+            where: { id }
+        });
+
+        if (existing) {
+            return new NextResponse("Payment method ID already exists", { status: 400 });
+        }
+
+        const method = await prisma.paymentMethod.create({
             data: {
-                id: crypto.randomUUID(),
-                name: body.name,
-                type: body.type, // 'card' or 'manual'
-                details: body.instructions || "",
-                icon: body.logoUrl || "",
-                isActive: body.isActive !== undefined ? body.isActive : (body.active !== undefined ? body.active : true),
+                id,
+                name,
+                type,
+                details,
+                icon,
+                isActive
             }
         });
 
-        return NextResponse.json(newMethod);
+        return NextResponse.json(method);
     } catch (error) {
-        console.error("Admin Payment Methods POST Error:", error);
-        return NextResponse.json({ error: "Failed to create payment method" }, { status: 500 });
+        console.error("[PAYMENT_METHODS_POST]", error);
+        return new NextResponse("Internal Error", { status: 500 });
     }
 }
