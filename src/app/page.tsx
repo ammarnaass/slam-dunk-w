@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prismadb";
 import Link from "next/link";
 import { ArrowLeft, PlayCircle, Star, Calendar, Film } from "lucide-react";
 import HomeSlider from "@/components/HomeSlider";
+import AnimeCard from "@/components/AnimeCard";
 
 export const dynamic = "force-dynamic";
 
@@ -104,44 +105,13 @@ export default async function Home() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-          {animes.map(anime => (
-            <Link
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+          {animes.map((anime, index) => (
+            <AnimeCard
               key={anime.id}
-              href={`/animes/${anime.id}`}
-              className="group relative block rounded-2xl overflow-hidden bg-slate-900 shadow-xl transition-all hover:-translate-y-2 hover:shadow-red-900/10"
-            >
-              <div className="aspect-[2/3] relative">
-                <img
-                  src={anime.coverImage}
-                  alt={anime.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-
-                <div className="absolute top-4 right-4">
-                  <span className="bg-red-600/90 text-white text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-md backdrop-blur-md">
-                    {anime.type}
-                  </span>
-                </div>
-
-                <div className="absolute bottom-0 p-5 w-full">
-                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-1 group-hover:text-red-500 transition-colors">
-                    {anime.title}
-                  </h3>
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium">
-                    <span className="flex items-center gap-1"><Calendar size={12} className="text-red-500" /> {anime.releaseYear}</span>
-                    <span className="flex items-center gap-1"><Film size={12} className="text-red-500" /> {anime.totalEpisodes} حلقة</span>
-                  </div>
-                </div>
-
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 bg-red-600/10 backdrop-blur-[2px]">
-                  <div className="bg-red-600 text-white p-4 rounded-full transform scale-50 group-hover:scale-100 transition-all duration-500 shadow-2xl">
-                    <PlayCircle size={32} className="fill-white" />
-                  </div>
-                </div>
-              </div>
-            </Link>
+              anime={anime}
+              priority={index < 4}
+            />
           ))}
         </div>
       </section>
