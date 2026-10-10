@@ -7,17 +7,25 @@ import HomeSlider from "@/components/HomeSlider";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  // Fetch data from Prisma
-  const [allAnimes, settings, latestEpisodesData, featuredCharacters] = await Promise.all([
-    prisma.anime.findMany({ orderBy: { updatedAt: 'desc' } }),
-    prisma.settings.findUnique({ where: { id: "global" } }),
-    prisma.episode.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-      include: { anime: { select: { title: true } } }
-    }),
-    prisma.character.findMany({ take: 4 })
-  ]);
+  let allAnimes: any[] = [];
+  let settings: any = null;
+  let latestEpisodesData: any[] = [];
+  let featuredCharacters: any[] = [];
+
+  try {
+    [allAnimes, settings, latestEpisodesData, featuredCharacters] = await Promise.all([
+      prisma.anime.findMany({ orderBy: { updatedAt: 'desc' } }),
+      prisma.settings.findUnique({ where: { id: "global" } }),
+      prisma.episode.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        include: { anime: { select: { title: true } } }
+      }),
+      prisma.character.findMany({ take: 4 })
+    ]);
+  } catch (err) {
+    console.error("Home page data fetch error:", err);
+  }
 
   const siteSettings = settings || {
     siteName: "سلام دانك",

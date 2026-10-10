@@ -16,7 +16,12 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await prisma.settings.findUnique({ where: { id: "global" } });
+  let settings = null;
+  try {
+    settings = await prisma.settings.findUnique({ where: { id: "global" } });
+  } catch (error) {
+    console.error("Layout generateMetadata settings fetch error:", error);
+  }
 
   const siteName = settings?.siteName || "سلام دانك";
 
@@ -41,7 +46,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await prisma.settings.findUnique({ where: { id: "global" } });
+  let settings = null;
+  try {
+    settings = await prisma.settings.findUnique({ where: { id: "global" } });
+  } catch (error) {
+    console.error("RootLayout settings fetch error:", error);
+  }
 
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>

@@ -13,9 +13,11 @@ dotenv.config();
 const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
 console.log('Using connection string:', connectionString ? 'Found' : 'Not Found');
 
+const isLocal = connectionString?.includes('localhost') || connectionString?.includes('127.0.0.1');
+
 const pool = new pg.Pool({
     connectionString,
-    ssl: { rejectUnauthorized: false }
+    ssl: isLocal ? false : { rejectUnauthorized: false }
 });
 const adapter = new PrismaPg(pool);
 
