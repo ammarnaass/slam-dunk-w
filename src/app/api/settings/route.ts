@@ -39,7 +39,15 @@ export async function GET() {
         return NextResponse.json(responseData);
     } catch (error) {
         console.error("Settings API Get Error:", error);
-        return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
+        return NextResponse.json({
+            siteName: "سلام دانك",
+            logoUrl: null,
+            faviconUrl: null,
+            maintenanceMode: false,
+            maintenanceMessage: null,
+            apiApp: { latestVersion: "1.0.0", updateUrl: null },
+            admob: { isEnabled: false }
+        });
     }
 }
 
