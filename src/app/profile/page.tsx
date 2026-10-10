@@ -3,16 +3,42 @@
 import { useEffect, useState } from "react";
 import { User, Anime } from "@/types";
 import { useRouter } from "next/navigation";
-import { Loader2, User as UserIcon, Calendar, Shield, Edit, Save, X, Phone, UserCircle, Star, Sparkles, Film, Heart, Home, Mail, Camera } from "lucide-react";
+import { 
+    Loader2, 
+    User as UserIcon, 
+    Calendar, 
+    Shield, 
+    Edit, 
+    Save, 
+    X, 
+    Phone, 
+    Star, 
+    Sparkles, 
+    Film, 
+    Heart, 
+    Mail, 
+    Camera,
+    LogOut,
+    CheckCircle2,
+    Crown,
+    Settings,
+    ArrowLeft,
+    Layers,
+    Lock
+} from "lucide-react";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import AnimeCard from "@/components/AnimeCard";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function ProfilePage() {
     const router = useRouter();
+    const { logout } = useAuth();
     const [user, setUser] = useState<User | null>(null);
     const [watchlistAnimes, setWatchlistAnimes] = useState<Anime[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
+    const [activeTab, setActiveTab] = useState<"watchlist" | "info" | "edit">("watchlist");
+    
     const [editForm, setEditForm] = useState({
         username: "",
         email: "",
@@ -103,11 +129,14 @@ export default function ProfilePage() {
             }
 
             setMsg({ type: "success", text: "تم تحديث البيانات بنجاح ✅" });
-            setIsEditing(false);
             setEditForm(prev => ({ ...prev, password: "" }));
 
             // Refresh user data
             await fetchUser();
+            setTimeout(() => {
+                setActiveTab("info");
+                setMsg({ type: "", text: "" });
+            }, 1200);
         } catch (error: any) {
             setMsg({ type: "error", text: error.message });
         } finally {
@@ -115,341 +144,533 @@ export default function ProfilePage() {
         }
     };
 
+    const handleLogout = async () => {
+        await logout();
+        router.push("/login");
+    };
+
     if (loading) {
         return (
-            <div className="min-h-screen">
-                <div className="flex items-center justify-center p-20">
-                    <Loader2 className="w-8 h-8 animate-spin text-red-600" />
-                </div>
+            <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center py-32">
+                <Loader2 className="w-10 h-10 animate-spin text-red-600 mb-4" />
+                <p className="text-sm text-slate-400 font-semibold">جاري تحميل الملف الشخصي...</p>
             </div>
         );
     }
 
     if (!user) return null;
 
+    const isAdmin = user.role?.toUpperCase() === "ADMIN" || user.name === "admin" || user.email === "admin@slamdunk.com" || user.email === "amarnaas1981@gmail.com";
+    const isVip = user.subscription?.isActive;
+    const avatarUrl = editForm.profileImage || user.avatar || user.profileImage;
+
     return (
-        <div className="min-h-screen">
-            <Breadcrumbs />
+        <div className="min-h-screen bg-slate-950 text-slate-100 pb-24">
+            {/* Ambient Background Radial Glow */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-[450px] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(220,38,38,0.2),transparent_80%)]" />
 
-            <div className="container mx-auto px-4 py-10 max-w-6xl">
-                {/* Header Section with Gradient */}
-                <div className="bg-gradient-to-r from-red-600 via-red-700 to-red-800 rounded-3xl p-8 mb-6 relative overflow-hidden shadow-2xl animate-in fade-in slide-in-from-top-4 duration-700">
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
-                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+            {/* Breadcrumbs */}
+            <div className="relative border-b border-slate-900/80 bg-slate-950/40 backdrop-blur-md">
+                <Breadcrumbs customLabels={{ profile: "الملف الشخصي" }} />
+            </div>
 
-                    <div className="relative flex flex-col md:flex-row items-center gap-6">
-                        {/* Profile Image */}
-                        <div className="relative group">
-                            <div className="w-32 h-32 rounded-full border-4 border-white/20 overflow-hidden shadow-2xl bg-slate-900 group-hover:scale-105 transition-transform duration-500">
-                                {user.avatar || user.profileImage ? (
-                                    <img src={user.avatar || user.profileImage} alt={user.name || "User"} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-white text-5xl font-bold">
-                                        {(user.name || user.email || "U")[0].toUpperCase()}
+            <main className="container mx-auto px-4 py-8 max-w-6xl">
+                {/* Hero Profile Header Card */}
+                <div className="relative rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-950/95 border border-slate-800/80 p-6 sm:p-8 mb-8 overflow-hidden shadow-2xl backdrop-blur-xl">
+                    {/* Top subtle highlight hairline */}
+                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent pointer-events-none" />
+                    
+                    {/* Background glow orbs */}
+                    <div className="absolute -top-12 -right-12 w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+
+                    <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+                        {/* Avatar & User Details */}
+                        <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-right">
+                            {/* Avatar with Badges */}
+                            <div className="relative group shrink-0">
+                                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl p-1 bg-gradient-to-tr from-red-600 via-rose-500 to-amber-500 shadow-xl shadow-red-950/40">
+                                    <div className="w-full h-full rounded-[22px] overflow-hidden bg-slate-950 flex items-center justify-center">
+                                        {avatarUrl ? (
+                                            <img 
+                                                src={avatarUrl} 
+                                                alt={user.name || "User"} 
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                                            />
+                                        ) : (
+                                            <span className="text-4xl sm:text-5xl font-black text-white">
+                                                {(user.name || user.email || "U")[0].toUpperCase()}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* VIP Crown or Admin Star Badge */}
+                                {isVip && (
+                                    <div className="absolute -bottom-2 -left-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black px-2.5 py-0.5 rounded-full text-[11px] flex items-center gap-1 shadow-lg border-2 border-slate-950">
+                                        <Crown size={12} className="fill-slate-950" />
+                                        <span>VIP</span>
+                                    </div>
+                                )}
+
+                                {isAdmin && (
+                                    <div className="absolute -bottom-2 -right-2 bg-red-600 text-white font-bold px-2 py-0.5 rounded-full text-[10px] flex items-center gap-1 shadow-lg border-2 border-slate-950">
+                                        <Shield size={11} />
+                                        <span>ADMIN</span>
                                     </div>
                                 )}
                             </div>
-                            {isEditing && (
-                                <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                                    <Camera className="w-8 h-8" />
-                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-                                </label>
-                            )}
-                            {user.subscription?.isActive && (
-                                <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg border-2 border-slate-900">
-                                    <Star className="w-3 h-3 fill-current" />
-                                    VIP
-                                </div>
-                            )}
-                        </div>
 
-                        {/* User Info */}
-                        <div className="flex-1 text-center md:text-right">
-                            <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-sm">{user.name || "مستخدم"}</h1>
-                            <p className="text-white/80 text-lg mb-4 flex items-center gap-2 justify-center md:justify-start">
-                                <Mail className="w-4 h-4 opacity-70" />
-                                {user.email}
-                            </p>
-                            <div className="flex gap-3 flex-wrap justify-center md:justify-start">
-                                <span className="px-4 py-1.5 bg-black/20 backdrop-blur-md rounded-full text-white text-sm font-medium flex items-center gap-2 border border-white/10">
-                                    <Shield className="w-4 h-4 text-red-300" />
-                                    {user.role === "ADMIN" ? "مدير" : "مستخدم"}
-                                </span>
-                                <span className="px-4 py-1.5 bg-black/20 backdrop-blur-md rounded-full text-white text-sm font-medium flex items-center gap-2 border border-white/10">
-                                    <Calendar className="w-4 h-4 text-red-300" />
-                                    {new Date(user.createdAt).toLocaleDateString('ar-EG')}
-                                </span>
+                            {/* User Info */}
+                            <div className="space-y-2">
+                                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                                        {user.name || "مستخدم سلام دانك"}
+                                    </h1>
+                                    {isAdmin && (
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-red-400 bg-red-950/60 border border-red-800/40 px-2.5 py-0.5 rounded-full">
+                                            <Shield size={12} />
+                                            مدير النظام
+                                        </span>
+                                    )}
+                                </div>
+
+                                <p className="text-xs sm:text-sm text-slate-400 flex items-center justify-center md:justify-start gap-1.5 font-medium">
+                                    <Mail size={14} className="text-red-500" />
+                                    <span>{user.email}</span>
+                                </p>
+
+                                {/* Meta details pills */}
+                                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-1">
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-300 bg-slate-900/80 border border-slate-800 px-3 py-1 rounded-full">
+                                        <Calendar size={12} className="text-red-500" />
+                                        انضم في: {user.createdAt ? new Date(user.createdAt).toLocaleDateString('ar-EG') : '2026'}
+                                    </span>
+
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-300 bg-slate-900/80 border border-slate-800 px-3 py-1 rounded-full">
+                                        <Heart size={12} className="text-red-500 fill-red-500" />
+                                        {watchlistAnimes.length} في المفضلة
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex gap-2">
-                            <Link
-                                href="/"
-                                className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl transition-all border border-white/20 text-white shadow-xl"
-                                title="العودة للرئيسية"
-                            >
-                                <Home className="w-5 h-5" />
-                            </Link>
-                            {!isEditing && (
-                                <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl transition-all border border-white/20 text-white shadow-xl"
-                                    title="تعديل الملف الشخصي"
+                        {/* Quick Action Buttons */}
+                        <div className="flex items-center gap-2.5 shrink-0">
+                            {isAdmin && (
+                                <Link
+                                    href="/admin"
+                                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-red-600/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-600/30 hover:border-red-600 text-xs font-bold transition-all shadow-md"
                                 >
-                                    <Edit className="w-5 h-5" />
-                                </button>
+                                    <Settings size={15} />
+                                    <span>لوحة الإدارة</span>
+                                </Link>
                             )}
+
+                            <button
+                                onClick={() => setActiveTab("edit")}
+                                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs font-bold transition-all shadow-sm"
+                            >
+                                <Edit size={14} />
+                                <span>تعديل الحساب</span>
+                            </button>
+
+                            <button
+                                onClick={handleLogout}
+                                title="تسجيل الخروج"
+                                className="p-2.5 rounded-xl bg-slate-900 hover:bg-red-950/40 text-slate-400 hover:text-red-400 border border-slate-800 transition-colors"
+                            >
+                                <LogOut size={16} />
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                {/* Main Content */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Column - Edit Form or Stats */}
-                    <div className="lg:col-span-1 space-y-6 animate-in fade-in slide-in-from-right-4 duration-1000">
-                        {isEditing ? (
-                            <div className="bg-slate-900/40 backdrop-blur-2xl rounded-3xl border border-white/5 shadow-2xl p-8 sticky top-24">
-                                <div className="flex items-center justify-between mb-8">
-                                    <h3 className="text-xl font-bold text-white flex items-center gap-3">
-                                        <div className="p-2 bg-red-500/10 rounded-lg">
-                                            <Edit className="w-5 h-5 text-red-500" />
-                                        </div>
-                                        تعديل البيانات
+                {/* Navigation Tabs Bar */}
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-4 mb-8 overflow-x-auto no-scrollbar">
+                    <button
+                        onClick={() => setActiveTab("watchlist")}
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 ${
+                            activeTab === "watchlist"
+                                ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
+                                : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800 hover:border-slate-700"
+                        }`}
+                    >
+                        <Heart size={16} className={activeTab === "watchlist" ? "fill-white" : ""} />
+                        <span>قائمتي والمفضلة</span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                            activeTab === "watchlist" ? "bg-black/30 text-white" : "bg-slate-800 text-slate-300"
+                        }`}>
+                            {watchlistAnimes.length}
+                        </span>
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab("info")}
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 ${
+                            activeTab === "info"
+                                ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
+                                : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800 hover:border-slate-700"
+                        }`}
+                    >
+                        <UserIcon size={16} />
+                        <span>البيانات والاشتراك</span>
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab("edit")}
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 ${
+                            activeTab === "edit"
+                                ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
+                                : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800 hover:border-slate-700"
+                        }`}
+                    >
+                        <Edit size={16} />
+                        <span>تعديل وكلمة المرور</span>
+                    </button>
+                </div>
+
+                {/* Tab 1: Watchlist */}
+                {activeTab === "watchlist" && (
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span className="w-1.5 h-6 bg-red-600 rounded-full" />
+                                <h2 className="text-lg font-bold text-white">
+                                    الأعمال المحفوظة في قائمتك
+                                </h2>
+                            </div>
+
+                            <Link 
+                                href="/animes" 
+                                className="text-xs text-red-500 hover:text-red-400 font-bold flex items-center gap-1 transition-colors"
+                            >
+                                <span>استكشاف المزيد</span>
+                                <ArrowLeft size={14} />
+                            </Link>
+                        </div>
+
+                        {watchlistAnimes.length > 0 ? (
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+                                {watchlistAnimes.map((anime) => (
+                                    <AnimeCard key={anime.id} anime={anime} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-20 px-4 text-center rounded-3xl bg-slate-900/40 border border-dashed border-slate-800">
+                                <div className="w-16 h-16 rounded-2xl bg-red-950/40 border border-red-900/40 flex items-center justify-center text-red-500 mb-4 shadow-lg shadow-red-950/40">
+                                    <Heart size={28} className="fill-red-500/20" />
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">
+                                    قائمتك فارغة حالياً
+                                </h3>
+                                <p className="text-xs text-slate-400 max-w-sm mb-6 leading-relaxed">
+                                    لم تقم بإضافة أي أنمي إلى قائمة المتابعة بعد. يمكنك إضافة أعمالك المفضلة للوصول إليها بنقرة واحدة.
+                                </p>
+                                <Link
+                                    href="/animes"
+                                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-lg shadow-red-600/30 transition-all hover:scale-105"
+                                >
+                                    <Film size={15} />
+                                    <span>تصفح دليل الأنميات</span>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Tab 2: User Info & Subscription */}
+                {activeTab === "info" && (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Details Cards */}
+                        <div className="lg:col-span-2 space-y-6">
+                            <div className="p-6 rounded-3xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-md space-y-4">
+                                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                                    <h3 className="text-base font-bold text-white flex items-center gap-2">
+                                        <UserIcon size={18} className="text-red-500" />
+                                        المعلومات الشخصية
                                     </h3>
-                                    <button
-                                        onClick={() => setIsEditing(false)}
-                                        className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400"
+                                    <button 
+                                        onClick={() => setActiveTab("edit")}
+                                        className="text-xs text-red-500 hover:text-red-400 font-bold flex items-center gap-1"
                                     >
-                                        <X className="w-5 h-5" />
+                                        <Edit size={13} />
+                                        تعديل
                                     </button>
                                 </div>
 
-                                {msg.text && (
-                                    <div className={`mb-6 p-4 rounded-2xl text-sm text-center animate-in slide-in-from-top duration-300 ${msg.type === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
-                                        {msg.text}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                                    <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+                                        <span className="text-[11px] text-slate-400 block mb-1">اسم المستخدم</span>
+                                        <span className="text-sm font-bold text-white">{user.name || "غير محدد"}</span>
+                                    </div>
+
+                                    <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+                                        <span className="text-[11px] text-slate-400 block mb-1">البريد الإلكتروني</span>
+                                        <span className="text-sm font-bold text-white">{user.email}</span>
+                                    </div>
+
+                                    <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+                                        <span className="text-[11px] text-slate-400 block mb-1">رقم الهاتف</span>
+                                        <span className="text-sm font-bold text-white" dir="ltr">{user.phoneNumber || "غير مضاف"}</span>
+                                    </div>
+
+                                    <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+                                        <span className="text-[11px] text-slate-400 block mb-1">الجنس</span>
+                                        <span className="text-sm font-bold text-white">
+                                            {user.gender === "male" ? "ذكر" : user.gender === "female" ? "أنثى" : "غير محدد"}
+                                        </span>
+                                    </div>
+
+                                    <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80 sm:col-span-2">
+                                        <span className="text-[11px] text-slate-400 block mb-1">تاريخ الميلاد</span>
+                                        <span className="text-sm font-bold text-white">
+                                            {user.birthDate ? new Date(user.birthDate).toLocaleDateString('ar-EG') : "غير محدد"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Subscription Card */}
+                        <div className="space-y-6">
+                            <div className="p-6 rounded-3xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-md">
+                                <div className="flex items-center gap-2 pb-4 mb-4 border-b border-slate-800">
+                                    <Star size={18} className="text-amber-400 fill-amber-400" />
+                                    <h3 className="text-base font-bold text-white">
+                                        حالة الاشتراك
+                                    </h3>
+                                </div>
+
+                                {isVip ? (
+                                    <div className="text-center p-6 rounded-2xl bg-gradient-to-b from-amber-500/10 to-transparent border border-amber-500/30 space-y-3">
+                                        <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center shadow-lg">
+                                            <Sparkles size={28} />
+                                        </div>
+                                        <h4 className="text-lg font-black text-amber-400">اشتراك VIP نشط</h4>
+                                        <p className="text-xs text-slate-300">
+                                            صالح حتى: {user.subscription?.endDate ? new Date(user.subscription.endDate).toLocaleDateString('ar-EG') : "مدى الحياة"}
+                                        </p>
+                                        <div className="pt-2 text-xs text-slate-400 flex flex-col gap-1.5 text-right">
+                                            <div className="flex items-center gap-2">
+                                                <CheckCircle2 size={13} className="text-emerald-400" />
+                                                <span>مشاهدة بدقة 1080p و 4K</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <CheckCircle2 size={13} className="text-emerald-400" />
+                                                <span>خالٍ تماماً من الإعلانات</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <CheckCircle2 size={13} className="text-emerald-400" />
+                                                <span>سرعة تحميل وتشغيل قصوى</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-center p-6 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-4">
+                                        <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-800/80 text-slate-500 flex items-center justify-center">
+                                            <Star size={28} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-base font-bold text-white">الحساب المجاني</h4>
+                                            <p className="text-xs text-slate-400 mt-1">قم بالترقية للاستمتاع بالمشاهدة بدون إعلانات وبأعلى جودة</p>
+                                        </div>
+                                        <Link
+                                            href="/pricing"
+                                            className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/20 transition-all hover:scale-105"
+                                        >
+                                            <Sparkles size={14} />
+                                            <span>ترقية إلى VIP الآن</span>
+                                        </Link>
                                     </div>
                                 )}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
-                                <form onSubmit={handleUpdate} className="space-y-5">
+                {/* Tab 3: Edit Form */}
+                {activeTab === "edit" && (
+                    <div className="max-w-2xl mx-auto">
+                        <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800/80 backdrop-blur-xl shadow-2xl">
+                            <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+                                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                    <Edit size={18} className="text-red-500" />
+                                    تعديل بيانات الحساب
+                                </h3>
+                                <button
+                                    onClick={() => setActiveTab("info")}
+                                    className="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors"
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+
+                            {msg.text && (
+                                <div className={`mb-6 p-4 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 ${
+                                    msg.type === "success" 
+                                        ? "bg-emerald-950/60 text-emerald-400 border border-emerald-800/40" 
+                                        : "bg-rose-950/60 text-rose-400 border border-rose-800/40"
+                                }`}>
+                                    <CheckCircle2 size={16} />
+                                    <span>{msg.text}</span>
+                                </div>
+                            )}
+
+                            <form onSubmit={handleUpdate} className="space-y-4">
+                                {/* Profile Photo Upload */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-slate-300 mb-2">
+                                        الصورة الشخصية
+                                    </label>
+                                    <div className="flex items-center gap-4">
+                                        <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shrink-0">
+                                            {avatarUrl ? (
+                                                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-slate-500 font-bold">
+                                                    U
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer border border-slate-700 transition-colors">
+                                            <Camera size={14} />
+                                            <span>رفع صورة جديدة</span>
+                                            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                        </label>
+
+                                        {editForm.profileImage && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setEditForm(prev => ({ ...prev, profileImage: "" }))}
+                                                className="text-xs text-red-400 hover:underline"
+                                            >
+                                                إزالة
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">اسم المستخدم</label>
+                                        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                            اسم المستخدم
+                                        </label>
                                         <input
                                             type="text"
                                             value={editForm.username}
                                             onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
-                                            className="w-full bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all"
+                                            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
                                             required
                                             minLength={3}
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">البريد الإلكتروني</label>
+                                        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                            البريد الإلكتروني
+                                        </label>
                                         <input
                                             type="email"
                                             value={editForm.email}
                                             onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                                            className="w-full bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all"
+                                            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
                                             required
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                        <div>
-                                            <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">الجنس</label>
-                                            <select
-                                                value={editForm.gender}
-                                                onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
-                                                className="w-full bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-3.5 text-white focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all appearance-none"
-                                            >
-                                                <option value="" disabled className="bg-slate-900">اختر الجنس</option>
-                                                <option value="male" className="bg-slate-900">ذكر</option>
-                                                <option value="female" className="bg-slate-900">أنثى</option>
-                                                <option value="other" className="bg-slate-900">أخرى</option>
-                                            </select>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">رقم الهاتف</label>
-                                            <div className="relative">
-                                                <Phone className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
-                                                <input
-                                                    type="tel"
-                                                    value={editForm.phoneNumber}
-                                                    onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
-                                                    className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pr-12 pl-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all text-left"
-                                                    dir="ltr"
-                                                    placeholder="+966 50 000 0000"
-                                                />
-                                            </div>
-                                        </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                            الجنس
+                                        </label>
+                                        <select
+                                            value={editForm.gender}
+                                            onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
+                                            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500 cursor-pointer"
+                                        >
+                                            <option value="">غير محدد</option>
+                                            <option value="male">ذكر</option>
+                                            <option value="female">أنثى</option>
+                                            <option value="other">أخرى</option>
+                                        </select>
                                     </div>
 
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">تاريخ الميلاد</label>
-                                        <div className="relative">
-                                            <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
-                                            <input
-                                                type="date"
-                                                value={editForm.birthDate}
-                                                onChange={(e) => setEditForm({ ...editForm, birthDate: e.target.value })}
-                                                className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pr-12 pl-4 py-3.5 text-white focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all text-right"
-                                            />
-                                        </div>
+                                        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                            رقم الهاتف
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            dir="ltr"
+                                            value={editForm.phoneNumber}
+                                            onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
+                                            placeholder="+966 50 000 0000"
+                                            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500 text-left"
+                                        />
                                     </div>
 
-                                    <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">رابط الصورة الشخصية (اختياري)</label>
-                                        <div className="relative">
-                                            <Camera className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
-                                            <input
-                                                type="url"
-                                                value={editForm.profileImage.startsWith('data:') ? 'صورة مرفوعة' : editForm.profileImage}
-                                                disabled={editForm.profileImage.startsWith('data:')}
-                                                onChange={(e) => setEditForm({ ...editForm, profileImage: e.target.value })}
-                                                className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pr-12 pl-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all disabled:opacity-50"
-                                                placeholder="https://example.com/image.jpg"
-                                            />
-                                            {editForm.profileImage.startsWith('data:') && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setEditForm({ ...editForm, profileImage: "" })}
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500 text-xs font-bold"
-                                                >
-                                                    إزالة
-                                                </button>
-                                            )}
-                                        </div>
+                                    <div className="sm:col-span-2">
+                                        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                            تاريخ الميلاد
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={editForm.birthDate}
+                                            onChange={(e) => setEditForm({ ...editForm, birthDate: e.target.value })}
+                                            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500"
+                                        />
                                     </div>
 
-                                    <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 pr-1">كلمة المرور الجديدة (اختياري)</label>
+                                    <div className="sm:col-span-2 pt-2 border-t border-slate-800">
+                                        <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                            <Lock size={13} className="text-red-500" />
+                                            <span>كلمة المرور الجديدة (اختياري)</span>
+                                        </label>
                                         <input
                                             type="password"
                                             value={editForm.password}
                                             onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
-                                            className="w-full bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-4 focus:ring-red-500/5 transition-all"
-                                            placeholder="••••••••"
+                                            placeholder="اتركه فارغاً للاحتفاظ بكلمة المرور الحالية"
                                             minLength={6}
+                                            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
                                         />
+                                        <p className="text-[11px] text-slate-500 mt-1">يجب أن تتكون من 6 أحرف أو أرقام على الأقل في حال الرغبة بالتغيير.</p>
                                     </div>
+                                </div>
+
+                                <div className="pt-4 flex items-center justify-end gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveTab("info")}
+                                        className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
+                                    >
+                                        إلغاء
+                                    </button>
 
                                     <button
                                         type="submit"
                                         disabled={saving}
-                                        className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-red-600/20 hover:shadow-red-600/40 hover:scale-[1.02]"
+                                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-lg shadow-red-600/30 transition-all hover:scale-105 disabled:opacity-50"
                                     >
-                                        {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <>
-                                            <Save className="w-5 h-5 ml-2" /> حفظ التغييرات
-                                        </>}
+                                        {saving ? (
+                                            <>
+                                                <Loader2 size={14} className="animate-spin" />
+                                                <span>جاري الحفظ...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save size={14} />
+                                                <span>حفظ التغييرات</span>
+                                            </>
+                                        )}
                                     </button>
-                                </form>
-                            </div>
-                        ) : (
-                            <div className="bg-slate-900/40 backdrop-blur-2xl rounded-3xl border border-white/5 shadow-2xl p-8">
-                                <h3 className="text-xl font-bold text-white mb-8 pr-1 flex items-center gap-3">
-                                    <div className="p-2 bg-yellow-500/10 rounded-lg">
-                                        <Star className="w-5 h-5 text-yellow-500" />
-                                    </div>
-                                    حالة الاشتراك
-                                </h3>
-
-                                {user.subscription?.isActive ? (
-                                    <div className="text-center group">
-                                        <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-yellow-500/20 group-hover:scale-110 transition-transform duration-500 rotate-3 group-hover:rotate-0">
-                                            <Sparkles className="w-12 h-12 text-white" />
-                                        </div>
-                                        <p className="text-yellow-400 text-xl font-black mb-1">اشتراك مميز فعال</p>
-                                        <p className="text-slate-500 text-sm">
-                                            صالح حتى {user.subscription.endDate ? new Date(user.subscription.endDate).toLocaleDateString('ar-EG') : ''}
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="text-center group">
-                                        <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-slate-800/50 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform duration-500 -rotate-3 group-hover:rotate-0">
-                                            <Star className="w-12 h-12 text-slate-600" />
-                                        </div>
-                                        <p className="text-slate-400 font-bold mb-6 italic">حساب مجاني</p>
-                                        <Link
-                                            href="/pricing"
-                                            className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-black px-8 py-3.5 rounded-2xl transition-all hover:scale-105 shadow-xl shadow-yellow-500/10 text-sm"
-                                        >
-                                            <Sparkles size={16} /> مميز (VIP) ترقية الآن
-                                        </Link>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Right Column - Watchlist */}
-                    <div className="lg:col-span-2 animate-in fade-in slide-in-from-left-4 duration-1000">
-                        <div className="bg-slate-900/40 backdrop-blur-2xl rounded-3xl border border-white/5 shadow-2xl p-8 h-full">
-                            <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-2xl font-bold text-white flex items-center gap-4 pr-1">
-                                    <div className="p-2 bg-red-500/10 rounded-xl">
-                                        <Heart className="w-6 h-6 text-red-500 fill-red-500" />
-                                    </div>
-                                    قائمتي ({watchlistAnimes.length})
-                                </h3>
-                                {watchlistAnimes.length > 0 && (
-                                    <Link href="/animes" className="text-sm font-bold text-slate-500 hover:text-red-500 transition-colors flex items-center gap-1 group">
-                                        استكشف المزيد
-                                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                    </Link>
-                                )}
-                            </div>
-
-                            {watchlistAnimes.length > 0 ? (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-                                    {watchlistAnimes.map((anime) => (
-                                        <Link
-                                            key={anime.id}
-                                            href={`/animes/${anime.id}`}
-                                            className="group relative bg-slate-950 rounded-2xl overflow-hidden border border-white/5 hover:border-red-600/50 transition-all aspect-[2/3] hover:scale-105 shadow-xl"
-                                        >
-                                            <img
-                                                src={anime.coverImage}
-                                                alt={anime.title}
-                                                className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90" />
-                                            <div className="absolute bottom-0 p-4 w-full">
-                                                <h4 className="text-sm font-bold text-white line-clamp-2 group-hover:text-red-500 transition-colors drop-shadow-md">
-                                                    {anime.title}
-                                                </h4>
-                                            </div>
-                                            <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <div className="bg-red-600 p-2 rounded-full shadow-lg">
-                                                    <PlayCircle className="w-4 h-4 text-white fill-white/20" />
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    ))}
                                 </div>
-                            ) : (
-                                <div className="text-center py-24 bg-slate-950/30 rounded-3xl border border-dashed border-white/5">
-                                    <div className="w-20 h-20 mx-auto mb-6 bg-slate-900 rounded-full flex items-center justify-center">
-                                        <Heart className="w-10 h-10 text-slate-800" />
-                                    </div>
-                                    <p className="text-slate-500 mb-6 font-medium">لا توجد أعمال في قائمتك بعد</p>
-                                    <Link
-                                        href="/animes"
-                                        className="inline-flex items-center gap-2 text-red-500 font-bold hover:text-red-400 transition-colors border-b-2 border-red-500/20 pb-1"
-                                    >
-                                        ابدأ باكتشاف الأنميات
-                                    </Link>
-                                </div>
-                            )}
+                            </form>
                         </div>
                     </div>
-                </div>
-            </div>
+                )}
+            </main>
         </div>
     );
 }
-
-// Fixed missing icon imports
-import { ChevronRight, PlayCircle } from "lucide-react";
