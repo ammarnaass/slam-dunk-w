@@ -6,19 +6,20 @@ import { THEME } from '../constants/theme';
 interface CharacterCardProps {
   character: Character;
   onPress?: (char: Character) => void;
+  width?: number;
 }
 
-export const CharacterCard: React.FC<CharacterCardProps> = ({ character, onPress }) => {
+export const CharacterCard: React.FC<CharacterCardProps> = ({ character, onPress, width = 145 }) => {
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, { width }]}
       onPress={() => onPress && onPress(character)}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
     >
-      <View style={styles.imageContainer}>
+      <View style={styles.avatarWrap}>
         <Image
           source={{ uri: character.image || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLg6JNKL3cZxeOj-F7SW7gLj9x7iPVm4yGTw&s' }}
-          style={styles.image}
+          style={styles.avatar}
           resizeMode="cover"
         />
         {character.number && (
@@ -27,18 +28,17 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, onPress
           </View>
         )}
       </View>
+
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1}>
           {character.name_ar || character.name}
         </Text>
-        <Text style={styles.role} numberOfLines={1}>
-          {character.role || character.position || 'لاعب شوهوكو'}
+        <Text style={styles.position} numberOfLines={1}>
+          {character.position || character.role || 'لاعب شوهوكو'}
         </Text>
-        {character.team && (
-          <View style={styles.teamTag}>
-            <Text style={styles.teamText}>{character.team}</Text>
-          </View>
-        )}
+        <Text style={styles.team} numberOfLines={1}>
+          {character.team || 'فريق الصقور'}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -46,64 +46,71 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, onPress
 
 const styles = StyleSheet.create({
   container: {
-    width: 140,
     backgroundColor: THEME.colors.card,
     borderRadius: THEME.radius.lg,
-    overflow: 'hidden',
+    padding: THEME.spacing.md,
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: THEME.colors.cardBorder,
     marginRight: THEME.spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  imageContainer: {
-    width: '100%',
-    aspectRatio: 1,
+  avatarWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     position: 'relative',
     backgroundColor: THEME.colors.surface,
+    borderWidth: 2,
+    borderColor: THEME.colors.primary,
+    marginBottom: THEME.spacing.sm,
   },
-  image: {
+  avatar: {
     width: '100%',
     height: '100%',
+    borderRadius: 36,
   },
   numberBadge: {
     position: 'absolute',
-    top: 6,
-    left: 6,
+    bottom: -4,
+    right: -4,
     backgroundColor: THEME.colors.primary,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: THEME.radius.sm,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: THEME.colors.background,
   },
   numberText: {
     color: THEME.colors.white,
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: '900',
   },
   info: {
-    padding: THEME.spacing.sm,
     alignItems: 'center',
+    width: '100%',
   },
   name: {
+    fontSize: 12,
+    fontWeight: '800',
     color: THEME.colors.white,
-    fontSize: 13,
-    fontWeight: 'bold',
     textAlign: 'center',
   },
-  role: {
-    color: THEME.colors.textMuted,
-    fontSize: 11,
+  position: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: THEME.colors.primaryLight,
     marginTop: 2,
     textAlign: 'center',
   },
-  teamTag: {
-    marginTop: 6,
-    backgroundColor: 'rgba(249, 115, 22, 0.15)',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: THEME.radius.sm,
-  },
-  teamText: {
-    color: THEME.colors.orange,
+  team: {
     fontSize: 9,
-    fontWeight: 'bold',
+    color: THEME.colors.textMuted,
+    marginTop: 2,
+    textAlign: 'center',
   },
 });

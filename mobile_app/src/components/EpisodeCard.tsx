@@ -16,7 +16,7 @@ export const EpisodeCard: React.FC<EpisodeCardProps> = ({
 }) => {
   const epNum = episode.episode_number || episode.episodeNumber || (episode.title.match(/\d+/) ? episode.title.match(/\d+/)![0] : '1');
 
-  // Clean thumbnail path
+  // Fallback thumbnail if empty or placeholder
   let imageUri = episode.thumbnail;
   if (!imageUri || imageUri === '/logoep.jpg') {
     imageUri = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTxpjOV_-f3YQQLUb_T_57HXpyZ4NIlMatMg&s';
@@ -26,7 +26,7 @@ export const EpisodeCard: React.FC<EpisodeCardProps> = ({
     <TouchableOpacity
       style={[styles.container, horizontal && styles.horizontalContainer]}
       onPress={() => onPress(episode)}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
     >
       <View style={styles.thumbnailContainer}>
         <Image
@@ -34,26 +34,32 @@ export const EpisodeCard: React.FC<EpisodeCardProps> = ({
           style={styles.thumbnail}
           resizeMode="cover"
         />
+
+        {/* Play Overlay */}
         <View style={styles.playOverlay}>
           <View style={styles.playButtonCircle}>
             <Text style={styles.playIcon}>▶</Text>
           </View>
         </View>
+
+        {/* Top Badges */}
         <View style={styles.episodeBadge}>
           <Text style={styles.episodeBadgeText}>الحلقة {epNum}</Text>
         </View>
+
         {episode.duration && (
           <View style={styles.durationBadge}>
             <Text style={styles.durationText}>{episode.duration}</Text>
           </View>
         )}
       </View>
+
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={1}>
           {episode.title}
         </Text>
         <Text style={styles.animeTitle} numberOfLines={1}>
-          {episode.animeTitle || 'سلام دانك'}
+          {episode.animeTitle || 'سلام دانك (Slam Dunk)'}
         </Text>
       </View>
     </TouchableOpacity>
@@ -68,9 +74,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: THEME.colors.cardBorder,
     marginBottom: THEME.spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 3,
   },
   horizontalContainer: {
-    width: 200,
+    width: 210,
     marginRight: THEME.spacing.md,
     marginBottom: 0,
   },
@@ -86,7 +97,7 @@ const styles = StyleSheet.create({
   },
   playOverlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    backgroundColor: 'rgba(0, 0, 0, 0.25)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -97,26 +108,32 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingLeft: 3,
+    shadowColor: THEME.colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 4,
   },
   playIcon: {
     color: THEME.colors.white,
     fontSize: 14,
-    fontWeight: 'bold',
+    marginLeft: 2,
   },
   episodeBadge: {
     position: 'absolute',
-    bottom: 6,
+    top: 6,
     right: 6,
-    backgroundColor: THEME.colors.primary,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
     paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: THEME.radius.sm,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   episodeBadgeText: {
     color: THEME.colors.white,
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: '800',
   },
   durationBadge: {
     position: 'absolute',
@@ -124,25 +141,26 @@ const styles = StyleSheet.create({
     left: 6,
     backgroundColor: 'rgba(0, 0, 0, 0.75)',
     paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: THEME.radius.sm,
+    paddingVertical: 1.5,
+    borderRadius: 4,
   },
   durationText: {
     color: THEME.colors.textMuted,
-    fontSize: 10,
+    fontSize: 9,
+    fontWeight: '700',
   },
   info: {
     padding: THEME.spacing.sm,
   },
   title: {
+    fontSize: 12,
+    fontWeight: '800',
     color: THEME.colors.white,
-    fontSize: 13,
-    fontWeight: 'bold',
     textAlign: 'right',
   },
   animeTitle: {
-    color: THEME.colors.textDim,
-    fontSize: 11,
+    fontSize: 10,
+    color: THEME.colors.textMuted,
     marginTop: 2,
     textAlign: 'right',
   },

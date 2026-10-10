@@ -18,47 +18,66 @@ export const BottomTabs: React.FC<BottomTabsProps> = ({ currentTab, onSelectTab 
   ];
 
   return (
-    <View style={styles.container}>
-      {tabs.map((tab) => {
-        const isActive = currentTab === tab.key;
-        return (
-          <TouchableOpacity
-            key={tab.key}
-            style={styles.tabButton}
-            onPress={() => onSelectTab(tab.key)}
-            activeOpacity={0.7}
-          >
-            <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
-              <Text style={[styles.tabIcon, isActive && styles.activeTabIcon]}>
-                {tab.icon}
+    <View style={styles.outerContainer}>
+      <View style={styles.dockContainer}>
+        {tabs.map((tab) => {
+          const isActive = currentTab === tab.key;
+          return (
+            <TouchableOpacity
+              key={tab.key}
+              style={[styles.tabButton, isActive && styles.activeTabButton]}
+              onPress={() => onSelectTab(tab.key)}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
+                <Text style={styles.tabIcon}>
+                  {tab.icon}
+                </Text>
+              </View>
+              <Text style={[styles.tabLabel, isActive && styles.activeTabLabel]}>
+                {tab.label}
               </Text>
-            </View>
-            <Text style={[styles.tabLabel, isActive && styles.activeTabLabel]}>
-              {tab.label}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
+              {isActive && <View style={styles.activeDot} />}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  outerContainer: {
+    backgroundColor: THEME.colors.background,
+    paddingHorizontal: THEME.spacing.md,
+    paddingBottom: THEME.spacing.sm,
+    paddingTop: 4,
+  },
+  dockContainer: {
     height: 64,
-    backgroundColor: THEME.colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: THEME.colors.cardBorder,
+    backgroundColor: 'rgba(11, 19, 41, 0.95)',
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: THEME.colors.cardBorder,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingBottom: 4,
+    paddingHorizontal: THEME.spacing.xs,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
+    elevation: 8,
   },
   tabButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  activeTabButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
   },
   iconContainer: {
     width: 32,
@@ -68,22 +87,26 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   activeIconContainer: {
-    backgroundColor: 'rgba(220, 38, 38, 0.2)',
+    backgroundColor: THEME.colors.primaryGlow,
   },
   tabIcon: {
     fontSize: 18,
   },
-  activeTabIcon: {
-    transform: [{ scale: 1.1 }],
-  },
   tabLabel: {
-    fontSize: 11,
+    fontSize: 10,
+    fontWeight: '600',
     color: THEME.colors.textMuted,
     marginTop: 2,
-    fontWeight: '500',
   },
   activeTabLabel: {
-    color: THEME.colors.primaryLight,
-    fontWeight: 'bold',
+    color: THEME.colors.white,
+    fontWeight: '800',
+  },
+  activeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: THEME.colors.primary,
+    marginTop: 2,
   },
 });

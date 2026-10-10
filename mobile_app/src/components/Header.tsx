@@ -9,32 +9,48 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  title = '🏀 سلام دانك',
+  title,
   onSearchPress,
   showSearch = true,
 }) => {
   return (
     <View style={styles.container}>
+      {/* Brand & Logo */}
       <View style={styles.brandRow}>
-        <View style={styles.badgeIndicator} />
-        <Text style={styles.title}>{title}</Text>
+        <View style={styles.logoBadge}>
+          <Text style={styles.logoEmoji}>🔥</Text>
+        </View>
+        <View style={styles.titleColumn}>
+          <View style={styles.titleRow}>
+            <Text style={styles.titleText}>{title || 'سلام دانك'}</Text>
+            <Text style={styles.dot}>.</Text>
+          </View>
+          <View style={styles.liveIndicatorRow}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>منصة المشاهدة الرسمية</Text>
+          </View>
+        </View>
       </View>
-      {showSearch && (
-        <TouchableOpacity
-          style={styles.searchButton}
-          onPress={onSearchPress}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.searchIconText}>🔍</Text>
-        </TouchableOpacity>
-      )}
+
+      {/* Action Buttons */}
+      <View style={styles.actionsRow}>
+        {showSearch && (
+          <TouchableOpacity
+            style={styles.searchButton}
+            onPress={onSearchPress}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.searchIconText}>🔍</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 68,
     backgroundColor: THEME.colors.background,
     borderBottomWidth: 1,
     borderBottomColor: THEME.colors.cardBorder,
@@ -46,25 +62,69 @@ const styles = StyleSheet.create({
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: THEME.spacing.sm,
+    gap: THEME.spacing.md,
   },
-  badgeIndicator: {
-    width: 4,
-    height: 22,
-    backgroundColor: THEME.colors.primary,
-    borderRadius: 2,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: THEME.colors.white,
-    letterSpacing: 0.5,
-  },
-  searchButton: {
+  logoBadge: {
     width: 38,
     height: 38,
-    borderRadius: THEME.radius.full,
-    backgroundColor: THEME.colors.card,
+    borderRadius: 12,
+    backgroundColor: THEME.colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: THEME.colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  logoEmoji: {
+    fontSize: 20,
+  },
+  titleColumn: {
+    justifyContent: 'center',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  titleText: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: THEME.colors.white,
+    letterSpacing: -0.5,
+  },
+  dot: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: THEME.colors.primary,
+  },
+  liveIndicatorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginTop: 2,
+  },
+  liveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: THEME.colors.emerald,
+  },
+  liveText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: THEME.colors.textMuted,
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: THEME.spacing.sm,
+  },
+  searchButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
     borderColor: THEME.colors.cardBorder,
     alignItems: 'center',

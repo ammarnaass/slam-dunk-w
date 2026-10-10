@@ -6,39 +6,63 @@ import { THEME } from '../constants/theme';
 interface AnimeCardProps {
   anime: Anime;
   onPress: (anime: Anime) => void;
+  cardWidth?: number;
 }
 
-export const AnimeCard: React.FC<AnimeCardProps> = ({ anime, onPress }) => {
+export const AnimeCard: React.FC<AnimeCardProps> = ({ anime, onPress, cardWidth = 155 }) => {
+  const isOngoing = anime.status?.toLowerCase() === 'ongoing' || anime.status === 'مستمر';
+
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, { width: cardWidth }]}
       onPress={() => onPress(anime)}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
     >
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: anime.coverImage || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTxpjOV_-f3YQQLUb_T_57HXpyZ4NIlMatMg&s' }}
+          source={{ uri: anime.coverImage || anime.bannerImage || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTxpjOV_-f3YQQLUb_T_57HXpyZ4NIlMatMg&s' }}
           style={styles.image}
           resizeMode="cover"
         />
-        {anime.type && (
-          <View style={styles.typeBadge}>
-            <Text style={styles.typeText}>{anime.type}</Text>
+
+        {/* Top Badges */}
+        <View style={styles.topBadgesRow}>
+          {anime.type ? (
+            <View style={styles.typeBadge}>
+              <Text style={styles.typeText}>{anime.type}</Text>
+            </View>
+          ) : <View />}
+
+          <View style={[styles.statusBadge, isOngoing ? styles.ongoingBadge : styles.completedBadge]}>
+            <View style={[styles.statusDot, isOngoing ? styles.ongoingDot : styles.completedDot]} />
+            <Text style={styles.statusText}>{isOngoing ? 'مستمر' : 'مكتمل'}</Text>
           </View>
-        )}
+        </View>
+
+        {/* Bottom Poster Gradient Info */}
+        <View style={styles.bottomPosterInfo}>
+          <View style={styles.episodesPill}>
+            <Text style={styles.episodesPillText}>
+              {anime.totalEpisodes ? `${anime.totalEpisodes} حلقة` : 'FHD'}
+            </Text>
+          </View>
+
+          {anime.releaseYear && (
+            <Text style={styles.yearText}>{anime.releaseYear}</Text>
+          )}
+        </View>
       </View>
+
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={1}>
           {anime.title}
         </Text>
-        <View style={styles.metaRow}>
-          {anime.releaseYear && (
-            <Text style={styles.metaText}>📅 {anime.releaseYear}</Text>
-          )}
-          {anime.totalEpisodes && (
-            <Text style={styles.metaText}>🎬 {anime.totalEpisodes} حلقة</Text>
-          )}
-        </View>
+
+        <Text style={styles.subtext} numberOfLines={1}>
+          {Array.isArray(anime.genres) && anime.genres.length > 0
+            ? anime.genres.join(' • ')
+            : 'رياضي • إثارة • كوميديا'}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -46,13 +70,17 @@ export const AnimeCard: React.FC<AnimeCardProps> = ({ anime, onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 150,
     backgroundColor: THEME.colors.card,
     borderRadius: THEME.radius.lg,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: THEME.colors.cardBorder,
     marginRight: THEME.spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   imageContainer: {
     width: '100%',
@@ -64,36 +92,103 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  typeBadge: {
+  topBadgesRow: {
     position: 'absolute',
     top: 6,
+    left: 6,
     right: 6,
-    backgroundColor: 'rgba(220, 38, 38, 0.9)',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  typeBadge: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: THEME.radius.sm,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   typeText: {
     color: THEME.colors.white,
     fontSize: 9,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 12,
+    gap: 4,
+  },
+  ongoingBadge: {
+    backgroundColor: 'rgba(14, 165, 233, 0.25)',
+  },
+  completedBadge: {
+    backgroundColor: 'rgba(16, 185, 129, 0.25)',
+  },
+  statusDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+  },
+  ongoingDot: {
+    backgroundColor: THEME.colors.sky,
+  },
+  completedDot: {
+    backgroundColor: THEME.colors.emerald,
+  },
+  statusText: {
+    color: THEME.colors.white,
+    fontSize: 9,
+    fontWeight: '700',
+  },
+  bottomPosterInfo: {
+    position: 'absolute',
+    bottom: 6,
+    left: 6,
+    right: 6,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  episodesPill: {
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  episodesPillText: {
+    color: THEME.colors.white,
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  yearText: {
+    color: THEME.colors.textMuted,
+    fontSize: 10,
+    fontWeight: '600',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 4,
   },
   info: {
     padding: THEME.spacing.sm,
   },
   title: {
-    color: THEME.colors.white,
     fontSize: 13,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    color: THEME.colors.white,
     textAlign: 'right',
   },
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 4,
-  },
-  metaText: {
-    color: THEME.colors.textDim,
+  subtext: {
     fontSize: 10,
+    color: THEME.colors.textMuted,
+    marginTop: 2,
+    textAlign: 'right',
   },
 });

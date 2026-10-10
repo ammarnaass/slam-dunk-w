@@ -1,7 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { Character } from '../types';
 import { THEME } from '../constants/theme';
+import { fetchCharacters } from '../services/api';
 
 const DEFAULT_CHARACTERS: Character[] = [
   {
@@ -67,36 +68,77 @@ const DEFAULT_CHARACTERS: Character[] = [
 ];
 
 export const CharactersScreen: React.FC = () => {
+  const [characters, setCharacters] = useState<Character[]>(DEFAULT_CHARACTERS);
+  const [selectedTeam, setSelectedTeam] = useState<string>('all');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchCharacters().then((data) => {
+      if (data && data.length > 0) {
+        setCharacters(data);
+      }
+    });
+  }, []);
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Header Banner */}
       <View style={styles.headerBox}>
-        <Text style={styles.headerTitle}>فريق مدرسة شوهوكو لكرة السلة</Text>
+        <View style={styles.badgeRow}>
+          <Text style={styles.badgeText}>🏀 بطولة المدارس الوطنية</Text>
+        </View>
+        <Text style={styles.headerTitle}>لاعبي وشخصيات سلام دانك</Text>
         <Text style={styles.headerSubtitle}>
-          الخماسي الأسطوري الذي تحدى أقوى فرق كاناغاوا واليابان
+          صقور شوهوكو والنجوم الأسطوريين الذين تنافسوا على زعامة كاناغاوا واليابان.
         </Text>
       </View>
 
+      {/* Characters Cards List */}
       <View style={styles.list}>
-        {DEFAULT_CHARACTERS.map((char) => (
+        {characters.map((char) => (
           <View key={char.id} style={styles.card}>
-            <Image source={{ uri: char.image }} style={styles.avatar} />
-            <View style={styles.details}>
-              <View style={styles.titleRow}>
-                <View style={styles.numBadge}>
-                  <Text style={styles.numText}>#{char.number}</Text>
-                </View>
-                <Text style={styles.name}>{char.name_ar}</Text>
+            <View style={styles.cardHeader}>
+              <View style={styles.avatarWrap}>
+                <Image
+                  source={{ uri: char.image || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLg6JNKL3cZxeOj-F7SW7gLj9x7iPVm4yGTw&s' }}
+                  style={styles.avatar}
+                  resizeMode="cover"
+                />
+                {char.number && (
+                  <View style={styles.numberBadge}>
+                    <Text style={styles.numberText}>#{char.number}</Text>
+                  </View>
+                )}
               </View>
-              <Text style={styles.position}>{char.position}</Text>
-              <Text style={styles.role}>{char.role}</Text>
-              <Text style={styles.desc} numberOfLines={3}>
-                {char.description}
-              </Text>
+
+              <View style={styles.titleArea}>
+                <Text style={styles.charName}>{char.name_ar || char.name}</Text>
+                {char.name_en && (
+                  <Text style={styles.charEnName}>{char.name_en}</Text>
+                )}
+                <View style={styles.roleRow}>
+                  <Text style={styles.charRole}>{char.role || char.position || 'لاعب'}</Text>
+                </View>
+              </View>
+            </View>
+
+            {char.description && (
+              <Text style={styles.charDesc}>{char.description}</Text>
+            )}
+
+            <View style={styles.cardFooter}>
+              <View style={styles.teamPill}>
+                <Text style={styles.teamPillText}>{char.team || 'فريق شوهوكو'}</Text>
+              </View>
+              {char.position && (
+                <View style={styles.positionPill}>
+                  <Text style={styles.positionPillText}>{char.position}</Text>
+                </View>
+              )}
             </View>
           </View>
         ))}
       </View>
-      <View style={{ height: 40 }} />
     </ScrollView>
   );
 };
@@ -105,88 +147,151 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: THEME.colors.background,
+    padding: THEME.spacing.lg,
   },
   headerBox: {
     padding: THEME.spacing.lg,
-    backgroundColor: THEME.colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: THEME.colors.cardBorder,
+    backgroundColor: THEME.colors.card,
+    borderRadius: THEME.radius.xl,
+    borderWidth: 1,
+    borderColor: THEME.colors.cardBorder,
+    marginBottom: THEME.spacing.xl,
+  },
+  badgeRow: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(220, 38, 38, 0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  badgeText: {
+    color: THEME.colors.primaryLight,
+    fontSize: 11,
+    fontWeight: '800',
   },
   headerTitle: {
+    fontSize: 20,
+    fontWeight: '900',
     color: THEME.colors.white,
-    fontSize: 18,
-    fontWeight: 'bold',
     textAlign: 'right',
+    marginBottom: 6,
   },
   headerSubtitle: {
-    color: THEME.colors.textMuted,
     fontSize: 12,
-    marginTop: 4,
+    color: THEME.colors.textMuted,
     textAlign: 'right',
+    lineHeight: 18,
   },
   list: {
-    padding: THEME.spacing.lg,
+    paddingBottom: 40,
     gap: THEME.spacing.md,
   },
   card: {
     backgroundColor: THEME.colors.card,
     borderRadius: THEME.radius.lg,
-    padding: THEME.spacing.md,
+    padding: THEME.spacing.lg,
     borderWidth: 1,
     borderColor: THEME.colors.cardBorder,
-    flexDirection: 'row-reverse',
-    gap: THEME.spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  avatar: {
-    width: 90,
-    height: 110,
-    borderRadius: THEME.radius.md,
-    backgroundColor: THEME.colors.surface,
-  },
-  details: {
-    flex: 1,
-  },
-  titleRow: {
+  cardHeader: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: THEME.spacing.sm,
+    gap: THEME.spacing.md,
   },
-  name: {
-    color: THEME.colors.white,
-    fontSize: 15,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'right',
+  avatarWrap: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    position: 'relative',
+    backgroundColor: THEME.colors.surface,
+    borderWidth: 2,
+    borderColor: THEME.colors.primary,
   },
-  numBadge: {
+  avatar: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 34,
+  },
+  numberBadge: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
     backgroundColor: THEME.colors.primary,
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: THEME.radius.sm,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: THEME.colors.card,
   },
-  numText: {
+  numberText: {
     color: THEME.colors.white,
-    fontSize: 11,
-    fontWeight: 'bold',
+    fontSize: 10,
+    fontWeight: '900',
   },
-  position: {
-    color: THEME.colors.orange,
-    fontSize: 11,
-    fontWeight: '600',
-    marginTop: 2,
-    textAlign: 'right',
+  titleArea: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
-  role: {
-    color: THEME.colors.textMuted,
-    fontSize: 11,
-    marginTop: 2,
-    textAlign: 'right',
+  charName: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: THEME.colors.white,
   },
-  desc: {
+  charEnName: {
+    fontSize: 11,
     color: THEME.colors.textDim,
+    marginTop: 1,
+  },
+  roleRow: {
+    marginTop: 4,
+  },
+  charRole: {
     fontSize: 11,
-    marginTop: 6,
-    lineHeight: 16,
+    fontWeight: '700',
+    color: THEME.colors.primaryLight,
+  },
+  charDesc: {
+    fontSize: 11,
+    color: THEME.colors.textSecondary,
     textAlign: 'right',
+    lineHeight: 18,
+    marginTop: THEME.spacing.md,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 8,
+    marginTop: THEME.spacing.md,
+    paddingTop: THEME.spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  teamPill: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  teamPillText: {
+    color: THEME.colors.textMuted,
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  positionPill: {
+    backgroundColor: 'rgba(220, 38, 38, 0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  positionPillText: {
+    color: THEME.colors.primaryLight,
+    fontSize: 10,
+    fontWeight: '700',
   },
 });
