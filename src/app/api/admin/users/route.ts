@@ -37,7 +37,29 @@ export async function GET() {
 
         return NextResponse.json(safeUsers);
     } catch (error) {
-        console.error("Admin Users GET Error:", error);
+        console.warn("Admin Users GET Error, falling back to local users:", error);
+        try {
+            const fs = await import("fs");
+            const path = await import("path");
+            const filePath = path.join(process.cwd(), "src/data/users.json");
+            if (fs.existsSync(filePath)) {
+                const users = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+                const safeUsers = users.map((user: any) => ({
+                    id: user.id,
+                    name: user.name,
+                    username: user.name,
+                    email: user.email,
+                    role: user.role,
+                    avatar: user.avatar,
+                    profileImage: user.avatar,
+                    createdAt: user.createdAt,
+                    subscription: user.subscription
+                }));
+                return NextResponse.json(safeUsers);
+            }
+        } catch (fallbackError) {
+            console.error("Local fallback failed:", fallbackError);
+        }
         return NextResponse.json({
             error: "Internal Server Error",
             details: error instanceof Error ? error.message : "Unknown error"

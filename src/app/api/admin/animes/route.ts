@@ -10,7 +10,19 @@ export async function GET() {
         });
         return NextResponse.json(animes);
     } catch (error) {
-        console.error("Admin Animes GET Error:", error);
+        console.warn("Admin Animes GET Error, using local fallback:", error);
+        try {
+            const fs = await import("fs");
+            const path = await import("path");
+            const filePath = path.join(process.cwd(), "src/data/animes.json");
+            if (fs.existsSync(filePath)) {
+                const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+                const list = Array.isArray(data) ? data : (data.animes || []);
+                return NextResponse.json(list);
+            }
+        } catch (fallbackError) {
+            console.error("Local JSON fallback failed:", fallbackError);
+        }
         return NextResponse.json({ error: "Failed to fetch animes" }, { status: 500 });
     }
 }
