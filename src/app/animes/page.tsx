@@ -6,13 +6,7 @@ import {
     Search, 
     X, 
     SlidersHorizontal, 
-    Sparkles, 
-    Film, 
-    Tv, 
-    Flame, 
-    RotateCcw,
-    Layers,
-    CheckCircle2
+    RotateCcw
 } from "lucide-react";
 import AnimeCard from "@/components/AnimeCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -110,11 +104,6 @@ export default function AnimesListPage() {
             });
     }, [animes, searchQuery, selectedGenre, selectedStatus, sortBy]);
 
-    // Total counts for stats
-    const totalEpisodesCount = useMemo(() => {
-        return animes.reduce((acc, curr) => acc + (curr.totalEpisodes || 0), 0);
-    }, [animes]);
-
     const hasActiveFilters = searchQuery !== "" || selectedGenre !== "all" || selectedStatus !== "all" || sortBy !== "latest";
 
     const resetFilters = () => {
@@ -134,68 +123,19 @@ export default function AnimesListPage() {
                 <Breadcrumbs customLabels={{ animes: "دليل الأنميات" }} />
             </div>
 
-            {/* Hero Header Section */}
-            <header className="relative pt-8 pb-10 sm:py-12 border-b border-slate-900">
-                <div className="container mx-auto px-4">
-                    <div className="max-w-4xl">
-                        {/* Top Badge */}
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-950/60 border border-red-800/40 text-red-400 text-xs font-semibold mb-4 backdrop-blur-md">
-                            <Sparkles size={13} className="animate-pulse" />
-                            <span>مكتبة الأنمي الشاملة</span>
-                        </div>
-
-                        {/* Title */}
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4">
-                            دليل مسلسلات وأفلام <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-rose-500 to-orange-500">الأنمي</span>
+            {/* Page Title Header */}
+            <header className="relative py-6 border-b border-slate-900 bg-slate-950/40 backdrop-blur-sm">
+                <div className="container mx-auto px-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-8 bg-red-600 rounded-full" />
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                            دليل الأنميات
                         </h1>
-
-                        {/* Subtitle */}
-                        <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl">
-                            استكشف أروع أعمال الأنمي الكلاسيكية والحديثة بأعلى دقة عرض وترجمة احترافية، مع دعم السيرفرات المتعددة والمشاهدة السلسة بدون إعلانات.
-                        </p>
-
-                        {/* Stats Row */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-6 border-t border-slate-900">
-                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-                                <div className="p-2.5 rounded-lg bg-red-600/10 text-red-500">
-                                    <Tv size={18} />
-                                </div>
-                                <div>
-                                    <div className="text-lg font-bold text-white">{animes.length || "2"}</div>
-                                    <div className="text-[11px] text-slate-400">أعمال متاحة</div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-                                <div className="p-2.5 rounded-lg bg-rose-600/10 text-rose-500">
-                                    <Film size={18} />
-                                </div>
-                                <div>
-                                    <div className="text-lg font-bold text-white">{totalEpisodesCount > 0 ? `+${totalEpisodesCount}` : "+250"}</div>
-                                    <div className="text-[11px] text-slate-400">حلقة مترجمة</div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-                                <div className="p-2.5 rounded-lg bg-amber-600/10 text-amber-500">
-                                    <Layers size={18} />
-                                </div>
-                                <div>
-                                    <div className="text-lg font-bold text-white">FHD 1080p</div>
-                                    <div className="text-[11px] text-slate-400">أعلى جودة</div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
-                                <div className="p-2.5 rounded-lg bg-emerald-600/10 text-emerald-500">
-                                    <CheckCircle2 size={18} />
-                                </div>
-                                <div>
-                                    <div className="text-lg font-bold text-white">سيرفرات سريعة</div>
-                                    <div className="text-[11px] text-slate-400">مشاهدة مباشرة</div>
-                                </div>
-                            </div>
-                        </div>
+                        {!loading && (
+                            <span className="text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full font-semibold">
+                                {animes.length} أعمال
+                            </span>
+                        )}
                     </div>
                 </div>
             </header>
