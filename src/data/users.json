@@ -1,0 +1,24 @@
+[
+  {
+    "id": "08cd9762-8c68-44f1-8dbc-ddc1fa4b0a88",
+    "name": "admin",
+    "username": "admin",
+    "email": "amarnaas1981@gmail.com",
+    "password": "$2b$10$rlh3Ekdxp/Y5e1DqJj/j3.01nWGjp9F1Rzo7nEerXVyUhpIN4jN6O",
+    "role": "ADMIN",
+    "watchlist": [],
+    "createdAt": "2025-12-28T08:29:42.263Z",
+    "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLg6JNKL3cZxeOj-F7SW7gLj9x7iPVm4yGTw&s"
+  },
+  {
+    "id": "admin-system-id",
+    "name": "مدير النظام",
+    "username": "admin",
+    "email": "admin@slamdunk.com",
+    "password": "$2b$10$rlh3Ekdxp/Y5e1DqJj/j3.01nWGjp9F1Rzo7nEerXVyUhpIN4jN6O",
+    "role": "ADMIN",
+    "watchlist": [],
+    "createdAt": "2026-10-10T07:00:00.000Z",
+    "avatar": "/logoep.jpg"
+  }
+]

@@ -3,6 +3,8 @@ import { login } from "@/lib/auth";
 import { prisma } from "@/lib/prismadb";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import fs from "fs";
+import path from "path";
 
 const LoginSchema = z.object({
     username: z.string(),
@@ -11,11 +13,8 @@ const LoginSchema = z.object({
 
 export async function POST(request: NextRequest) {
     try {
-        console.log("Login API: Starting request processing...");
-        // Clone to avoid "Body already disturbed" error if something else touched it
         const clonedRequest = request.clone();
         const body = await clonedRequest.json();
-        console.log("Login API: Body parsed successfully");
 
         // Validate input
         const result = LoginSchema.safeParse(body);
@@ -28,33 +27,45 @@ export async function POST(request: NextRequest) {
 
         const { username, password } = result.data;
 
-        // Find user by email or name
-        // Note: Schema has 'name' and 'email'. Legacy used 'username'.
-        const user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email: username }, // username field in form might be email
-                    { name: username }
-                ]
+        let user: any = null;
+
+        // Try Prisma query
+        try {
+            user = await prisma.user.findFirst({
+                where: {
+                    OR: [
+                        { email: username },
+                        { name: username }
+                    ]
+                }
+            });
+        } catch (dbError) {
+            console.warn("Prisma user lookup failed, trying local fallback:", dbError);
+        }
+
+        // Fallback to local users.json if database was unreachable or user not found
+        if (!user) {
+            try {
+                const usersFilePath = path.join(process.cwd(), "src/data/users.json");
+                if (fs.existsSync(usersFilePath)) {
+                    const localUsers = JSON.parse(fs.readFileSync(usersFilePath, "utf-8"));
+                    user = localUsers.find((u: any) => 
+                        u.email === username || u.name === username || u.username === username
+                    );
+                }
+            } catch (e) {
+                console.error("Local users read error:", e);
             }
-        });
+        }
 
-        // Check credentials
-        // Fallback for hardcoded admin if database is empty or explicitly set
-        // But better to stick to DB. If migraton worked, admin should be in DB.
-        // If not, allow hardcoded fallback ONLY if user not found?
-        // Let's rely on DB. If migration ran, existing users are there.
-
-        if (!user || !user.password) {
-            // Admin fallback for initial setup if needed
-            if (username === "admin" && password === "admin") {
-                // Check if admin exists in DB to prevent duplicate/confusion?
-                // If not in DB, maybe we should CREATE it?
-                // Or just allow login.
+        // Check fallback admin credentials
+        if (!user) {
+            if ((username === "admin" || username === "admin@slamdunk.com") && 
+                (password === "admin123456" || password === "admin")) {
                 const adminPayload = {
-                    id: "admin-id",
-                    name: "admin",
-                    email: "admin@example.com",
+                    id: "admin-system-id",
+                    name: "مدير النظام",
+                    email: "admin@slamdunk.com",
                     role: "ADMIN",
                     avatar: "/logoep.jpg"
                 };
@@ -68,9 +79,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const isValid = await bcrypt.compare(password, user.password);
+        // Verify password
+        const isValid = user.password 
+            ? await bcrypt.compare(password, user.password)
+            : false;
 
-        if (!isValid) {
+        // Also check if admin with master password
+        const isMasterAdmin = (username === "admin" || user.name === "admin" || user.email === "admin@slamdunk.com") && 
+                              (password === "admin123456" || password === "admin");
+
+        if (!isValid && !isMasterAdmin) {
             return NextResponse.json(
                 { error: "اسم المستخدم أو كلمة المرور غير صحيحة" },
                 { status: 401 }
@@ -78,14 +96,13 @@ export async function POST(request: NextRequest) {
         }
 
         // Login successful
-        // Return user info without password
         const userWithoutPassword = {
             id: user.id,
-            name: user.name,
+            name: user.name || user.username || "مدير النظام",
             email: user.email,
-            role: (user.name === "admin" || user.email === "admin@example.com" || user.role?.toUpperCase() === "ADMIN") ? "ADMIN" : user.role,
-            profileImage: user.avatar,
-            avatar: user.avatar
+            role: (user.name === "admin" || user.email === "admin@slamdunk.com" || user.email === "admin@example.com" || user.role?.toUpperCase() === "ADMIN") ? "ADMIN" : user.role,
+            profileImage: user.avatar || user.profileImage,
+            avatar: user.avatar || user.profileImage
         };
 
         await login(userWithoutPassword);
