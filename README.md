@@ -44,7 +44,7 @@ This project provides a premium streaming experience tailored for anime fans. It
 | Layer | Technologies |
 | :--- | :--- |
 | **Frontend (Web)** | Next.js 15 (App Router), TypeScript, Tailwind CSS, Lucide Icons |
-| **Mobile App** | Flutter, Dart |
+| **Mobile App** | React Native 0.87, Metro Bundler, TypeScript |
 | **Backend / API** | Next.js API Routes, Server Actions |
 | **Database** | Prisma ORM, PostgreSQL |
 | **Authentication** | JWT (Jose), Bcrypt, Google Cloud Console (OAuth 2.0) |
@@ -53,12 +53,13 @@ This project provides a premium streaming experience tailored for anime fans. It
 
 ---
 
-## 📱 Mobile Integration (Flutter)
+## 📱 Mobile Application (React Native + Metro)
 
-The project includes a native Flutter application (`/flutter_app`) that syncs perfectly with the web backend.
-- **Unified Auth**: Same account works on web and mobile.
-- **Cross-Platform Sync**: Watchlist and History sync across devices.
-- **Premium Design**: Material Design 3 implementation for a modern feel.
+The project includes a cross-platform React Native application (`/mobile_app`) powered by Metro Bundler that syncs seamlessly with the web backend.
+- **Metro Bundler**: Fast, scalable bundling with HMR (`npm start`).
+- **Complete Streaming Hub**: Watch all 101 episodes with multi-server playback and quality selection.
+- **Roster & Characters**: Interactive character profiles for Shohoku players.
+- **Cross-Platform**: Configured for Android and iOS with native performance.
 
 ---
 
