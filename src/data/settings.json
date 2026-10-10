@@ -1,6 +1,6 @@
 {
-  "siteName": "أنمي داز",
-  "siteDescription": "شاهد أحدث حلقات الأنمي بجودة عالية ومجاناً",
+  "siteName": "سلام دانك",
+  "siteDescription": "شاهد أحدث حلقات أنمي سلام دانك وأروع الأعمال بجودة عالية ومجاناً",
   "logoUrl": "",
   "faviconUrl": "",
   "currency": "EUR",
@@ -17,15 +17,34 @@
   ],
   "admob": {
     "isEnabled": false,
-    "appId": "",
-    "bannerId": "",
-    "interstitialId": ""
+    "appId": "ca-app-pub-3940256099942544~3347511713",
+    "bannerId": "ca-app-pub-3940256099942544/6300978111",
+    "interstitialId": "ca-app-pub-3940256099942544/1033173712",
+    "rewardedId": "ca-app-pub-3940256099942544/5224354917"
   },
   "apiApp": {
     "isMaintenance": false,
-    "maintenanceMessage": "التطبيق في وضع الصيانة حالياً. سنعود قريباً!",
-    "latestVersion": "1.0.0",
-    "updateUrl": "",
-    "apiUrl": "https://slam-dunk-w.vercel.app/api/mobile/v1"
+    "maintenanceTitle": "صيانة دورية مجدولة",
+    "maintenanceMessage": "التطبيق في وضع الصيانة حالياً لتحسين الخوادم. سنعود قريباً!",
+    "maintenanceEndTime": "",
+    "devBypassKey": "SLAM_DEV_2026",
+    "latestVersion": "1.2.0",
+    "latestBuild": 12,
+    "minSupportedVersion": "1.0.0",
+    "minSupportedBuild": 10,
+    "forceUpdate": false,
+    "updateUrl": "https://play.google.com/store/apps/details?id=com.slamdunk.app",
+    "directApkUrl": "https://slam-dunk-w.vercel.app/downloads/slamdunk-latest.apk",
+    "releaseNotes": [
+      "إضافة دعم سيرفرات المشاهدة بدقة FHD 1080p",
+      "تسريع تحميل وتشغيل الحلقات بنسبة 40%",
+      "تحسين واجهة المستخدم ودعم الاستئناف التلقائي"
+    ],
+    "apiUrl": "https://slam-dunk-w.vercel.app/api/mobile/v1",
+    "apiKey": "slam_live_app_key_2026",
+    "defaultQuality": "720p",
+    "defaultServer": "Mega",
+    "allowDownloads": true,
+    "interstitialInterval": 2
   }
 }
