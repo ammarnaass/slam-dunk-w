@@ -6,7 +6,7 @@ A professional, full-stack streaming platform for the "Slam Dunk" anime series, 
 
 ## 🌟 Overview
 
-This project provides a premium streaming experience tailored for anime fans. It combines a high-performance **Next.js 15 Web App** with a **Flutter Mobile App**, all powered by a robust **Prisma + PostgreSQL** backend.
+This project provides a premium streaming experience tailored for anime fans. It combines a high-performance **Next.js 15 Web App** with a **React Native Mobile App (Android)**, all powered by a robust **Prisma + PostgreSQL** backend.
 
 ### 🌐 Live Web App
 [https://slam-dunk-w.vercel.app](https://slam-dunk-w.vercel.app)

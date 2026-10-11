@@ -46,3 +46,12 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+# Executables & Binaries
+*.exe
+*.dll
+*.so
+
+# Build & Test outputs
+build_output*.txt
+*_test.json
