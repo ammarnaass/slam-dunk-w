@@ -1,194 +1,289 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Anime } from '../types';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Dimensions,
+} from 'react-native';
 import { THEME } from '../constants/theme';
+import { Anime } from '../types';
+import { Icon } from './Icon';
 
 interface AnimeCardProps {
   anime: Anime;
   onPress: (anime: Anime) => void;
+  width?: number;
   cardWidth?: number;
+  style?: any;
+  showDetails?: boolean;
 }
 
-export const AnimeCard: React.FC<AnimeCardProps> = ({ anime, onPress, cardWidth = 155 }) => {
-  const isOngoing = anime.status?.toLowerCase() === 'ongoing' || anime.status === 'مستمر';
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_GAP = 12;
+const CARD_WIDTH = (SCREEN_WIDTH - THEME.spacing.margin * 2 - CARD_GAP) / 2;
+
+export const AnimeCard: React.FC<AnimeCardProps> = ({
+  anime,
+  onPress,
+  width,
+  cardWidth,
+  style,
+  showDetails = true,
+}) => {
+  const finalWidth = cardWidth || width || CARD_WIDTH;
+  const isVip = anime.type === 'vip' || anime.ageRating === 'VIP' || anime.id === 'slam-dunk';
+  const isOngoing = anime.status === 'ongoing' || anime.status === 'مستمر';
+  const isCompleted = anime.status === 'completed' || anime.status === 'مكتمل';
+  const ratingValue = anime.rating || 9.4;
+  const epCount = anime.totalEpisodes || (anime.episodes ? anime.episodes.length : 101);
 
   return (
     <TouchableOpacity
-      style={[styles.container, { width: cardWidth }]}
+      style={[styles.container, { width: finalWidth }, style]}
       onPress={() => onPress(anime)}
       activeOpacity={0.85}
+      accessibilityRole="button"
+      accessibilityLabel={anime.title}
     >
-      <View style={styles.imageContainer}>
+      {/* 2:3 Poster Frame */}
+      <View style={[styles.posterFrame, { width: finalWidth, height: finalWidth * 1.5 }]}>
         <Image
-          source={{ uri: anime.coverImage || anime.bannerImage || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTxpjOV_-f3YQQLUb_T_57HXpyZ4NIlMatMg&s' }}
-          style={styles.image}
+          source={{ uri: anime.coverImage || anime.bannerImage }}
+          style={styles.poster}
           resizeMode="cover"
         />
 
-        {/* Top Badges */}
+        {/* Top Badges Row */}
         <View style={styles.topBadgesRow}>
-          {anime.type ? (
-            <View style={styles.typeBadge}>
-              <Text style={styles.typeText}>{anime.type}</Text>
-            </View>
-          ) : <View />}
-
-          <View style={[styles.statusBadge, isOngoing ? styles.ongoingBadge : styles.completedBadge]}>
-            <View style={[styles.statusDot, isOngoing ? styles.ongoingDot : styles.completedDot]} />
-            <Text style={styles.statusText}>{isOngoing ? 'مستمر' : 'مكتمل'}</Text>
-          </View>
-        </View>
-
-        {/* Bottom Poster Gradient Info */}
-        <View style={styles.bottomPosterInfo}>
-          <View style={styles.episodesPill}>
-            <Text style={styles.episodesPillText}>
-              {anime.totalEpisodes ? `${anime.totalEpisodes} حلقة` : 'FHD'}
+          {/* Resolution Badge */}
+          <View style={styles.badgeQuality}>
+            <Text style={styles.badgeQualityText}>
+              {isVip ? '1080p' : 'FHD'}
             </Text>
           </View>
 
-          {anime.releaseYear && (
-            <Text style={styles.yearText}>{anime.releaseYear}</Text>
-          )}
+          {/* VIP or Status Badge */}
+          {isVip ? (
+            <View style={styles.badgeVip}>
+              <Text style={styles.badgeVipText}>VIP</Text>
+            </View>
+          ) : isOngoing ? (
+            <View style={styles.badgeOngoing}>
+              <View style={styles.ongoingDot} />
+              <Text style={styles.badgeOngoingText}>مستمر</Text>
+            </View>
+          ) : isCompleted ? (
+            <View style={styles.badgeCompleted}>
+              <Text style={styles.badgeCompletedText}>مكتمل</Text>
+            </View>
+          ) : null}
+        </View>
+
+        {/* Bottom Vignette Overlay with Score and Ep Count */}
+        <View style={styles.scrimBottom}>
+          <View style={styles.scorePill}>
+            <Icon name="star" size={13} color={THEME.colors.secondary} filled />
+            <Text style={styles.scoreText}>{ratingValue.toFixed(1)}</Text>
+          </View>
+
+          <View style={styles.epPill}>
+            <Text style={styles.epText}>{epCount} حلقة</Text>
+          </View>
         </View>
       </View>
 
-      <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={1}>
-          {anime.title}
-        </Text>
+      {/* Card Info Details */}
+      {showDetails && (
+        <View style={styles.detailsContainer}>
+          <Text style={styles.title} numberOfLines={1}>
+            {anime.title}
+          </Text>
 
-        <Text style={styles.subtext} numberOfLines={1}>
-          {Array.isArray(anime.genres) && anime.genres.length > 0
-            ? anime.genres.join(' • ')
-            : 'رياضي • إثارة • كوميديا'}
-        </Text>
-      </View>
+          <Text style={styles.genres} numberOfLines={1}>
+            {anime.genres && anime.genres.length > 0
+              ? anime.genres.slice(0, 3).join(' • ')
+              : 'رياضي • كلاسيكي • سبيستون'}
+          </Text>
+
+          <View style={styles.metaRow}>
+            <View style={styles.dubTag}>
+              <Text style={styles.dubTagText}>
+                {anime.studio || 'مدبلج + مترجم'}
+              </Text>
+            </View>
+
+            <Text style={styles.yearText}>
+              {anime.releaseYear || 1993}
+            </Text>
+          </View>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: THEME.colors.card,
+    backgroundColor: THEME.colors.surfaceContainerLow,
     borderRadius: THEME.radius.lg,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: THEME.colors.cardBorder,
-    marginRight: THEME.spacing.md,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.6,
+    shadowRadius: 16,
+    elevation: 5,
+    marginBottom: THEME.spacing.spaceMd,
   },
-  imageContainer: {
-    width: '100%',
-    aspectRatio: 2 / 3,
+  posterFrame: {
     position: 'relative',
-    backgroundColor: THEME.colors.surface,
+    overflow: 'hidden',
+    backgroundColor: THEME.colors.surfaceContainerHighest,
   },
-  image: {
+  poster: {
     width: '100%',
     height: '100%',
   },
   topBadgesRow: {
     position: 'absolute',
-    top: 6,
-    left: 6,
-    right: 6,
+    top: 8,
+    left: 8,
+    right: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    zIndex: 2,
   },
-  typeBadge: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  badgeQuality: {
+    backgroundColor: 'rgba(10, 14, 22, 0.88)',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 4,
   },
-  typeText: {
-    color: THEME.colors.white,
-    fontSize: 9,
-    fontWeight: '800',
-    textTransform: 'uppercase',
+  badgeQualityText: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.onSurface,
+    fontWeight: '700',
   },
-  statusBadge: {
+  badgeVip: {
+    backgroundColor: THEME.colors.secondaryContainer,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    shadowColor: THEME.colors.secondaryContainer,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.45,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  badgeVipText: {
+    color: THEME.colors.onSecondary,
+    fontSize: 10,
+    fontWeight: '900',
+  },
+  badgeOngoing: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(16, 185, 129, 0.9)',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 12,
-    gap: 4,
-  },
-  ongoingBadge: {
-    backgroundColor: 'rgba(14, 165, 233, 0.25)',
-  },
-  completedBadge: {
-    backgroundColor: 'rgba(16, 185, 129, 0.25)',
-  },
-  statusDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
+    borderRadius: 4,
   },
   ongoingDot: {
-    backgroundColor: THEME.colors.sky,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#FFF',
   },
-  completedDot: {
-    backgroundColor: THEME.colors.emerald,
-  },
-  statusText: {
-    color: THEME.colors.white,
+  badgeOngoingText: {
+    color: '#FFF',
     fontSize: 9,
     fontWeight: '700',
   },
-  bottomPosterInfo: {
-    position: 'absolute',
-    bottom: 6,
-    left: 6,
-    right: 6,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  episodesPill: {
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+  badgeCompleted: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 4,
   },
-  episodesPillText: {
-    color: THEME.colors.white,
-    fontSize: 10,
+  badgeCompletedText: {
+    color: THEME.colors.onSurface,
+    fontSize: 9,
+    fontWeight: '600',
+  },
+  scrimBottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 52,
+    backgroundColor: 'rgba(15, 19, 28, 0.72)',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    padding: 8,
+  },
+  scorePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(10, 14, 22, 0.82)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  scoreText: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.secondary,
+    fontWeight: '700',
+  },
+  epPill: {
+    backgroundColor: 'rgba(10, 14, 22, 0.82)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  epText: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.onSurfaceVariant,
+  },
+  detailsContainer: {
+    padding: THEME.spacing.spaceSm,
+    gap: 2,
+  },
+  title: {
+    ...THEME.typography.headlineSm,
+    fontSize: 16,
+    color: THEME.colors.onSurface,
+    textAlign: 'right',
+  },
+  genres: {
+    ...THEME.typography.bodySm,
+    color: THEME.colors.onSurfaceVariant,
+    textAlign: 'right',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+    paddingTop: 4,
+  },
+  dubTag: {
+    backgroundColor: 'rgba(220, 38, 38, 0.12)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  dubTagText: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.primaryContainer,
     fontWeight: '700',
   },
   yearText: {
-    color: THEME.colors.textMuted,
-    fontSize: 10,
-    fontWeight: '600',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 4,
-  },
-  info: {
-    padding: THEME.spacing.sm,
-  },
-  title: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: THEME.colors.white,
-    textAlign: 'right',
-  },
-  subtext: {
-    fontSize: 10,
-    color: THEME.colors.textMuted,
-    marginTop: 2,
-    textAlign: 'right',
+    ...THEME.typography.labelSm,
+    color: THEME.colors.onSurfaceVariant,
   },
 });

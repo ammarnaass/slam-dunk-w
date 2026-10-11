@@ -1,43 +1,70 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Character } from '../types';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { THEME } from '../constants/theme';
+import { Character } from '../types';
 
 interface CharacterCardProps {
   character: Character;
-  onPress?: (char: Character) => void;
+  onPress?: (character: Character) => void;
   width?: number;
 }
 
-export const CharacterCard: React.FC<CharacterCardProps> = ({ character, onPress, width = 145 }) => {
+export const CharacterCard: React.FC<CharacterCardProps> = ({
+  character,
+  onPress,
+  width = 112,
+}) => {
+  const name = character.name_ar || character.name;
+  const jerseyNum = character.number || '';
+  const position = character.position || character.role || 'لاعب';
+  const nickname = character.description || 'بطل الصقور';
+
   return (
     <TouchableOpacity
       style={[styles.container, { width }]}
-      onPress={() => onPress && onPress(character)}
-      activeOpacity={0.85}
+      onPress={() => onPress?.(character)}
+      activeOpacity={0.8}
+      disabled={!onPress}
+      accessibilityRole="button"
+      accessibilityLabel={name}
     >
-      <View style={styles.avatarWrap}>
-        <Image
-          source={{ uri: character.image || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLg6JNKL3cZxeOj-F7SW7gLj9x7iPVm4yGTw&s' }}
-          style={styles.avatar}
-          resizeMode="cover"
-        />
-        {character.number && (
-          <View style={styles.numberBadge}>
-            <Text style={styles.numberText}>#{character.number}</Text>
-          </View>
-        )}
+      {/* Circle Avatar with jersey number band */}
+      <View style={styles.avatarWrapper}>
+        <View style={styles.avatarCircle}>
+          {character.image ? (
+            <Image
+              source={{ uri: character.image }}
+              style={styles.avatarImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.avatarPlaceholder}>
+              <Text style={styles.placeholderText}>{name?.charAt(0) || '؟'}</Text>
+            </View>
+          )}
+
+          {jerseyNum ? (
+            <View style={styles.jerseyBand}>
+              <Text style={styles.jerseyText}>#{jerseyNum}</Text>
+            </View>
+          ) : null}
+        </View>
       </View>
 
-      <View style={styles.info}>
-        <Text style={styles.name} numberOfLines={1}>
-          {character.name_ar || character.name}
-        </Text>
-        <Text style={styles.position} numberOfLines={1}>
-          {character.position || character.role || 'لاعب شوهوكو'}
-        </Text>
-        <Text style={styles.team} numberOfLines={1}>
-          {character.team || 'فريق الصقور'}
+      {/* Name */}
+      <Text style={styles.name} numberOfLines={1}>
+        {name}
+      </Text>
+
+      {/* Position */}
+      <Text style={styles.position} numberOfLines={1}>
+        {position}
+      </Text>
+
+      {/* Nickname / Badge */}
+      <View style={styles.badgePill}>
+        <Text style={styles.badgeText} numberOfLines={1}>
+          {nickname}
         </Text>
       </View>
     </TouchableOpacity>
@@ -46,71 +73,88 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character, onPress
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: THEME.colors.card,
+    backgroundColor: THEME.colors.surfaceContainer,
     borderRadius: THEME.radius.lg,
-    padding: THEME.spacing.md,
+    padding: 10,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: THEME.colors.cardBorder,
-    marginRight: THEME.spacing.md,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOpacity: 0.45,
+    shadowRadius: 10,
+    elevation: 4,
+    gap: 3,
   },
-  avatarWrap: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+  avatarWrapper: {
+    marginBottom: 4,
+  },
+  avatarCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    overflow: 'hidden',
+    backgroundColor: THEME.colors.surfaceContainerHigh,
     position: 'relative',
-    backgroundColor: THEME.colors.surface,
-    borderWidth: 2,
-    borderColor: THEME.colors.primary,
-    marginBottom: THEME.spacing.sm,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  avatar: {
+  avatarImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 36,
   },
-  numberBadge: {
-    position: 'absolute',
-    bottom: -4,
-    right: -4,
-    backgroundColor: THEME.colors.primary,
-    paddingHorizontal: 5,
-    paddingVertical: 1,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    borderColor: THEME.colors.background,
-  },
-  numberText: {
-    color: THEME.colors.white,
-    fontSize: 10,
-    fontWeight: '900',
-  },
-  info: {
-    alignItems: 'center',
+  avatarPlaceholder: {
     width: '100%',
+    height: '100%',
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  placeholderText: {
+    ...THEME.typography.headlineMd,
+    color: THEME.colors.onSurfaceVariant,
+  },
+  jerseyBand: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(220, 38, 38, 0.92)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 1,
+  },
+  jerseyText: {
+    color: THEME.colors.white,
+    fontSize: 9,
+    fontWeight: '800',
+    lineHeight: 11,
   },
   name: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: THEME.colors.white,
+    ...THEME.typography.titleMd,
+    fontSize: 15,
+    color: THEME.colors.onSurface,
     textAlign: 'center',
+    width: '100%',
   },
   position: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: THEME.colors.primaryLight,
-    marginTop: 2,
+    ...THEME.typography.labelSm,
+    fontSize: 11,
+    color: THEME.colors.primaryContainer,
     textAlign: 'center',
+    width: '100%',
   },
-  team: {
-    fontSize: 9,
-    color: THEME.colors.textMuted,
-    marginTop: 2,
+  badgePill: {
+    marginTop: 3,
+    width: '100%',
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+    borderRadius: THEME.radius.sm,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    alignItems: 'center',
+  },
+  badgeText: {
+    ...THEME.typography.labelSm,
+    fontSize: 10,
+    color: THEME.colors.onSurfaceVariant,
     textAlign: 'center',
   },
 });

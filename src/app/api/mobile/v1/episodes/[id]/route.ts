@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import { mobileSuccess, mobileError } from "@/lib/mobile-api";
 import { prisma } from "@/lib/prismadb";
+import fs from "fs";
+import path from "path";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
     req: NextRequest,
@@ -8,20 +12,69 @@ export async function GET(
 ) {
     try {
         const { id } = await params;
+        let episode: any = null;
 
-        const episode = await prisma.episode.findUnique({
-            where: { id: id },
-            include: {
-                servers: true,
-                anime: {
-                    select: {
-                        id: true,
-                        title: true,
-                        coverImage: true
+        try {
+            episode = await prisma.episode.findUnique({
+                where: { id: id },
+                include: {
+                    servers: true,
+                    anime: {
+                        select: {
+                            id: true,
+                            title: true,
+                            coverImage: true
+                        }
                     }
                 }
+            });
+        } catch (dbErr) {
+            console.warn(`Prisma error for episode [${id}], attempting local fallback:`, dbErr);
+        }
+
+        if (!episode) {
+            try {
+                const episodesPath = path.join(process.cwd(), "src/data/episodes.json");
+                const animesPath = path.join(process.cwd(), "src/data/animes.json");
+
+                if (fs.existsSync(episodesPath)) {
+                    const epList = JSON.parse(fs.readFileSync(episodesPath, "utf-8"));
+                    const found = epList.find((ep: any) => ep.id === id || ep.episode_number?.toString() === id);
+                    if (found) {
+                        let animeTitle = "سلام دانك";
+                        let animeCover = "/hero-bg.jpg";
+
+                        if (fs.existsSync(animesPath)) {
+                            const animes = JSON.parse(fs.readFileSync(animesPath, "utf-8"));
+                            const animeFound = animes.find((a: any) => a.id === (found.animeId || "slam-dunk"));
+                            if (animeFound) {
+                                animeTitle = animeFound.title;
+                                animeCover = animeFound.coverImage;
+                            }
+                        }
+
+                        episode = {
+                            id: found.id,
+                            title: found.title,
+                            thumbnail: found.thumbnail || "/logoep.jpg",
+                            duration: found.duration || "23:30",
+                            createdAt: new Date().toISOString(),
+                            animeId: found.animeId || "slam-dunk",
+                            animeTitle,
+                            animeCover,
+                            servers: found.mega_link ? [{
+                                id: "srv-mega",
+                                name: "سيرفر Mega الرسمي",
+                                url: found.mega_link,
+                                quality: "1080p FHD"
+                            }] : []
+                        };
+                    }
+                }
+            } catch (fallbackErr) {
+                console.error("Local episode fallback failed:", fallbackErr);
             }
-        });
+        }
 
         if (!episode) {
             return mobileError("الحلقة غير موجودة", 404);
@@ -32,29 +85,19 @@ export async function GET(
             title: episode.title,
             thumbnail: episode.thumbnail || episode.anime?.coverImage,
             duration: episode.duration,
-            createdAt: episode.createdAt.toISOString(),
+            createdAt: typeof episode.createdAt === 'string' ? episode.createdAt : episode.createdAt?.toISOString(),
             animeId: episode.animeId,
-            animeTitle: episode.anime?.title,
-            servers: episode.servers.map(s => ({
+            animeTitle: episode.animeTitle || episode.anime?.title,
+            servers: (episode.servers || []).map((s: any) => ({
+                id: s.id,
                 name: s.name,
                 url: s.url,
-                quality: s.quality
-            })),
-            // Fallback for direct videoUrl if no servers are migrated yet but exists in legacy or logic
-            // In schema we have videoUrl on Episode? Let's check schema.
-            // Schema has `thumbnail`, `duration`, `servers`. It does NOT have videoUrl on Episode model directly in the simplified version I wrote?
-            // Wait, let me check schema again. `model Episode { ... servers Server[] }`.
-            // Ah, I recall `fields: [animeId]`.
-            // If the JSON had `videoUrl` directly on episode, my migration script might have missed it if I didn't add it to schema.
-            // Let's check `prisma/schema.prisma` content I wrote earlier.
-            // It has `thumbnail String?`. It does NOT have `videoUrl` column in Episode model.
-            // It has `servers`.
-            // The JSON migration `ep.servers` was migrated.
-            // The `api/mobile/v1/watch` might be the one handling video extraction.
+                quality: s.quality || "720p"
+            }))
         });
 
     } catch (error) {
-        console.error("Mobile V1 Episode Details API (Prisma) Error:", error);
+        console.error("Mobile V1 Episode Details API Error:", error);
         return mobileError("حدث خطأ أثناء جلب تفاصيل الحلقة", 500);
     }
 }

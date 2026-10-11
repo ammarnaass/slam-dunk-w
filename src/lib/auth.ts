@@ -48,6 +48,17 @@ export async function logout() {
 }
 
 export async function verifyAuth(request: Request) {
+    // 1. Check Bearer token from header (for mobile apps & API clients)
+    const authHeader = request.headers.get("authorization") || request.headers.get("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+        const token = authHeader.substring(7).trim();
+        const payload = await decrypt(token);
+        if (payload && payload.user) {
+            return payload.user;
+        }
+    }
+
+    // 2. Check session cookie (for web clients)
     const session = await getSession();
     if (!session || !session.user) return null;
     return session.user;

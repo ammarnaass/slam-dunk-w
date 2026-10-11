@@ -22,6 +22,24 @@ export interface Episode {
   servers?: Server[];
 }
 
+export interface AnimeReview {
+  id: string;
+  userName: string;
+  userAvatar?: string;
+  rating: number; // 1 to 10
+  comment: string;
+  createdAt: string;
+  isVip?: boolean;
+}
+
+export interface AnimeRatingMetrics {
+  overallScore: number;
+  totalVotes: number;
+  storyScore: number;
+  animationScore: number;
+  soundScore: number;
+}
+
 export interface Anime {
   id: string;
   title: string;
@@ -34,7 +52,12 @@ export interface Anime {
   totalEpisodes?: number;
   genres?: string[];
   rating?: number;
+  studio?: string;
+  ageRating?: string;
+  ratingMetrics?: AnimeRatingMetrics;
+  reviews?: AnimeReview[];
   isFeatured?: boolean;
+  episodes?: Episode[];
 }
 
 export interface Character {
@@ -57,6 +80,8 @@ export interface AppSettings {
   apiApp?: {
     latestVersion?: string;
     updateUrl?: string;
+    isMaintenance?: boolean;
+    maintenanceMessage?: string;
   };
 }
 
@@ -66,4 +91,25 @@ export interface HomeApiResponse {
   ongoing?: Anime[];
   sections?: { title: string; items: any[] }[];
   settings?: AppSettings;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string | null;
+  isVip?: boolean;
+  planType?: string;
+  token?: string;
+  watchlist?: string[];
+}
+
+export interface WatchHistoryItem {
+  id?: string;
+  userId: string;
+  animeId: string;
+  episodeId: string;
+  progress: number;
+  watchedAt: string;
 }

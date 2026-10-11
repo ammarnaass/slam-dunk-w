@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#0f131c;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0f131c","on-background":"#dfe2ee","on-primary-fixed":"#410002","surface":"#0f131c","tertiary-container":"#d63135","on-primary-container":"#fff6f5","tertiary":"#ffb3ad","secondary-fixed":"#ffddb8","on-tertiary":"#68000a","secondary-fixed-dim":"#ffb95f","inverse-surface":"#dfe2ee","tertiary-fixed":"#ffdad7","surface-variant":"#31353e","surface-container-lowest":"#0a0e16","surface-container-low":"#181c24","on-primary":"#690005","surface-container-highest":"#31353e","surface-bright":"#353942","on-surface-variant":"#e6bdb8","surface-container-high":"#262a33","secondary":"#ffb95f","inverse-primary":"#bf0715","on-tertiary-fixed":"#410004","inverse-on-surface":"#2c3039","primary-fixed":"#ffdad6","outline":"#ac8884","surface-container":"#1c2028","primary-container":"#dc2626","secondary-container":"#ee9800","on-surface":"#dfe2ee","on-tertiary-fixed-variant":"#930013","on-secondary":"#472a00","on-tertiary-container":"#fff6f5","on-primary-fixed-variant":"#93000b","surface-tint":"#ffb4ab","tertiary-fixed-dim":"#ffb3ad","primary-fixed-dim":"#ffb4ab","outline-variant":"#5c403c","error-container":"#93000a","primary":"#ffb4ab","surface-dim":"#0f131c","on-secondary-container":"#5b3800","on-secondary-fixed":"#2a1700","on-error":"#690005","on-secondary-fixed-variant":"#653e00","on-error-container":"#ffdad6","error":"#ffb4ab"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"gutter":"1rem","margin":"1.25rem","space-md":"1rem","space-lg":"1.5rem","space-xs":"0.25rem","space-xl":"2.25rem","space-sm":"0.5rem"},fontFamily:{"label-sm":["IBM Plex Sans"],"display-hero-mobile":["IBM Plex Sans"],"headline-lg":["IBM Plex Sans"],"body-sm":["IBM Plex Sans"],"body-lg":["IBM Plex Sans"],"body-md":["IBM Plex Sans"],"display-hero":["IBM Plex Sans"],"label-md":["IBM Plex Sans"],"headline-md":["IBM Plex Sans"],"label-lg":["IBM Plex Sans"],"headline-sm":["IBM Plex Sans"],"title-md":["IBM Plex Sans"]},fontSize:{"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.5px","fontWeight":"700"}],"display-hero-mobile":["28px",{"lineHeight":"38px","fontWeight":"800"}],"headline-lg":["26px",{"lineHeight":"36px","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"display-hero":["36px",{"lineHeight":"46px","fontWeight":"800"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"600"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"20px","fontWeight":"600"}],"headline-sm":["18px",{"lineHeight":"26px","fontWeight":"600"}],"title-md":["16px",{"lineHeight":"24px","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_4px_20px_rgba(0,0,0,0.5)]"><div class="h-16 px-space-sm flex items-center justify-between"><div class="flex items-center gap-space-sm"><button class="w-11 h-11 flex items-center justify-center text-on-surface hover:text-primary transition-colors rounded-full" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_forward</span></button><div class="flex items-center gap-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1UqLVIEiU9HTEZwLj5XT18efMovYDsIt0odDPiQwRI-2kSKsB6LtCjmqPZKVvQ6hWVGxw8P1ll2jKa324hpg-MPBcPpyYNDTVuLhePTwl4fG2RHdUiiXdafOKHAnwXRb4iJN1-buVYoIF1ZMuRQlVpPuQnavyAGOiyfIp8UUtgnVtn3PcxcptuY9g7r3f6BgRGNIUCHpLP8UHcWOlrIU31Ad_Zalj5GaLbZgRWAI593ZFgg1EYzM0vqAko"/><h1 class="font-headline-sm text-headline-sm text-on-surface truncate">Video Player</h1></div></div><div class="flex items-center gap-space-xs"><button class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors rounded-full"><span class="material-symbols-outlined text-[22px]">share</span></button><button class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors rounded-full"><span class="material-symbols-outlined text-[22px]">bookmark_border</span></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 bg-surface pb-safe"><div class="flex flex-col w-full text-on-surface">
+<!-- مشغل الفيديو السينمائي المدمج -->
+<div class="relative w-full aspect-video bg-surface-container-lowest overflow-hidden shadow-2xl group select-none">
+<img class="w-full h-full object-cover opacity-85" data-alt="Cinematic high adrenaline anime frame from Slam Dunk basketball anime match featuring red-haired player Hanamichi Sakuragi mid-air for a dramatic rebound jump against fierce rival team, intense stadium lighting, cinematic red flare rim light, deep navy shadows, studio animation quality" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMPVNR4ix76vzObnfVl-_p9CUq0Lh9p40E21mNoEN8WXID79OT4iIDMlpJq-OwOOshargraXFmTOJ5GDo0DinsBgvSWKsos0klNKgwvyCVkVyQ5MmQzQPlhTy8X6x74nNjEl80PxCHj7zRirprKdR3QtSaRaNEXQHNtoGRAtEv1eiiA5YjiQ4OqN_XIIKPua84NEE0peAb1K3swIuKif5EqdRHWEiAAkUkUhZuYxvXX7LBRKSvJ4iH"/>
+<!-- تدرج سينمائي لضمان وضوح عناصر التحكم -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/95 via-transparent to-surface-container-lowest/60"></div>
+<!-- شارة الجودة الحية العلوية والمؤشرات -->
+<div class="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none">
+<div class="flex items-center gap-space-xs pointer-events-auto">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm shadow-md animate-pulse">
+<span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+          بث فائق الدقة
+        </span>
+<button class="flex items-center gap-0.5 px-2 py-0.5 rounded-lg bg-surface-container-high/80 backdrop-blur-md text-on-surface font-label-sm text-label-sm hover:bg-surface-bright transition-colors" id="qualityBtn">
+<span>1080p FHD</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+</div>
+<div class="flex items-center gap-space-xs pointer-events-auto">
+<button class="w-8 h-8 rounded-full bg-surface-container-high/80 backdrop-blur-md flex items-center justify-center text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+</div>
+</div>
+<!-- زر التشغيل / الإيقاف المركزي -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<button class="w-14 h-14 rounded-full bg-primary-container/90 text-on-primary-container flex items-center justify-center shadow-[0_8px_24px_-4px_rgba(220,38,38,0.65)] hover:scale-105 active:scale-95 transition-transform pointer-events-auto" id="centerPlayBtn">
+<span class="material-symbols-outlined text-[32px] translate-x-[-1px]">play_arrow</span>
+</button>
+</div>
+<!-- شريط التحكم السفلي للمشغل -->
+<div class="absolute bottom-0 inset-x-0 p-3 flex flex-col gap-1.5 bg-gradient-to-t from-surface-container-lowest to-transparent pointer-events-auto">
+<!-- شريط التقدم الزمني -->
+<div class="relative w-full h-1.5 bg-surface-variant rounded-full cursor-pointer group/bar flex items-center">
+<div class="absolute right-0 top-0 bottom-0 bg-primary-container rounded-full w-[61%] shadow-[0_0_12px_rgba(220,38,38,0.8)]"></div>
+<div class="absolute right-[61%] w-3 h-3 bg-white rounded-full -mr-1.5 shadow-md scale-0 group-hover/bar:scale-100 transition-transform"></div>
+</div>
+<!-- عناصر التحكم السفلية والمؤقت -->
+<div class="flex items-center justify-between text-on-surface font-label-md text-label-md pt-1">
+<div class="flex items-center gap-space-sm">
+<button class="text-on-surface hover:text-primary transition-colors flex items-center" id="playbackToggle">
+<span class="material-symbols-outlined text-[20px]">pause</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center" title="تأخير 10 ثوانٍ">
+<span class="material-symbols-outlined text-[20px]">replay_10</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center" title="تقديم 10 ثوانٍ">
+<span class="material-symbols-outlined text-[20px]">forward_10</span>
+</button>
+<span class="font-label-sm text-label-sm text-on-surface-variant tracking-wider">
+            14:32 <span class="text-surface-variant">/</span> 23:45
+          </span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center">
+<span class="material-symbols-outlined text-[20px]">volume_up</span>
+</button>
+<button class="text-on-surface hover:text-primary transition-colors flex items-center">
+<span class="material-symbols-outlined text-[20px]">fullscreen</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- لوحة تفضيلات البث وسيرفرات التشغيل -->
+<div class="p-gutter flex flex-col gap-space-md bg-surface-container-low shadow-sm">
+<!-- اختيار خادم البث -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1.5 font-label-lg text-label-lg text-on-surface">
+<span class="material-symbols-outlined text-primary-container text-[18px]">dns</span>
+          اختر سيرفر البث المباشر
+        </span>
+<button class="flex items-center gap-1 text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm" id="reportBtn">
+<span class="material-symbols-outlined text-[15px]">flag</span>
+          إبلاغ عن رابط معطل
+        </button>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-1">
+<!-- خادم 1 (نشط) -->
+<button class="server-pill flex flex-col items-center justify-center p-2 rounded-xl bg-primary-container/20 text-on-surface ring-1 ring-primary-container text-center transition-all relative overflow-hidden">
+<div class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<span class="font-label-md text-label-md font-bold truncate w-full">الصقر السريع 1</span>
+<span class="font-label-sm text-label-sm text-primary">الأسرع للـ 4K</span>
+</button>
+<!-- خادم 2 -->
+<button class="server-pill flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high text-center transition-all">
+<span class="font-label-md text-label-md font-bold truncate w-full">الفهد المباشر 2</span>
+<span class="font-label-sm text-label-sm opacity-70">سلس ومستقر</span>
+</button>
+<!-- خادم 3 -->
+<button class="server-pill flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high text-center transition-all">
+<span class="font-label-md text-label-md font-bold truncate w-full">سيرفر بديل 3</span>
+<span class="font-label-sm text-label-sm opacity-70">طوارئ احتياطي</span>
+</button>
+</div>
+</div>
+<!-- مبدل الدبلجة والترجمة الفوري -->
+<div class="flex items-center justify-between p-2 rounded-xl bg-surface-container">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">translate</span>
+<span class="font-label-md text-label-md text-on-surface">المسار الصوتي والترجمة</span>
+</div>
+<div class="flex items-center bg-surface-container-lowest p-1 rounded-lg">
+<button class="px-2.5 py-1 rounded-md bg-secondary text-on-secondary font-label-sm text-label-sm transition-all shadow-sm" id="dubBtn">
+          الدبلجة الكلاسيكية
+        </button>
+<button class="px-2.5 py-1 rounded-md text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all" id="subBtn">
+          الياباني المترجم
+        </button>
+</div>
+</div>
+</div>
+<!-- بيانات الحلقة والإجراءات السريعة -->
+<div class="p-gutter flex flex-col gap-space-md">
+<!-- العنوان والتصنيف -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+          موسم 1
+        </span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary-container font-label-sm text-label-sm">
+          رياضي • شونين
+        </span>
+<span class="flex items-center gap-0.5 font-label-sm text-label-sm text-secondary mr-auto">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
+          9.6
+        </span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-1">
+        سلام دانك - الحلقة 47: العزيمة النارية في الشوط الحاسم
+      </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+        يشتعل التنافس بين الصقور والخصم اللدود مع بقاء دقيقتين فقط على صافرة النهاية؛ يتأهب حسان لتحقيق الارتداد التاريخي الحاسم تحت السلة وسط حماس الجماهير الملتهب.
+      </p>
+</div>
+<!-- شريط الإجراءات التفاعلية السريعة -->
+<div class="flex items-center gap-space-xs">
+<!-- زر الحلقة التالية الرئيسي -->
+<button class="flex-1 h-12 rounded-xl bg-primary-container text-on-primary-container font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(220,38,38,0.4)] active:scale-95 transition-transform">
+<span>الحلقة التالية (48)</span>
+<span class="material-symbols-outlined text-[20px] scale-x-[-1]">skip_next</span>
+</button>
+<!-- تحميل الحلقة -->
+<button class="h-12 px-4 rounded-xl bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-1.5 hover:bg-surface-bright transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[20px]">download</span>
+<span>تحميل</span>
+</button>
+<!-- مشاركة -->
+<button class="h-12 w-12 rounded-xl bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center hover:bg-surface-bright transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+</div>
+</div>
+<!-- فاصل بصري ناعم -->
+<div class="h-1 w-full bg-surface-container-low"></div>
+<!-- مجتمع المعجبين ونقاشات الحلقة -->
+<div class="p-gutter flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[22px]">forum</span>
+<h3 class="font-title-md text-title-md text-on-surface">نقاشات المعجبين</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">184 تعليق</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+        الأحدث أولاً
+        <span class="material-symbols-outlined text-[16px]">swap_vert</span>
+</span>
+</div>
+<!-- حقل كتابة تعليق سريع ممتع -->
+<div class="flex items-start gap-space-sm p-3 rounded-2xl bg-surface-container-low">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex-shrink-0 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<input class="w-full bg-surface-container rounded-xl px-3 py-2 text-on-surface placeholder:text-on-surface-variant/60 font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-high transition-colors" id="commentInput" placeholder="اكتب تعليقك حول الحلقة 47 وحماس اللقاء..." type="text"/>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary transition-colors p-1 rounded"><span class="material-symbols-outlined text-[18px]">sentiment_satisfied</span></button>
+<button class="hover:text-primary transition-colors p-1 rounded"><span class="material-symbols-outlined text-[18px]">gif_box</span></button>
+<button class="hover:text-primary transition-colors p-1 rounded"><span class="material-symbols-outlined text-[18px]">alternate_email</span></button>
+</div>
+<button class="px-4 py-1.5 rounded-xl bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold flex items-center gap-1 hover:opacity-90 active:scale-95 transition-all" id="sendCommentBtn">
+<span>نشر</span>
+<span class="material-symbols-outlined text-[16px] scale-x-[-1]">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- قائمة التعليقات التفاعلية -->
+<div class="flex flex-col gap-space-sm" id="commentsList">
+<!-- تعليق 1 (مستخدم VIP) -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col gap-2 transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="relative">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="Avatar portrait of an active anime fan user with retro basketball jersey and headphones, stylish digital anime art profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwBLTC5yGIznP0iTZmVobozF5AZhsKyizalhORe4cSb2K9AG6_Xi1ABa5HbAYBvew7oOUIcf_pK9yKLgCTOUI6po_Z22DmdqNCBaHayW-ZfE1QQvrM3bwKaupIK9zTpE-7N7X2ER-Ynm-lUQ_TPqZZkhCde_h30-zdne6MWW01MULxumM8U-xGBXQ5sx2JoGUQjf2J7GjEitt9oxk38kLCjLfzupvSyNuUtIcbNGdbyinvpgSi33Df"/>
+<span class="absolute -bottom-1 -left-1 w-4 h-4 rounded-full bg-secondary flex items-center justify-center text-on-secondary shadow-sm">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">طارق الأسطورة</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary-container/20 text-secondary-container font-label-sm text-label-sm text-[9px] font-bold">عضو VIP</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-[10px]">منذ 15 دقيقة • سيرفر الصقر</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed pr-11">
+          أداء حسان في هذه اللحظة بالذات يثبت أنه ليس مجرد مبتدئ! صوت مؤدي الدبلجة في الصرخة الأخيرة أعاد ذكريات الطفولة بقوة لا توصف 🔥🏀
+        </p>
+<div class="flex items-center gap-space-md pr-11 pt-1 font-label-sm text-label-sm text-on-surface-variant">
+<button class="like-btn flex items-center gap-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">thumb_up</span>
+<span class="like-count">42</span>
+</button>
+<button class="flex items-center gap-1 hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]">reply</span>
+<span>رد (3)</span>
+</button>
+</div>
+</div>
+<!-- تعليق 2 -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col gap-2 transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="Anime fan avatar depicting athletic anime girl with headband, clean vibrant cel-shaded illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2OsPY2ToyKhKhG8D7ZbaPaYG4D2T7Dv0eEXKU3A0Ex693Ig-zjdxb2-kAf90bXglPiQlYDdhMXDvxjjKfgX10ul-iA3cSikJLgAgolwUszccm1ogl6-3MTkYANxItcjCS9NyTi31FmLKohMg3PhkypD_iLmkAqt0JXaq2biKgLszhuySi5lposOauX3idEdWwQieSxF94qbpkarNk2rQM6Q_BboqvG0Sk9nXxNPmJ6mX9PRQxFDxv"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">ريم الفهد</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-[10px]">منذ 42 دقيقة</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed pr-11">
+          الموسيقى التصويرية التصاعدية في الدقيقة 18 خلت قلبي يدق بسرعة.. جودة السيرفر 1080p ثابتة تماماً بدون أي تقطيع! شكراً على توفير الدبلجة النظيفة.
+        </p>
+<div class="flex items-center gap-space-md pr-11 pt-1 font-label-sm text-label-sm text-on-surface-variant">
+<button class="like-btn flex items-center gap-1 text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">thumb_up</span>
+<span class="like-count">19</span>
+</button>
+<button class="flex items-center gap-1 hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]">reply</span>
+<span>رد</span>
+</button>
+</div>
+</div>
+<!-- تعليق 3 -->
+<div class="p-3.5 rounded-2xl bg-surface-container flex flex-col gap-2 transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="Young anime fan avatar profile with red basketball jersey, vibrant flat anime portrait style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsytD79_xjyNVoWC0cXMiSXX8uOZ5TTQ2JTdR-YURNvXJHaTs7QlGaBOj8UJrZPs4d2m6BE2ZPHqVGIKNJDzFtTpb6dP2Bk5n8AmKVlqUxkFAPJKqA1uVbimwP5quiTGL2Upa3jOlmJfugKoZ7h7joMN6W3kkOcaovd2mJKDnuZfMKle_rX7SibifiXKm3QjhoDYhyw8wGvpbv73ez1QX8eOi7E1z-kPd59Yu5x0XwMBddBxNIQiQ_"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface">فادي كورت</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary-container/30 text-tertiary font-label-sm text-label-sm text-[9px]">أوتاكو ذهبي</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-[10px]">منذ ساعة</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed pr-11">
+          التمريرة من فادي إلى جواد كانت مستحيلة! حلقة من قمم الأنمي الرياضي بلا منازع. متجه فوراً للحلقة 48 🏃💨
+        </p>
+<div class="flex items-center gap-space-md pr-11 pt-1 font-label-sm text-label-sm text-on-surface-variant">
+<button class="like-btn flex items-center gap-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">thumb_up</span>
+<span class="like-count">8</span>
+</button>
+<button class="flex items-center gap-1 hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]">reply</span>
+<span>رد</span>
+</button>
+</div>
+</div>
+</div>
+<!-- زر تحميل المزيد من الآراء -->
+<button class="w-full py-3 rounded-xl bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 hover:bg-surface-bright transition-colors">
+<span>عرض المزيد من تعليقات الحماس (181+)</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+<!-- مساحة أمان سفلية ناعمة -->
+<div class="h-6"></div>
+</div>
+<script>
+  // تفاعلات مشغل الفيديو
+  const playBtn = document.getElementById('playbackToggle');
+  const centerPlayBtn = document.getElementById('centerPlayBtn');
+  let isPlaying = true;
+
+  function togglePlay() {
+    isPlaying = !isPlaying;
+    const icon = isPlaying ? 'pause' : 'play_arrow';
+    if(playBtn) playBtn.querySelector('span').innerText = icon;
+    if(centerPlayBtn) centerPlayBtn.querySelector('span').innerText = icon;
+  }
+
+  if (playBtn) playBtn.addEventListener('click', togglePlay);
+  if (centerPlayBtn) centerPlayBtn.addEventListener('click', togglePlay);
+
+  // تبديل السيرفرات
+  const serverPills = document.querySelectorAll('.server-pill');
+  serverPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      serverPills.forEach(p => {
+        p.className = 'server-pill flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high text-center transition-all';
+        const indicator = p.querySelector('.bg-primary-container');
+        if (indicator && indicator.classList.contains('w-1.5')) indicator.remove();
+      });
+      pill.className = 'server-pill flex flex-col items-center justify-center p-2 rounded-xl bg-primary-container/20 text-on-surface ring-1 ring-primary-container text-center transition-all relative overflow-hidden';
+      const dot = document.createElement('div');
+      dot.className = 'absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-primary-container';
+      pill.appendChild(dot);
+    });
+  });
+
+  // تبديل لغة الصوت (دبلجة / ترجمة)
+  const dubBtn = document.getElementById('dubBtn');
+  const subBtn = document.getElementById('subBtn');
+
+  if (dubBtn && subBtn) {
+    dubBtn.addEventListener('click', () => {
+      dubBtn.className = 'px-2.5 py-1 rounded-md bg-secondary text-on-secondary font-label-sm text-label-sm transition-all shadow-sm';
+      subBtn.className = 'px-2.5 py-1 rounded-md text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all';
+    });
+
+    subBtn.addEventListener('click', () => {
+      subBtn.className = 'px-2.5 py-1 rounded-md bg-secondary text-on-secondary font-label-sm text-label-sm transition-all shadow-sm';
+      dubBtn.className = 'px-2.5 py-1 rounded-md text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all';
+    });
+  }
+
+  // تفاعل الإعجاب بالتعليقات
+  document.querySelectorAll('.like-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const countSpan = this.querySelector('.like-count');
+      const icon = this.querySelector('.material-symbols-outlined');
+      let count = parseInt(countSpan.textContent, 10);
+      const isLiked = this.classList.contains('text-primary');
+
+      if (isLiked) {
+        this.classList.remove('text-primary');
+        icon.style.fontVariationSettings = "'FILL' 0";
+        countSpan.textContent = count - 1;
+      } else {
+        this.classList.add('text-primary');
+        icon.style.fontVariationSettings = "'FILL' 1";
+        countSpan.textContent = count + 1;
+      }
+    });
+  });
+
+  // إرسال تعليق فوري ممتع
+  const sendCommentBtn = document.getElementById('sendCommentBtn');
+  const commentInput = document.getElementById('commentInput');
+  const commentsList = document.getElementById('commentsList');
+
+  if (sendCommentBtn && commentInput && commentsList) {
+    sendCommentBtn.addEventListener('click', () => {
+      const val = commentInput.value.trim();
+      if (!val) return;
+
+      const newComment = document.createElement('div');
+      newComment.className = 'p-3.5 rounded-2xl bg-surface-container flex flex-col gap-2 transition-all transform animate-fadeIn';
+      newComment.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+              أ
+            </div>
+            <div class="flex flex-col">
+              <span class="font-label-md text-label-md text-on-surface">أنت (الآن)</span>
+              <span class="font-label-sm text-label-sm text-primary text-[10px]">نُشر للتو</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-[18px] text-on-surface-variant">check_circle</span>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface leading-relaxed pr-11">
+          ${val}
+        </p>
+        <div class="flex items-center gap-space-md pr-11 pt-1 font-label-sm text-label-sm text-on-surface-variant">
+          <button class="flex items-center gap-1 hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-[16px]">thumb_up</span>
+            <span>0</span>
+          </button>
+        </div>
+      `;
+
+      commentsList.prepend(newComment);
+      commentInput.value = '';
+    });
+  }
+
+  // إبلاغ عن رابط معطل
+  const reportBtn = document.getElementById('reportBtn');
+  if (reportBtn) {
+    reportBtn.addEventListener('click', () => {
+      reportBtn.innerHTML = '<span class="material-symbols-outlined text-[15px] text-secondary">check</span> تم الإبلاغ، شكراً لدعمك!';
+      setTimeout(() => {
+        reportBtn.innerHTML = '<span class="material-symbols-outlined text-[15px]">flag</span> إبلاغ عن رابط معطل';
+      }, 3000);
+    });
+  }
+</script></main></body></html>

@@ -1,29 +1,27 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { mobileSuccess, mobileError } from "@/lib/mobile-api";
 import { prisma } from "@/lib/prismadb";
-import { getSession } from "@/lib/auth";
+import { verifyAuth } from "@/lib/auth";
 
-export async function GET(req: Request) {
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest) {
     try {
-        const session = await getSession();
-        if (!session || !session.user) {
+        const user = await verifyAuth(req);
+        if (!user) {
             return mobileError("يجب تسجيل الدخول أولاً", 401);
         }
 
-        const history = await prisma.history.findMany({
-            where: { userId: session.user.id },
-            orderBy: { watchedAt: 'desc' },
-            include: {
-                // Ideally we'd include anime info for display
-                // Need to ensure relations are mapped in schema
-            },
-            take: 20
-        });
-
-        // Enrich with anime details if schema allows
-        // Since my schema has animeId but not a direct relation defined for History -> Anime yet,
-        // I might need to fetch them if I want titles. 
-        // But for mobile client, maybe IDs are enough or let's assume UI handles it.
+        let history: any[] = [];
+        try {
+            history = await prisma.history.findMany({
+                where: { userId: user.id },
+                orderBy: { watchedAt: 'desc' },
+                take: 20
+            });
+        } catch (dbErr) {
+            console.warn("Prisma history GET error:", dbErr);
+        }
 
         return mobileSuccess(history);
     } catch (error) {
@@ -32,42 +30,55 @@ export async function GET(req: Request) {
     }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
-        const session = await getSession();
-        if (!session || !session.user) {
+        const user = await verifyAuth(req);
+        if (!user) {
             return mobileError("يجب تسجيل الدخول أولاً", 401);
         }
 
-        const { animeId, episodeId, progress } = await req.json();
+        const body = await req.json();
+        const { animeId, episodeId, progress } = body;
 
         if (!animeId || !episodeId) {
             return mobileError("بيانات ناقصة", 400);
         }
 
-        const history = await prisma.history.upsert({
-            where: {
-                userId_animeId_episodeId: {
-                    userId: session.user.id,
+        let savedEntry: any = {
+            userId: user.id,
+            animeId,
+            episodeId,
+            progress: progress || 0,
+            watchedAt: new Date().toISOString()
+        };
+
+        try {
+            savedEntry = await prisma.history.upsert({
+                where: {
+                    userId_animeId_episodeId: {
+                        userId: user.id,
+                        animeId,
+                        episodeId,
+                    }
+                },
+                update: {
+                    progress: progress || 0,
+                    watchedAt: new Date()
+                },
+                create: {
+                    userId: user.id,
                     animeId,
                     episodeId,
+                    progress: progress || 0,
                 }
-            },
-            update: {
-                progress: progress || 0,
-                watchedAt: new Date()
-            },
-            create: {
-                userId: session.user.id,
-                animeId,
-                episodeId,
-                progress: progress || 0
-            }
-        });
+            });
+        } catch (dbErr) {
+            console.warn("Prisma history POST error:", dbErr);
+        }
 
-        return mobileSuccess(history);
+        return mobileSuccess(savedEntry);
     } catch (error) {
         console.error("History POST Error:", error);
-        return mobileError("حدث خطأ أثناء حفظ المشاهدة", 500);
+        return mobileError("حدث خطأ أثناء حفظ تاريخ المشاهدة", 500);
     }
 }

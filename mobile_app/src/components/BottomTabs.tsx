@@ -1,43 +1,75 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { THEME } from '../constants/theme';
+import { Icon, IconName } from './Icon';
 
-export type TabType = 'home' | 'episodes' | 'characters' | 'profile';
+export type TabType = 'home' | 'animes' | 'episodes' | 'downloads' | 'characters' | 'profile';
+
+interface TabDef {
+  key: TabType;
+  label: string;
+  icon: IconName;
+}
+
+const TABS: TabDef[] = [
+  { key: 'home', label: 'الرئيسية', icon: 'home' },
+  { key: 'animes', label: 'دليل الأنمي', icon: 'video_library' },
+  { key: 'episodes', label: 'استكشاف', icon: 'explore' },
+  { key: 'profile', label: 'حسابي', icon: 'person' },
+];
 
 interface BottomTabsProps {
   currentTab: TabType;
   onSelectTab: (tab: TabType) => void;
 }
 
-export const BottomTabs: React.FC<BottomTabsProps> = ({ currentTab, onSelectTab }) => {
-  const tabs: { key: TabType; label: string; icon: string }[] = [
-    { key: 'home', label: 'الرئيسية', icon: '🏠' },
-    { key: 'episodes', label: 'الحلقات', icon: '🎬' },
-    { key: 'characters', label: 'الشخصيات', icon: '🏀' },
-    { key: 'profile', label: 'حسابي', icon: '👤' },
-  ];
-
+export const BottomTabs: React.FC<BottomTabsProps> = ({
+  currentTab,
+  onSelectTab,
+}) => {
   return (
-    <View style={styles.outerContainer}>
-      <View style={styles.dockContainer}>
-        {tabs.map((tab) => {
-          const isActive = currentTab === tab.key;
+    <View style={styles.container}>
+      <View style={styles.tabRow}>
+        {TABS.map((tab) => {
+          const isActive =
+            currentTab === tab.key ||
+            (tab.key === 'animes' && currentTab === 'characters') ||
+            (tab.key === 'profile' && currentTab === 'downloads');
+
           return (
             <TouchableOpacity
               key={tab.key}
-              style={[styles.tabButton, isActive && styles.activeTabButton]}
+              style={styles.tab}
               onPress={() => onSelectTab(tab.key)}
               activeOpacity={0.7}
+              accessibilityLabel={tab.label}
             >
-              <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
-                <Text style={styles.tabIcon}>
-                  {tab.icon}
-                </Text>
+              <View
+                style={[
+                  styles.iconCapsule,
+                  isActive && styles.iconCapsuleActive,
+                ]}
+              >
+                <Icon
+                  name={tab.icon}
+                  size={24}
+                  color={
+                    isActive
+                      ? THEME.colors.primaryContainer
+                      : THEME.colors.onSurfaceVariant
+                  }
+                  filled={isActive}
+                />
               </View>
-              <Text style={[styles.tabLabel, isActive && styles.activeTabLabel]}>
+              <Text
+                style={[
+                  styles.label,
+                  isActive && styles.labelActive,
+                ]}
+                numberOfLines={1}
+              >
                 {tab.label}
               </Text>
-              {isActive && <View style={styles.activeDot} />}
             </TouchableOpacity>
           );
         })}
@@ -47,66 +79,48 @@ export const BottomTabs: React.FC<BottomTabsProps> = ({ currentTab, onSelectTab 
 };
 
 const styles = StyleSheet.create({
-  outerContainer: {
-    backgroundColor: THEME.colors.background,
-    paddingHorizontal: THEME.spacing.md,
-    paddingBottom: THEME.spacing.sm,
-    paddingTop: 4,
-  },
-  dockContainer: {
-    height: 64,
-    backgroundColor: 'rgba(11, 19, 41, 0.95)',
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: THEME.colors.cardBorder,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingHorizontal: THEME.spacing.xs,
+  container: {
+    backgroundColor: THEME.colors.dockBg,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.06)',
+    paddingBottom: Platform.OS === 'ios' ? 16 : 6,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.5,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.7,
+    shadowRadius: 24,
+    elevation: 16,
   },
-  tabButton: {
+  tabRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    height: 60,
+    paddingHorizontal: THEME.spacing.spaceSm,
+  },
+  tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 6,
-    borderRadius: 16,
+    gap: 3,
   },
-  activeTabButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-  },
-  iconContainer: {
-    width: 32,
-    height: 32,
+  iconCapsule: {
+    width: 44,
+    height: 30,
+    borderRadius: THEME.radius.full,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 16,
+    backgroundColor: 'transparent',
   },
-  activeIconContainer: {
-    backgroundColor: THEME.colors.primaryGlow,
+  iconCapsuleActive: {
+    backgroundColor: 'rgba(220, 38, 38, 0.18)',
   },
-  tabIcon: {
-    fontSize: 18,
+  label: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.onSurfaceVariant,
+    letterSpacing: -0.2,
   },
-  tabLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: THEME.colors.textMuted,
-    marginTop: 2,
-  },
-  activeTabLabel: {
-    color: THEME.colors.white,
-    fontWeight: '800',
-  },
-  activeDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: THEME.colors.primary,
-    marginTop: 2,
+  labelActive: {
+    color: THEME.colors.primaryContainer,
+    fontWeight: '700',
   },
 });

@@ -1,5 +1,5 @@
 {
-  "siteName": "سلام دانك",
+  "siteName": "ANIME DAZE",
   "siteDescription": "شاهد أحدث حلقات أنمي سلام دانك وأروع الأعمال بجودة عالية ومجاناً",
   "logoUrl": "",
   "faviconUrl": "",
@@ -28,12 +28,12 @@
     "maintenanceMessage": "التطبيق في وضع الصيانة حالياً لتحسين الخوادم. سنعود قريباً!",
     "maintenanceEndTime": "",
     "devBypassKey": "SLAM_DEV_2026",
-    "latestVersion": "1.2.0",
+    "latestVersion": "1.0.0",
     "latestBuild": 12,
     "minSupportedVersion": "1.0.0",
     "minSupportedBuild": 10,
     "forceUpdate": false,
-    "updateUrl": "https://play.google.com/store/apps/details?id=com.slamdunk.app",
+    "updateUrl": "",
     "directApkUrl": "https://slam-dunk-w.vercel.app/downloads/slamdunk-latest.apk",
     "releaseNotes": [
       "إضافة دعم سيرفرات المشاهدة بدقة FHD 1080p",
@@ -46,5 +46,7 @@
     "defaultServer": "Mega",
     "allowDownloads": true,
     "interstitialInterval": 2
-  }
+  },
+  "maintenanceMode": false,
+  "maintenanceMessage": "التطبيق في وضع الصيانة حالياً لتحسين الخوادم. سنعود قريباً!"
 }
