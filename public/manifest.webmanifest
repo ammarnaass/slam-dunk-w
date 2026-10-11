@@ -1,10 +1,11 @@
 {
-    "name": "Anime Daze",
-    "short_name": "AnimeDaze",
-    "description": "شاهد أحدث حلقات الأنمي بجودة عالية ومجاناً",
+    "name": "أنمي دايز | ANIME DAZE",
+    "short_name": "أنمي دايز",
+    "description": "منصة الأنمي العربية الأولى - مسلسلات كلاسيكية، سبيستون، وأحدث إنتاجات الأنمي بجودة 4K مع دبلجة احترافية",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#020617",
+    "orientation": "portrait",
+    "background_color": "#0e0e12",
     "theme_color": "#dc2626",
     "icons": [
         {

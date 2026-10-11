@@ -1,80 +1,321 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Surfaces & Canvas (Obsidian Cinematic Palette) */
+  --color-canvas: #0b0b0f;
+  --color-surface: #131317;
+  --color-surface-dim: #131317;
+  --color-surface-bright: #39393d;
+  --color-surface-container-lowest: #0e0e12;
+  --color-surface-container-low: #1b1b1f;
+  --color-surface-container: #1f1f23;
+  --color-surface-container-high: #2a292e;
+  --color-surface-container-highest: #353439;
+  --color-surface-variant: #353439;
+  --color-surface-tint: #ffb4ab;
+
+  /* On-Surface Text Colors */
+  --color-on-surface: #e4e1e7;
+  --color-on-surface-variant: #e6bdb8;
+  --color-inverse-surface: #e4e1e7;
+  --color-inverse-on-surface: #303034;
+  --color-background: #131317;
+  --color-on-background: #e4e1e7;
+
+  /* Outlines */
+  --color-outline: #ac8884;
+  --color-outline-variant: #5c403c;
+
+  /* Primary (Crimson Accents) */
+  --color-primary: #ffb4ab;
+  --color-on-primary: #690005;
+  --color-primary-container: #dc2626;
+  --color-on-primary-container: #fff6f5;
+  --color-inverse-primary: #bf0715;
+  --color-primary-fixed: #ffdad6;
+  --color-primary-fixed-dim: #ffb4ab;
+  --color-on-primary-fixed: #410002;
+  --color-on-primary-fixed-variant: #93000b;
+
+  /* Secondary (Amber / VIP Gold) */
+  --color-secondary: #ffb95f;
+  --color-on-secondary: #472a00;
+  --color-secondary-container: #ee9800;
+  --color-on-secondary-container: #5b3800;
+  --color-secondary-fixed: #ffddb8;
+  --color-secondary-fixed-dim: #ffb95f;
+  --color-on-secondary-fixed: #2a1700;
+  --color-on-secondary-fixed-variant: #653e00;
+
+  /* Tertiary */
+  --color-tertiary: #b9c8de;
+  --color-on-tertiary: #233143;
+  --color-tertiary-container: #647387;
+  --color-on-tertiary-container: #f6f8ff;
+  --color-tertiary-fixed: #d4e4fa;
+  --color-tertiary-fixed-dim: #b9c8de;
+  --color-on-tertiary-fixed: #0d1c2d;
+  --color-on-tertiary-fixed-variant: #39485a;
+
+  /* Error */
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+
+  /* Custom Spacing Tokens */
+  --spacing-gutter: 1rem;
+  --spacing-gutter-md: 1.5rem;
+  --spacing-gutter-lg: 2rem;
+  --spacing-margin: 1rem;
+  --spacing-margin-md: 2rem;
+  --spacing-margin-lg: 3.5rem;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 0.75rem;
+  --spacing-space-lg: 1.25rem;
+  --spacing-space-xl: 2rem;
+
+  /* Font Families */
+  --font-cairo: "Cairo", sans-serif;
+  --font-tajawal: "Tajawal", sans-serif;
+  --font-headline-hero: "Cairo", sans-serif;
+  --font-headline-hero-mobile: "Cairo", sans-serif;
+  --font-headline-lg: "Cairo", sans-serif;
+  --font-headline-lg-mobile: "Cairo", sans-serif;
+  --font-headline-md: "Cairo", sans-serif;
+  --font-headline-sm: "Cairo", sans-serif;
+  --font-body-lg: "Tajawal", sans-serif;
+  --font-body-md: "Tajawal", sans-serif;
+  --font-body-sm: "Tajawal", sans-serif;
+  --font-label-md: "Tajawal", sans-serif;
+  --font-label-sm: "Tajawal", sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --background: #0e0e12;
+  --foreground: #e4e1e7;
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @layer base {
-  :root {
-    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+    margin: 0;
+    padding: 0;
   }
 
   body {
-    padding-bottom: constant(safe-area-inset-bottom);
-    padding-bottom: env(safe-area-inset-bottom);
+    background-color: #0e0e12;
+    color: #e4e1e7;
+    font-family: "Tajawal", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Cairo", sans-serif;
+  }
+
+  main > :first-child {
+    margin-top: 0 !important;
+  }
+
+  main > :last-child {
+    margin-bottom: 0 !important;
   }
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
+/* Typography Utility Classes matching Design System */
+.font-headline-hero {
+  font-family: "Cairo", sans-serif;
+  font-weight: 800;
+}
+.text-headline-hero {
+  font-size: 48px;
+  line-height: 56px;
+}
+@media (max-width: 768px) {
+  .text-headline-hero {
+    font-size: 30px;
+    line-height: 38px;
+  }
+}
+
+.font-headline-lg {
+  font-family: "Cairo", sans-serif;
+  font-weight: 700;
+}
+.text-headline-lg {
+  font-size: 32px;
+  line-height: 40px;
+}
+@media (max-width: 768px) {
+  .text-headline-lg {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+.font-headline-md {
+  font-family: "Cairo", sans-serif;
+  font-weight: 700;
+}
+.text-headline-md {
+  font-size: 22px;
+  line-height: 30px;
+}
+
+.font-headline-sm {
+  font-family: "Cairo", sans-serif;
+  font-weight: 600;
+}
+.text-headline-sm {
+  font-size: 18px;
+  line-height: 26px;
+}
+
+.font-body-lg {
+  font-family: "Tajawal", sans-serif;
+  font-weight: 500;
+}
+.text-body-lg {
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.font-body-md {
+  font-family: "Tajawal", sans-serif;
+  font-weight: 400;
+}
+.text-body-md {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.font-body-sm {
+  font-family: "Tajawal", sans-serif;
+  font-weight: 400;
+}
+.text-body-sm {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.font-label-md {
+  font-family: "Tajawal", sans-serif;
+  font-weight: 700;
+}
+.text-label-md {
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.font-label-sm {
+  font-family: "Tajawal", sans-serif;
+  font-weight: 700;
+}
+.text-label-sm {
+  font-size: 11px;
+  line-height: 14px;
+}
+
+/* Material Symbols Outlined Icon Font */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+}
+
+/* Scrollbar styles */
+.no-scrollbar::-webkit-scrollbar,
+::-webkit-scrollbar {
   display: none;
 }
-
-/* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
   -ms-overflow-style: none;
-  /* IE and Edge */
   scrollbar-width: none;
-  /* Firefox */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Glow Effects */
+.crimson-glow {
+  box-shadow: 0 0 24px rgba(220, 38, 38, 0.45);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.crimson-glow-lg {
+  box-shadow: 0 0 36px rgba(220, 38, 38, 0.7);
+}
+
+.crimson-glow-card {
+  box-shadow: 0 8px 24px -4px rgba(220, 38, 38, 0.35);
+}
+
+.gold-glow {
+  box-shadow: 0 0 16px rgba(238, 152, 0, 0.45);
+}
+
+.gold-glow-lg {
+  box-shadow: 0 0 24px rgba(238, 152, 0, 0.6);
+}
+
+.glass-nav {
+  background-color: rgba(19, 19, 23, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-card {
+  background-color: rgba(27, 27, 31, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 @keyframes slow-zoom {
-  0% {
-    transform: scale(1);
-  }
-
-  100% {
-    transform: scale(1.1);
-  }
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
 }
 
 .animate-slow-zoom {
   animation: slow-zoom 20s ease-in-out infinite alternate;
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.6s ease-out forwards;
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Omni-Screen Responsive & Touch Utilities */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Image containment preventing flex row blowouts */
+img, svg, video {
+  max-width: 100%;
 }

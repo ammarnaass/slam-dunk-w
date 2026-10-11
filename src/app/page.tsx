@@ -1,24 +1,58 @@
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
-import { 
-    ArrowLeft, 
-    Play, 
-    PlayCircle, 
-    Sparkles, 
-    Zap, 
-    Tv, 
-    ShieldCheck, 
-    Flame,
-    Film,
-    BookmarkCheck
-} from "lucide-react";
 import { prisma } from "@/lib/prismadb";
 import HomeSlider from "@/components/HomeSlider";
 import AnimeCard from "@/components/AnimeCard";
+import EpisodeCard from "@/components/EpisodeCard";
 import CharacterCard from "@/components/CharacterCard";
 
 export const dynamic = "force-dynamic";
+
+const SPACETOON_PLANETS = [
+    { 
+        name: "كوكب رياضة", 
+        icon: "sports_basketball", 
+        badge: "سلام دانك • ماجد", 
+        genre: "Sports",
+        color: "from-amber-600/30 to-orange-700/40 border-amber-500/30 text-amber-400"
+    },
+    { 
+        name: "كوكب أكشن", 
+        icon: "swords", 
+        badge: "القناص • دراغون بول", 
+        genre: "Action",
+        color: "from-red-600/30 to-rose-700/40 border-red-500/30 text-red-400"
+    },
+    { 
+        name: "كوكب مغامرات", 
+        icon: "explore", 
+        badge: "ون بيس • كونان", 
+        genre: "Adventure",
+        color: "from-emerald-600/30 to-teal-700/40 border-emerald-500/30 text-emerald-400"
+    },
+    { 
+        name: "كوكب كوميديا", 
+        icon: "sentiment_very_satisfied", 
+        badge: "ضحك • ترفيه", 
+        genre: "Comedy",
+        color: "from-yellow-500/30 to-amber-600/40 border-yellow-500/30 text-yellow-400"
+    },
+    { 
+        name: "كوكب زمردة", 
+        icon: "auto_awesome", 
+        badge: "للفتيات فقط", 
+        genre: "Drama",
+        color: "from-pink-600/30 to-purple-700/40 border-pink-500/30 text-pink-400"
+    },
+    { 
+        name: "الخيال العلمي", 
+        icon: "rocket_launch", 
+        badge: "غرندايزر • ميكا", 
+        genre: "Sci-Fi",
+        color: "from-cyan-600/30 to-blue-700/40 border-cyan-500/30 text-cyan-400"
+    },
+];
 
 export default async function Home() {
     let allAnimes: any[] = [];
@@ -33,10 +67,10 @@ export default async function Home() {
             prisma.settings.findUnique({ where: { id: "global" } }),
             prisma.episode.findMany({
                 orderBy: { createdAt: 'desc' },
-                take: 5,
-                include: { anime: { select: { title: true } } }
+                take: 6,
+                include: { anime: { select: { title: true, id: true } } }
             }),
-            prisma.character.findMany({ take: 4 })
+            prisma.character.findMany({ take: 6 })
         ]);
     } catch (err) {
         console.warn("Prisma query failed on Home, using local json fallback:", err);
@@ -66,12 +100,13 @@ export default async function Home() {
         try {
             const parsed = JSON.parse(fs.readFileSync(path.join(dataDir, "episodes.json"), "utf-8"));
             const eps = Array.isArray(parsed) ? parsed : (parsed.episodes || []);
-            latestEpisodesData = eps.slice(0, 5).map((e: any) => ({
+            latestEpisodesData = eps.slice(0, 6).map((e: any) => ({
                 id: e.id,
                 title: e.title,
                 thumbnail: e.thumbnail,
+                duration: e.duration || "24 دقيقة",
                 episodeNumber: e.episode_number || (e.title.match(/\d+/) ? e.title.match(/\d+/)![0] : "1"),
-                anime: { title: "سلام دانك" }
+                anime: { title: "سلام دانك", id: "slam-dunk" }
             }));
         } catch (e) {
             console.error("Fallback episodes read error:", e);
@@ -81,255 +116,401 @@ export default async function Home() {
     if (featuredCharacters.length === 0 && fs.existsSync(path.join(dataDir, "characters.json"))) {
         try {
             const parsed = JSON.parse(fs.readFileSync(path.join(dataDir, "characters.json"), "utf-8"));
-            featuredCharacters = (Array.isArray(parsed) ? parsed : (parsed.characters || [])).slice(0, 4);
+            featuredCharacters = (Array.isArray(parsed) ? parsed : (parsed.characters || [])).slice(0, 6);
         } catch (e) {
             console.error("Fallback characters read error:", e);
         }
     }
 
-    // Filter slider animes
-    const sliderAnimes = allAnimes.filter(a => a.isFeatured).slice(0, 4);
-    const displaySliderAnimes = sliderAnimes.length > 0 ? sliderAnimes : allAnimes.slice(0, 4);
+    // Filter featured animes for billboard
+    const sliderAnimes = allAnimes.filter(a => a.isFeatured).slice(0, 5);
+    const displaySliderAnimes = sliderAnimes.length > 0 ? sliderAnimes : allAnimes.slice(0, 5);
 
-    const animes = allAnimes.slice(0, 10);
+    // Spacetoon & Classics
+    const spacetoonClassics = allAnimes.filter(a => 
+        a.genres?.includes("Sports") || 
+        a.title?.includes("سلام دانك") || 
+        a.title?.includes("القناص") || 
+        a.title?.includes("كونان") ||
+        a.isFeatured
+    ).slice(0, 5);
 
-    // Map latest episodes for display
+    // Map episodes for display
     const latestEpisodes = latestEpisodesData.map((ep: any) => ({
         id: ep.id,
         title: ep.title,
         thumbnail: ep.thumbnail,
+        duration: ep.duration || "24 دقيقة",
         episodeNumber: ep.episodeNumber || (ep.title.match(/\d+/) ? ep.title.match(/\d+/)![0] : "1"),
         animeTitle: ep.anime?.title || "سلام دانك"
     }));
 
     return (
-        <main className="min-h-screen bg-slate-950 text-slate-100 font-sans overflow-x-hidden pb-16">
-            {/* Ambient Background Radial Glow */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-[600px] bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(220,38,38,0.22),transparent_80%)]" />
-
-            {/* Hero Cinema Slider */}
+        <div className="flex flex-col w-full text-on-surface font-body-md bg-surface-container-lowest">
+            
+            {/* 1. CINEMATIC HERO SLIDER SECTION */}
             <HomeSlider animes={displaySliderAnimes} />
 
-            {/* Latest Episodes Section */}
-            <section className="relative py-12 bg-slate-950/70 border-b border-slate-900/80 backdrop-blur-sm">
-                <div className="container mx-auto px-4">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-3">
-                            <span className="w-1.5 h-8 bg-red-600 rounded-full" />
-                            <div>
-                                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                                    أحدث الحلقات المضافة
-                                </h2>
-                                <p className="text-xs text-slate-400 mt-0.5">مشاهدة مباشرة بجودة عالية وسيرفرات سريعة</p>
+            {/* 2. CONTINUE WATCHING RAIL WITH PROGRESS */}
+            {latestEpisodes.length > 0 && (
+                <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-20 border-b border-white/[0.04]">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="flex items-end justify-between mb-space-lg">
+                            <div className="flex items-center gap-space-sm">
+                                <div className="w-1.5 h-7 rounded-full bg-primary-container shadow-[0_0_10px_rgba(220,38,38,0.7)]" />
+                                <div>
+                                    <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold">استكمل المشاهدة</h2>
+                                    <p className="font-body-sm text-body-sm text-on-surface-variant">تابع من النقطة التي توقفت عندها بالضبط</p>
+                                </div>
                             </div>
+                            <Link 
+                                href="/profile?tab=history" 
+                                className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1"
+                            >
+                                <span>سجل المشاهدة الكامل</span>
+                                <span className="material-symbols-outlined text-sm">arrow_back</span>
+                            </Link>
                         </div>
 
-                        <Link 
-                            href="/animes" 
-                            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-red-500 hover:text-red-400 font-bold transition-colors group"
-                        >
-                            <span>جميع الحلقات</span>
-                            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                        </Link>
-                    </div>
+                        {/* Horizontal Episode Rail */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
+                            {latestEpisodes.slice(0, 3).map((ep, idx) => {
+                                const randomProgress = (idx * 25 + 40) % 85;
+                                return (
+                                    <div 
+                                        key={ep.id}
+                                        className="group relative flex items-center gap-space-md p-space-sm rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all border border-white/[0.05] hover:border-primary-container/40 shadow-lg"
+                                    >
+                                        <div className="w-40 aspect-video rounded-xl overflow-hidden shrink-0 relative bg-surface-container-highest">
+                                            <img
+                                                src={ep.thumbnail || "/hero-bg.jpg"}
+                                                alt={ep.title}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-lg">
+                                                    <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+                                                </div>
+                                            </div>
+                                            <div className="absolute bottom-0 inset-x-0 h-1 bg-surface-container-highest">
+                                                <div 
+                                                    className="h-full bg-primary-container shadow-[0_0_8px_rgba(220,38,38,0.8)]" 
+                                                    style={{ width: `${randomProgress}%` }}
+                                                />
+                                            </div>
+                                        </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-5">
-                        {latestEpisodes.map((ep) => (
-                            <Link
-                                key={ep.id}
-                                href={`/watch/${ep.id}`}
-                                className="group flex flex-col bg-slate-900/80 rounded-2xl overflow-hidden border border-slate-800/80 hover:border-red-500/50 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_12px_28px_-6px_rgba(220,38,38,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-                            >
-                                <div className="aspect-video relative overflow-hidden bg-slate-950">
-                                    <img 
-                                        src={ep.thumbnail || "/logoep.jpg"} 
-                                        alt={ep.title} 
-                                        loading="lazy"
-                                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out" 
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                                    
-                                    {/* Play Overlay */}
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-[2px]">
-                                        <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-600/50 transform scale-75 group-hover:scale-100 transition-all">
-                                            <Play size={18} className="fill-white translate-x-[-1px]" />
+                                        <div className="flex-1 min-w-0 pr-1">
+                                            <span className="font-label-sm text-label-sm text-secondary font-bold block truncate">
+                                                {ep.animeTitle}
+                                            </span>
+                                            <h4 className="font-headline-sm text-headline-sm text-on-surface font-bold text-sm truncate group-hover:text-primary transition-colors mt-0.5">
+                                                {ep.title}
+                                            </h4>
+                                            <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-center gap-2">
+                                                <span>الحلقة {ep.episodeNumber}</span>
+                                                <span>•</span>
+                                                <span>متبقي 8 دقائق</span>
+                                            </p>
+                                            <Link 
+                                                href={`/watch/${ep.id}`}
+                                                className="mt-2 inline-flex items-center gap-1 font-label-sm text-label-sm text-primary hover:text-on-primary-container"
+                                            >
+                                                <span>استئناف الآن</span>
+                                                <span className="material-symbols-outlined text-xs">play_circle</span>
+                                            </Link>
                                         </div>
                                     </div>
-
-                                    {/* Episode Badge */}
-                                    <div className="absolute bottom-2.5 right-2.5 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
-                                        الحلقة {ep.episodeNumber}
-                                    </div>
-                                    
-                                    {/* Quality Badge */}
-                                    <div className="absolute top-2.5 left-2.5 bg-black/75 backdrop-blur-md border border-white/10 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                                        FHD
-                                    </div>
-                                </div>
-
-                                <div className="p-3 flex flex-col justify-between flex-1 gap-1">
-                                    <h4 className="text-xs sm:text-sm font-bold text-white line-clamp-1 group-hover:text-red-400 transition-colors">
-                                        {ep.title}
-                                    </h4>
-                                    <span className="text-[10px] text-slate-400 font-medium">
-                                        {ep.animeTitle}
-                                    </span>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Platform Advantages Banner */}
-            <section className="py-12 border-b border-slate-900 bg-slate-950">
-                <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800/80 hover:border-slate-700 transition-colors">
-                            <div className="p-2.5 rounded-xl bg-red-600/10 text-red-500 shrink-0">
-                                <Zap size={22} />
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-bold text-white">سرعة فائقة</h3>
-                                <p className="text-[11px] text-slate-400">سيرفرات سحابية بدون تقطيع</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800/80 hover:border-slate-700 transition-colors">
-                            <div className="p-2.5 rounded-xl bg-rose-600/10 text-rose-500 shrink-0">
-                                <Tv size={22} />
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-bold text-white">دقة FHD 1080p</h3>
-                                <p className="text-[11px] text-slate-400">نقاء سينمائي وصوت محيطي</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800/80 hover:border-slate-700 transition-colors">
-                            <div className="p-2.5 rounded-xl bg-amber-600/10 text-amber-500 shrink-0">
-                                <BookmarkCheck size={22} />
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-bold text-white">تتبع المشاهدة</h3>
-                                <p className="text-[11px] text-slate-400">حفظ تلقائي للتقدم والمفضلة</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800/80 hover:border-slate-700 transition-colors">
-                            <div className="p-2.5 rounded-xl bg-emerald-600/10 text-emerald-500 shrink-0">
-                                <ShieldCheck size={22} />
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-bold text-white">بدون إعلانات</h3>
-                                <p className="text-[11px] text-slate-400">مشاهدة نقية ومريحة 100%</p>
-                            </div>
+                                );
+                            })}
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
-            {/* Latest Anime Showcase Section */}
-            <section className="py-16 container mx-auto px-4">
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-3">
-                        <span className="w-1.5 h-8 bg-red-600 rounded-full" />
-                        <div>
-                            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                                أحدث مسلسلات وأفلام الأنمي
-                            </h2>
-                            <p className="text-xs text-slate-400 mt-0.5">أعمال كلاسيكية وحديثة مترجمة ومدبلجة</p>
-                        </div>
-                    </div>
-
-                    <Link 
-                        href="/animes" 
-                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-red-500 hover:text-red-400 font-bold transition-colors group"
-                    >
-                        <span>عرض الكل</span>
-                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                    </Link>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-                    {animes.map((anime, index) => (
-                        <AnimeCard
-                            key={anime.id}
-                            anime={anime}
-                            priority={index < 4}
-                        />
-                    ))}
-                </div>
-            </section>
-
-            {/* Featured Characters Section */}
-            <section className="py-20 bg-slate-900/30 border-y border-slate-900 relative">
-                <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-15 pointer-events-none" />
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="flex items-center justify-between mb-10">
-                        <div className="flex items-center gap-3">
-                            <span className="w-1.5 h-8 bg-red-600 rounded-full" />
+            {/* 3. PLANETS & UNIVERSE CATEGORIES */}
+            <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-surface-container-lowest relative border-b border-white/[0.04]">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex items-end justify-between mb-space-lg">
+                        <div className="flex items-center gap-space-sm">
+                            <div className="w-1.5 h-7 rounded-full bg-secondary-container shadow-[0_0_10px_rgba(238,152,0,0.7)]" />
                             <div>
-                                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                                    أبطال ونجوم سلام دانك
-                                </h2>
-                                <p className="text-xs text-slate-400 mt-0.5">تعرف على لاعبي فريق الصقور والمنافسين وإحصائياتهم</p>
+                                <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold">كواكب الأنمي</h2>
+                                <p className="font-body-sm text-body-sm text-on-surface-variant">سافر بين عوالم التصنيفات المستوحاة من كواكب الطفولة والخيال</p>
                             </div>
                         </div>
-
                         <Link 
-                            href="/characters" 
-                            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-red-500 hover:text-red-400 font-bold transition-colors group"
+                            href="/animes" 
+                            className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1"
                         >
-                            <span>جميع الشخصيات</span>
-                            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                            <span>كل الكواكب (+12)</span>
+                            <span className="material-symbols-outlined text-sm">arrow_back</span>
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                        {featuredCharacters.map((character) => (
-                            <CharacterCard key={character.id} character={character} />
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-space-md">
+                        {SPACETOON_PLANETS.map((planet) => (
+                            <Link
+                                key={planet.name}
+                                href={`/animes?genre=${planet.genre}`}
+                                className={`group flex flex-col items-center justify-center p-space-md rounded-2xl bg-surface-container-low hover:bg-surface-container border ${planet.color} transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center`}
+                            >
+                                <div className="w-14 h-14 rounded-2xl bg-surface-container-highest/80 flex items-center justify-center mb-space-sm group-hover:scale-110 transition-transform duration-300 shadow-md">
+                                    <span className="material-symbols-outlined text-3xl">
+                                        {planet.icon}
+                                    </span>
+                                </div>
+                                <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold text-sm group-hover:text-primary transition-colors">
+                                    {planet.name}
+                                </h3>
+                                <span className="font-label-sm text-label-sm text-on-surface-variant mt-1">
+                                    {planet.badge}
+                                </span>
+                            </Link>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* VIP Subscription CTA Teaser */}
-            <section className="py-16 container mx-auto px-4">
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-red-950/60 via-slate-900/90 to-amber-950/40 border border-red-500/30 p-8 sm:p-12 shadow-2xl">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-                    <div className="relative z-10 max-w-2xl space-y-4">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold">
-                            <Sparkles size={14} className="fill-amber-400" />
-                            <span>عضوية VIP المميزة</span>
+            {/* 4. LATEST EPISODES RAIL (UPDATED TODAY) */}
+            <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative border-b border-white/[0.04]">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm mb-space-lg">
+                        <div className="flex items-center gap-space-sm">
+                            <div className="w-1.5 h-7 rounded-full bg-primary-container shadow-[0_0_10px_rgba(220,38,38,0.7)]" />
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold">أحدث الحلقات المضافة</h2>
+                                    <span className="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary font-label-sm text-xs font-bold border border-primary-container/30 flex items-center gap-1">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse" />
+                                        مباشر الآن
+                                    </span>
+                                </div>
+                                <p className="font-body-sm text-body-sm text-on-surface-variant">تحديث فوري فور البث الياباني بدون فواصل إعلانية</p>
+                            </div>
+                        </div>
+                        <Link 
+                            href="/animes" 
+                            className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1 self-start sm:self-auto"
+                        >
+                            <span>جدول الحلقات الأسبوعي</span>
+                            <span className="material-symbols-outlined text-sm">arrow_back</span>
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-gutter">
+                        {latestEpisodes.map((episode) => (
+                            <EpisodeCard 
+                                key={episode.id} 
+                                episode={{
+                                    ...episode,
+                                    isVip: false
+                                } as any} 
+                            />
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* 5. TOP TRENDING THIS WEEK (TOP RANKED) */}
+            <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-surface-container-lowest relative border-b border-white/[0.04]">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex items-end justify-between mb-space-lg">
+                        <div className="flex items-center gap-space-sm">
+                            <div className="w-1.5 h-7 rounded-full bg-primary-container shadow-[0_0_10px_rgba(220,38,38,0.7)]" />
+                            <div>
+                                <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold">الأكثر مشاهدة هذا الأسبوع</h2>
+                                <p className="font-body-sm text-body-sm text-on-surface-variant">أفضل الأعمال التي تتصدر تصويت ومتابعات الجماهير العربية</p>
+                            </div>
+                        </div>
+                        <Link 
+                            href="/animes" 
+                            className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1"
+                        >
+                            <span>عرض كل الأعمال</span>
+                            <span className="material-symbols-outlined text-sm">arrow_back</span>
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-space-md lg:gap-gutter">
+                        {allAnimes.slice(0, 10).map((anime, index) => (
+                            <div key={anime.id} className="relative">
+                                {/* Large Rank Number (01, 02...) */}
+                                {index < 5 && (
+                                    <span className="absolute -top-3 -right-2 z-20 font-cairo font-black text-3xl sm:text-4xl text-white/90 drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)] bg-surface-container-high/90 px-2 py-0.5 rounded-xl border border-white/10 pointer-events-none">
+                                        0{index + 1}
+                                    </span>
+                                )}
+                                <AnimeCard
+                                    anime={anime}
+                                    priority={index < 4}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* 6. SPACETOON & ARABIC CLASSICS NOSTALGIA */}
+            {spacetoonClassics.length > 0 && (
+                <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative overflow-hidden bg-gradient-to-b from-surface-container-lowest via-surface-container-low/50 to-surface-container-lowest border-b border-white/[0.04]">
+                    <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none" />
+                    
+                    <div className="max-w-7xl mx-auto relative z-10">
+                        {/* Section Banner Header */}
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-lg p-space-lg rounded-2xl bg-surface-container-low/80 backdrop-blur-md shadow-xl border border-white/[0.06]">
+                            <div className="space-y-space-xs">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary font-label-md text-label-md font-bold">
+                                    <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+                                    ذكريات الزمن الجميل • دبلجة عربية مركز الزهرة الأيقونية
+                                </div>
+                                <h2 className="font-headline-lg text-headline-lg text-on-surface font-black">
+                                    سبيستون كلاسيك دايز
+                                </h2>
+                                <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                                    أعد إحياء لحظات الطفولة الخالدة، جميع المواسم كاملة بجودة محسّنة بالذكاء الاصطناعي 1080p ومعالجة صوتية نقية للأغاني والشارات الأصلية.
+                                </p>
+                            </div>
+                            <Link 
+                                href="/animes?planet=spacetoon" 
+                                className="shrink-0 flex items-center gap-space-xs px-space-lg py-space-sm rounded-xl bg-secondary-container text-on-secondary font-headline-sm text-headline-sm hover:brightness-110 transition-all shadow-[0_0_20px_rgba(238,152,0,0.4)]"
+                            >
+                                <span className="material-symbols-outlined text-xl">play_circle</span>
+                                <span>تصفح كوكب الكلاسيكيات</span>
+                            </Link>
                         </div>
 
-                        <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-                            استمتع بأفضل تجربة مشاهدة أنمي بدون أي إعلانات
-                        </h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-space-md lg:gap-gutter">
+                            {spacetoonClassics.map((anime) => (
+                                <AnimeCard
+                                    key={`classic-${anime.id}`}
+                                    anime={anime}
+                                    priority={false}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
 
-                        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            احصل على سرعات تحميل فائقة، وصول مبكر للحلقات الحصرية، وتنزيل الحلقات للمشاهدة بدون إنترنت عبر تطبيق الهاتف.
-                        </p>
-
-                        <div className="pt-2 flex flex-wrap items-center gap-3">
-                            <Link
-                                href="/pricing"
-                                className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-amber-500/20 transition-all hover:scale-105"
+            {/* 7. FEATURED CHARACTERS CAST */}
+            {featuredCharacters.length > 0 && (
+                <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative border-b border-white/[0.04]">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="flex items-center justify-between mb-space-lg">
+                            <div className="flex items-center gap-space-sm">
+                                <div className="w-1.5 h-7 rounded-full bg-primary-container shadow-[0_0_10px_rgba(220,38,38,0.7)]" />
+                                <div>
+                                    <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold">
+                                        أبطال وشخصيات الأنمي
+                                    </h2>
+                                    <p className="font-body-sm text-body-sm text-on-surface-variant">
+                                        تعرف على أبطال الأنمي ونخبة فناني الدبلجة
+                                    </p>
+                                </div>
+                            </div>
+                            <Link 
+                                href="/characters" 
+                                className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1"
                             >
-                                <span>اشترك الآن</span>
-                                <ArrowLeft size={16} />
+                                <span>جميع الشخصيات</span>
+                                <span className="material-symbols-outlined text-sm">arrow_back</span>
                             </Link>
+                        </div>
 
-                            <Link
-                                href="/animes"
-                                className="inline-flex items-center gap-2 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-sm px-5 py-3.5 rounded-xl border border-slate-700 transition-colors"
-                            >
-                                <span>استكشف الأعمال المجانية</span>
-                            </Link>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-space-md">
+                            {featuredCharacters.map((character) => (
+                                <CharacterCard 
+                                    key={character.id} 
+                                    character={character} 
+                                    variant="circle" 
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* 8. PWA APP DOWNLOAD & VIP PROMO BANNER */}
+            <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                <div className="max-w-7xl mx-auto">
+                    <div className="relative rounded-3xl bg-surface-container-low overflow-hidden p-6 sm:p-8 lg:p-12 shadow-2xl border border-white/[0.06]">
+                        {/* Ambient Red/Amber Gradients */}
+                        <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary-container/20 blur-3xl pointer-events-none" />
+                        <div className="absolute -left-20 -top-20 w-80 h-80 rounded-full bg-secondary-container/15 blur-3xl pointer-events-none" />
+                        
+                        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-center">
+                            {/* Content Side (8 Cols) */}
+                            <div className="lg:col-span-8 space-y-space-md">
+                                <div className="inline-flex items-center gap-2 px-space-md py-1 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-bold shadow-[0_0_12px_rgba(220,38,38,0.5)]">
+                                    <span className="material-symbols-outlined text-sm">install_mobile</span>
+                                    تجربة بث سينمائية بدون تقطيع
+                                </div>
+                                <h2 className="font-headline-lg text-headline-lg text-on-surface font-extrabold max-w-xl">
+                                    ثبّت تطبيق ANIME DAZE كـ PWA خفيف على هاتفك وشاشتك الذكية
+                                </h2>
+                                <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                                    استمتع بمشاهدة بدون إعلانات نهائياً، سرعة تشغيل فورية، تنبيهات عند صدور الحلقات المترجمة في نفس دقيقة نزولها في اليابان، مع إمكانية التحميل للمشاهدة بدون إنترنت.
+                                </p>
+                                
+                                {/* Features Highlights Grid */}
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
+                                    <div className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary text-xl">block</span>
+                                        <span className="font-label-md text-label-md text-on-surface">صفر إعلانات</span>
+                                    </div>
+                                    <div className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-secondary text-xl">bolt</span>
+                                        <span className="font-label-md text-label-md text-on-surface">مشغل فائق السرعة</span>
+                                    </div>
+                                    <div className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary text-xl">download_for_offline</span>
+                                        <span className="font-label-md text-label-md text-on-surface">تحميل أوفلاين</span>
+                                    </div>
+                                    <div className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-secondary text-xl">notifications_active</span>
+                                        <span className="font-label-md text-label-md text-on-surface">تنبيهات فورية</span>
+                                    </div>
+                                </div>
+
+                                <div className="pt-space-sm flex flex-wrap items-center gap-space-md">
+                                    <Link
+                                        href="/pricing"
+                                        className="flex items-center gap-space-sm px-space-xl py-space-md rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm shadow-[0_0_24px_rgba(220,38,38,0.4)] hover:brightness-110 active:scale-95 transition-all"
+                                    >
+                                        <span className="material-symbols-outlined text-xl">diamond</span>
+                                        <span>ترقية إلى VIP بخصم 40%</span>
+                                    </Link>
+                                    <Link
+                                        href="/animes"
+                                        className="flex items-center gap-space-sm px-space-lg py-space-md rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-label-md text-label-md"
+                                    >
+                                        <span>تصفح المكتبة المجانية</span>
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Graphic Promo Side (4 Cols) */}
+                            <div className="lg:col-span-4 hidden lg:flex justify-center">
+                                <div className="relative w-64 aspect-[3/4] rounded-2xl overflow-hidden bg-surface-container-highest border border-white/10 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+                                    <img
+                                        src="/hero-bg.jpg"
+                                        alt="ANIME DAZE App Preview"
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent" />
+                                    <div className="absolute bottom-4 inset-x-4 p-3 rounded-xl bg-surface-container/90 backdrop-blur-md text-center">
+                                        <span className="font-headline-sm text-xs font-bold text-secondary">
+                                            تجربة سبيستون الكلاسيكية الحديثة
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
-        </main>
+
+        </div>
     );
 }

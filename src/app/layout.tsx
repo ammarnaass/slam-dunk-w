@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { SettingsService } from "@/server/services/settings.service";
@@ -9,24 +8,28 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/providers/AuthProvider";
 
-const cairo = Cairo({ subsets: ["arabic", "latin"] });
-
 export const viewport: Viewport = {
-  themeColor: "#dc2626",
+  themeColor: "#0b0b0f",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await SettingsService.getSettings();
 
-  const siteName = settings?.siteName || "سلام دانك";
+  const siteName = settings?.siteName || "أنمي دايز";
 
   return {
-    title: siteName,
-    description: "الموقع الرسمي لمشاهدة حلقات سلام دانك بجودة عالية",
+    title: {
+      template: `%s | ${siteName}`,
+      default: `${siteName} - منصة الأنمي وسبيستون الكلاسيكية`,
+    },
+    description: "المنصة العربية الأولى لمشاهدة وتحميل أفضل مسلسلات وأفلام الأنمي وكلاسيكيات سبيستون بدقة 4K فائقة وترجمة ودبلجة احترافية.",
     manifest: "/manifest.webmanifest",
     appleWebApp: {
       capable: true,
-      statusBarStyle: "default",
+      statusBarStyle: "black-translucent",
       title: siteName,
     },
     icons: {
@@ -43,17 +46,30 @@ export default async function RootLayout({
 }>) {
   const settings = await SettingsService.getSettings();
 
-
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <body className={`${cairo.className} bg-slate-950 text-slate-200 antialiased`}>
+    <html lang="ar" dir="rtl" className="dark" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"
+        />
+      </head>
+      <body
+        className="font-tajawal bg-[#0e0e12] text-[#e4e1e7] min-h-screen antialiased selection:bg-[#dc2626] selection:text-[#fff6f5] pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0 overflow-x-hidden w-full relative"
+      >
         <AuthProvider>
           <AdmobProvider>
             <NextTopLoader color="#dc2626" showSpinner={false} />
             <Navbar settings={settings || {}} />
-            <div className="min-h-screen">
+            <main className="min-h-screen">
               {children}
-            </div>
+            </main>
             <Footer settings={settings || {}} />
             <BottomNav />
             <script src="https://accounts.google.com/gsi/client" async defer></script>

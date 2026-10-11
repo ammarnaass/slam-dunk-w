@@ -1,8 +1,29 @@
 import fs from "fs";
 import path from "path";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prismadb";
+import { 
+    SiteIdentity, 
+    FullSiteSettings, 
+    UpdateSiteIdentityDto, 
+    UpdateSiteSettingsDto 
+} from "@/server/types/settings.types";
+import { 
+    updateSiteIdentitySchema, 
+    updateSiteSettingsSchema 
+} from "@/server/validators/settings.validator";
 
 const DATA_DIR = path.join(process.cwd(), "src/data");
+
+export const DEFAULT_SITE_IDENTITY: SiteIdentity = {
+    siteName: "أنمي دايز",
+    siteNameEn: "ANIME DAZE",
+    siteDescription: "منصة البث السينمائية الأولى لعشاق الأنمي في العالم العربي. مكتبة حصرية تجمع بين روائع الجيل الذهبي وأحدث إصدارات الأنمي المترجمة والمدبلجة بجودة فائقة 4K.",
+    logoUrl: "https://lh3.googleusercontent.com/aida/AEtjO1UiSLhyw_pFl8EO-8FgL4HrDL2d9Oh8xf35S6mPsvN6CLAeTTpeY_Y4zm4rjsRuYww9UNqCIq98rij14h5osYHduHU73DQq5klCpJEZFM7q4WFwh529QyN14MBCOgwBQCafVH2D7Zqj8RtA7YeHEf53boMtjjIUflj41hkrmwwiWjLsz5RNzpHujzyYnwEwKNuokWsaRntGYjD842E14qpqp84ozsbd8Inmm-2ENPd6K5e0xdj7TSIckg",
+    faviconUrl: "/favicon.ico",
+    brandColor: "#dc2626",
+    accentColor: "#ffb95f"
+};
 
 function loadLocalSettings(): any {
     try {
@@ -11,17 +32,32 @@ function loadLocalSettings(): any {
             return JSON.parse(fs.readFileSync(filePath, "utf-8"));
         }
     } catch (e) {
-        console.error("Local settings fallback error:", e);
+        console.error("Local settings fallback read error:", e);
     }
     return {
-        siteName: "ANIME DAZE",
-        siteDescription: "منصة مشاهدة الأنمي الأولى بجودة عالية ومجاناً",
-        maintenanceMode: false
+        ...DEFAULT_SITE_IDENTITY,
+        currency: "ج.م",
+        maintenanceMode: false,
+        maintenanceMessage: "الموقع في وضع الصيانة حالياً. سنعود قريباً!",
+        socialLinks: {},
+        sliderAnimeIds: ["slam-dunk"]
     };
 }
 
+function persistLocalSettings(data: any) {
+    try {
+        const filePath = path.join(DATA_DIR, "settings.json");
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+    } catch (e) {
+        console.error("Local settings fallback write error:", e);
+    }
+}
+
 export class SettingsService {
-    static async getSettings() {
+    /**
+     * Get consolidated settings with DB priority and JSON fallback.
+     */
+    static async getSettings(): Promise<FullSiteSettings> {
         let dbSettings: any = null;
         try {
             dbSettings = await prisma.settings.findUnique({
@@ -29,20 +65,183 @@ export class SettingsService {
             });
         } catch (_) {}
 
-        const localSettings = loadLocalSettings();
+        const local = loadLocalSettings();
 
         return {
-            siteName: dbSettings?.siteName || localSettings.siteName || "ANIME DAZE",
-            siteDescription: localSettings.siteDescription || "شاهد أحدث حلقات أنمي سلام دانك وأروع الأعمال بجودة عالية",
-            logoUrl: dbSettings?.logoUrl || localSettings.logoUrl || "",
-            faviconUrl: dbSettings?.faviconUrl || localSettings.faviconUrl || "",
-            maintenanceMode: dbSettings?.maintenanceMode ?? localSettings.maintenanceMode ?? false,
-            maintenanceMessage: dbSettings?.maintenanceMessage || localSettings.maintenanceMessage || "الموقع في وضع الصيانة حالياً.",
-            socialLinks: localSettings.socialLinks || {},
-            sliderAnimeIds: localSettings.sliderAnimeIds || ["slam-dunk"]
+            siteName: dbSettings?.siteName || local.siteName || DEFAULT_SITE_IDENTITY.siteName,
+            siteNameEn: local.siteNameEn || DEFAULT_SITE_IDENTITY.siteNameEn,
+            siteDescription: local.siteDescription || DEFAULT_SITE_IDENTITY.siteDescription,
+            logoUrl: dbSettings?.logoUrl || local.logoUrl || DEFAULT_SITE_IDENTITY.logoUrl,
+            faviconUrl: dbSettings?.faviconUrl || local.faviconUrl || DEFAULT_SITE_IDENTITY.faviconUrl,
+            brandColor: local.brandColor || DEFAULT_SITE_IDENTITY.brandColor,
+            accentColor: local.accentColor || DEFAULT_SITE_IDENTITY.accentColor,
+            currency: local.currency || "ج.م",
+            maintenanceMode: dbSettings?.maintenanceMode ?? local.maintenanceMode ?? false,
+            maintenanceMessage: dbSettings?.maintenanceMessage || local.maintenanceMessage || "الموقع في وضع الصيانة حالياً.",
+            socialLinks: local.socialLinks || {},
+            admob: local.admob || {
+                isEnabled: dbSettings?.admobEnabled ?? false,
+                appId: dbSettings?.admobAppId ?? "",
+                bannerId: dbSettings?.admobBannerId ?? "",
+                interstitialId: dbSettings?.admobInterstitialId ?? ""
+            },
+            apiApp: local.apiApp || {},
+            sliderAnimeIds: local.sliderAnimeIds || ["slam-dunk"]
         };
     }
 
+    /**
+     * Fast retrieval of site identity for public consumer pages (Navbar, Footer, SEO).
+     */
+    static async getPublicIdentity(): Promise<SiteIdentity> {
+        const settings = await this.getSettings();
+        return {
+            siteName: settings.siteName,
+            siteNameEn: settings.siteNameEn,
+            siteDescription: settings.siteDescription,
+            logoUrl: settings.logoUrl,
+            faviconUrl: settings.faviconUrl,
+            brandColor: settings.brandColor,
+            accentColor: settings.accentColor
+        };
+    }
+
+    /**
+     * Update site identity (name, logo, favicon, colors).
+     */
+    static async updateIdentity(input: UpdateSiteIdentityDto): Promise<SiteIdentity> {
+        const validated = updateSiteIdentitySchema.parse(input);
+        const currentLocal = loadLocalSettings();
+
+        const updatedData = {
+            ...currentLocal,
+            siteName: validated.siteName,
+            siteNameEn: validated.siteNameEn ?? currentLocal.siteNameEn ?? DEFAULT_SITE_IDENTITY.siteNameEn,
+            siteDescription: validated.siteDescription ?? currentLocal.siteDescription,
+            logoUrl: validated.logoUrl,
+            faviconUrl: validated.faviconUrl ?? currentLocal.faviconUrl,
+            brandColor: validated.brandColor ?? currentLocal.brandColor ?? DEFAULT_SITE_IDENTITY.brandColor,
+            accentColor: validated.accentColor ?? currentLocal.accentColor ?? DEFAULT_SITE_IDENTITY.accentColor
+        };
+
+        // 1. Persist locally
+        persistLocalSettings(updatedData);
+
+        // 2. Sync to Neon DB
+        try {
+            await prisma.settings.upsert({
+                where: { id: "global" },
+                update: {
+                    siteName: updatedData.siteName,
+                    logoUrl: updatedData.logoUrl,
+                    faviconUrl: updatedData.faviconUrl
+                },
+                create: {
+                    id: "global",
+                    siteName: updatedData.siteName,
+                    logoUrl: updatedData.logoUrl,
+                    faviconUrl: updatedData.faviconUrl
+                }
+            });
+        } catch (dbError) {
+            console.warn("Neon DB sync failed for identity, persisted locally:", dbError);
+        }
+
+        // 3. Revalidate cache
+        try {
+            revalidatePath("/", "layout");
+            revalidatePath("/admin", "layout");
+        } catch (_) {}
+
+        return {
+            siteName: updatedData.siteName,
+            siteNameEn: updatedData.siteNameEn,
+            siteDescription: updatedData.siteDescription,
+            logoUrl: updatedData.logoUrl,
+            faviconUrl: updatedData.faviconUrl,
+            brandColor: updatedData.brandColor,
+            accentColor: updatedData.accentColor
+        };
+    }
+
+    /**
+     * Update full settings payload.
+     */
+    static async updateFullSettings(input: UpdateSiteSettingsDto): Promise<FullSiteSettings> {
+        const validated = updateSiteSettingsSchema.parse(input);
+        const currentLocal = loadLocalSettings();
+
+        const merged = {
+            ...currentLocal,
+            ...validated,
+            socialLinks: {
+                ...(currentLocal.socialLinks || {}),
+                ...(validated.socialLinks || {})
+            },
+            admob: {
+                ...(currentLocal.admob || {}),
+                ...(validated.admob || {})
+            },
+            apiApp: {
+                ...(currentLocal.apiApp || {}),
+                ...(validated.apiApp || {})
+            }
+        };
+
+        // 1. Persist locally
+        persistLocalSettings(merged);
+
+        // 2. Sync to DB
+        try {
+            await prisma.settings.upsert({
+                where: { id: "global" },
+                update: {
+                    siteName: merged.siteName,
+                    logoUrl: merged.logoUrl,
+                    faviconUrl: merged.faviconUrl,
+                    maintenanceMode: !!merged.maintenanceMode,
+                    maintenanceMessage: merged.maintenanceMessage,
+                    admobEnabled: !!merged.admob?.isEnabled,
+                    admobAppId: merged.admob?.appId,
+                    admobBannerId: merged.admob?.bannerId,
+                    admobInterstitialId: merged.admob?.interstitialId
+                },
+                create: {
+                    id: "global",
+                    siteName: merged.siteName || DEFAULT_SITE_IDENTITY.siteName,
+                    logoUrl: merged.logoUrl || DEFAULT_SITE_IDENTITY.logoUrl,
+                    faviconUrl: merged.faviconUrl || DEFAULT_SITE_IDENTITY.faviconUrl,
+                    maintenanceMode: !!merged.maintenanceMode,
+                    maintenanceMessage: merged.maintenanceMessage,
+                    admobEnabled: !!merged.admob?.isEnabled,
+                    admobAppId: merged.admob?.appId,
+                    admobBannerId: merged.admob?.bannerId,
+                    admobInterstitialId: merged.admob?.interstitialId
+                }
+            });
+        } catch (dbError) {
+            console.warn("Neon DB sync failed for full settings, persisted locally:", dbError);
+        }
+
+        // 3. Revalidate cache
+        try {
+            revalidatePath("/", "layout");
+            revalidatePath("/admin", "layout");
+        } catch (_) {}
+
+        return this.getSettings();
+    }
+
+    /**
+     * Emergency reset back to the official "أنمي دايز" branding presets.
+     */
+    static async resetToDefaultIdentity(): Promise<SiteIdentity> {
+        return this.updateIdentity(DEFAULT_SITE_IDENTITY);
+    }
+
+    /**
+     * Mobile app configuration (backward compatibility).
+     */
     static async getMobileConfig() {
         const localSettings = loadLocalSettings();
         const apiApp = localSettings.apiApp || {};

@@ -1,456 +1,374 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Settings, Facebook, Twitter, Instagram, Youtube, Send, Film, Image as ImageIcon, Loader2, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { Anime } from "@/types";
+import { 
+    Settings, 
+    Sparkles, 
+    Save, 
+    RotateCcw, 
+    CheckCircle2, 
+    AlertCircle, 
+    ExternalLink, 
+    SlidersHorizontal, 
+    Palette, 
+    Layers, 
+    Film,
+    Loader2
+} from "lucide-react";
+import LogoManagerCard from "./components/LogoManagerCard";
+import IdentitySettingsCard from "./components/IdentitySettingsCard";
+import SystemStatusCard from "./components/SystemStatusCard";
+import { FullSiteSettings } from "@/server/types/settings.types";
+
+const INITIAL_SETTINGS: FullSiteSettings = {
+    siteName: "أنمي دايز",
+    siteNameEn: "ANIME DAZE",
+    siteDescription: "منصتك الأولى لمشاهدة وتحميل أفضل مسلسلات وأفلام الأنمي المترجمة والمدبلجة بدقة عالية وبدون إعلانات مزعجة.",
+    logoUrl: "https://lh3.googleusercontent.com/aida/AEtjO1UiSLhyw_pFl8EO-8FgL4HrDL2d9Oh8xf35S6mPsvN6CLAeTTpeY_Y4zm4rjsRuYww9UNqCIq98rij14h5osYHduHU73DQq5klCpJEZFM7q4WFwh529QyN14MBCOgwBQCafVH2D7Zqj8RtA7YeHEf53boMtjjIUflj41hkrmwwiWjLsz5RNzpHujzyYnwEwKNuokWsaRntGYjD842E14qpqp84ozsbd8Inmm-2ENPd6K5e0xdj7TSIckg",
+    faviconUrl: "/favicon.ico",
+    brandColor: "#dc2626",
+    accentColor: "#ffb95f",
+    currency: "ج.م",
+    maintenanceMode: false,
+    maintenanceMessage: "",
+    socialLinks: {
+        facebook: "",
+        twitter: "",
+        instagram: "",
+        youtube: "",
+        telegram: "",
+        discord: "",
+    },
+    admob: {
+        isEnabled: false,
+        appId: "",
+        bannerId: "",
+        interstitialId: "",
+    }
+};
 
 export default function SettingsPage() {
+    const [settings, setSettings] = useState<FullSiteSettings>(INITIAL_SETTINGS);
+    const [originalSettings, setOriginalSettings] = useState<FullSiteSettings>(INITIAL_SETTINGS);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [animes, setAnimes] = useState<Anime[]>([]);
-    const [settings, setSettings] = useState({
-        siteName: "",
-        siteDescription: "",
-        logoUrl: "",
-        faviconUrl: "",
-        currency: "ج.م",
-        socialLinks: {
-            facebook: "",
-            twitter: "",
-            instagram: "",
-            youtube: "",
-            telegram: "",
-        },
-        admob: {
-            isEnabled: false,
-            appId: "",
-            bannerId: "",
-            interstitialId: "",
-        },
-    });
+    const [activeTab, setActiveTab] = useState<"logo" | "identity" | "system">("logo");
+    const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-    const [uploadingLogo, setUploadingLogo] = useState(false);
-    const [uploadingFavicon, setUploadingFavicon] = useState(false);
+    // Check if there are unsaved changes
+    const isDirty = JSON.stringify(settings) !== JSON.stringify(originalSettings);
 
     useEffect(() => {
         fetchSettings();
     }, []);
 
-    const fetchSettings = async () => {
-        try {
-            const [settingsRes, animesRes] = await Promise.all([
-                fetch("/api/settings"),
-                fetch("/api/admin/animes")
-            ]);
+    // Auto-dismiss toast
+    useEffect(() => {
+        if (toast) {
+            const timer = setTimeout(() => setToast(null), 4000);
+            return () => clearTimeout(timer);
+        }
+    }, [toast]);
 
-            if (settingsRes.ok) {
-                const data = await settingsRes.json();
-                setSettings(data);
+    const fetchSettings = async () => {
+        setLoading(true);
+        try {
+            // Try admin endpoint first
+            let res = await fetch("/api/admin/settings");
+            if (!res.ok) {
+                // Fallback to public endpoint
+                res = await fetch("/api/settings");
             }
 
-            if (animesRes.ok) {
-                const data = await animesRes.json();
-                setAnimes(data);
+            if (res.ok) {
+                const json = await res.json();
+                const data = json.data || json;
+                const merged: FullSiteSettings = {
+                    ...INITIAL_SETTINGS,
+                    ...data,
+                    socialLinks: {
+                        ...INITIAL_SETTINGS.socialLinks,
+                        ...(data.socialLinks || {})
+                    },
+                    admob: {
+                        ...INITIAL_SETTINGS.admob,
+                        ...(data.admob || {})
+                    }
+                };
+                setSettings(merged);
+                setOriginalSettings(merged);
             }
         } catch (error) {
-            console.error("Failed to fetch data", error);
+            console.error("Failed to load settings:", error);
+            setToast({ type: "error", message: "تعذر تحميل إعدادات الموقع، جاري استخدام الإعدادات الافتراضية." });
         } finally {
             setLoading(false);
         }
     };
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'favicon') => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        // Limit file size (e.g., 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            alert("حجم الملف كبير جداً. يرجى اختيار صورة أقل من 2 ميجابايت.");
-            return;
-        }
-
-        if (type === 'logo') setUploadingLogo(true);
-        else setUploadingFavicon(true);
-
-        try {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const base64String = reader.result as string;
-
-                // Update local state for preview
-                setSettings(prev => ({
-                    ...prev,
-                    [type === 'logo' ? 'logoUrl' : 'faviconUrl']: base64String
-                }));
-
-                if (type === 'logo') setUploadingLogo(false);
-                else setUploadingFavicon(false);
-            };
-            reader.onerror = (error) => {
-                console.error("FileReader error", error);
-                alert("حدث خطأ أثناء قراءة الملف");
-                if (type === 'logo') setUploadingLogo(false);
-                else setUploadingFavicon(false);
-            };
-        } catch (error) {
-            console.error("Upload process error", error);
-            alert("حدث خطأ غير متوقع");
-            if (type === 'logo') setUploadingLogo(false);
-            else setUploadingFavicon(false);
-        }
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setSettings((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSocialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setSettings((prev) => ({
-            ...prev,
-            socialLinks: {
-                ...prev.socialLinks,
-                [name]: value
-            }
-        }));
-    };
-
-
-    const handleAdMobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setSettings((prev) => ({
-            ...prev,
-            admob: {
-                ...prev.admob,
-                [name]: value
-            }
-        }));
-    };
-
-    const handleAdMobToggle = () => {
-        setSettings((prev) => ({
-            ...prev,
-            admob: {
-                ...prev.admob,
-                isEnabled: !prev.admob.isEnabled
-            }
-        }));
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSave = async () => {
         setSaving(true);
-
         try {
-            const res = await fetch("/api/settings", {
+            const res = await fetch("/api/admin/settings", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(settings),
             });
 
-            if (res.ok) {
-                alert("تم حفظ الإعدادات بنجاح");
-                // Force reload to update layout/navbar
-                window.location.reload();
-            } else {
-                alert("حدث خطأ أثناء الحفظ");
+            if (!res.ok) {
+                // Fallback to public endpoint
+                const fallbackRes = await fetch("/api/settings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(settings),
+                });
+                if (!fallbackRes.ok) throw new Error("Save failed");
             }
+
+            setOriginalSettings(settings);
+            setToast({ type: "success", message: "تم حفظ إعدادات وهوية الموقع وتحديث الواجهة بنجاح!" });
         } catch (error) {
-            console.error("Error saving settings", error);
-            alert("حدث خطأ أثناء الحفظ");
+            console.error("Error saving settings:", error);
+            setToast({ type: "error", message: "حدث خطأ أثناء حفظ الإعدادات، يرجى المحاولة ثانية." });
         } finally {
             setSaving(false);
         }
     };
 
-    if (loading) return <div className="text-white text-center p-8">جاري التحميل...</div>;
+    const handleResetToDefaultBrand = () => {
+        if (!confirm("هل أنت متأكد من استعادة شعار وهوية 'أنمي دايز' الرسمية الافتراضية؟")) return;
 
-    return (
-        <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-4 mb-8">
-                <div className="bg-slate-800 p-3 rounded-lg">
-                    <Settings className="text-red-500" size={32} />
+        setSettings(prev => ({
+            ...prev,
+            siteName: "أنمي دايز",
+            siteNameEn: "ANIME DAZE",
+            logoUrl: INITIAL_SETTINGS.logoUrl,
+            brandColor: "#dc2626",
+            accentColor: "#ffb95f"
+        }));
+
+        setToast({ type: "success", message: "تمت استعادة هوية أنمي دايز بنجاح! اضغط 'حفظ التغييرات' لاعتمادها." });
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center">
+                <div className="w-12 h-12 rounded-2xl bg-[#dc2626]/20 border border-[#dc2626]/40 flex items-center justify-center text-[#ffb4ab] animate-pulse">
+                    <Loader2 className="animate-spin" size={24} />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold text-white">إعدادات الموقع</h1>
-                    <p className="text-slate-400 mt-1">تحكم في هوية الموقع والشعار</p>
+                    <h3 className="font-cairo font-bold text-white text-base">جاري تحميل إعدادات المنصة</h3>
+                    <p className="font-tajawal text-xs text-[#94a3b8] mt-1">يتم جلب بيانات الهوية والشعار وربط النظام...</p>
                 </div>
             </div>
+        );
+    }
 
-            <form onSubmit={handleSubmit} className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
-                <div>
-                    <label className="block text-slate-400 text-sm font-medium mb-2">اسم الموقع</label>
-                    <input
-                        type="text"
-                        name="siteName"
-                        value={settings.siteName}
-                        onChange={handleChange}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
-                        placeholder="سلام دانك"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">يظهر في شريط العنوان وشريط التنقل.</p>
+    return (
+        <div className="max-w-5xl mx-auto space-y-8 pb-24" dir="rtl">
+            {/* Toast Alert Notification */}
+            {toast && (
+                <div className={`fixed top-6 left-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-xl border transition-all animate-in fade-in slide-in-from-top-4 duration-300 ${
+                    toast.type === "success" 
+                        ? "bg-[#112211]/90 border-emerald-500/30 text-emerald-300 shadow-emerald-950/40" 
+                        : "bg-[#221111]/90 border-red-500/30 text-red-300 shadow-red-950/40"
+                }`}>
+                    {toast.type === "success" ? <CheckCircle2 size={20} className="text-emerald-400" /> : <AlertCircle size={20} className="text-red-400" />}
+                    <span className="font-tajawal text-xs font-bold">{toast.message}</span>
                 </div>
+            )}
 
-                <div>
-                    <label className="block text-slate-400 text-sm font-medium mb-2">وصف الموقع</label>
-                    <textarea
-                        name="siteDescription"
-                        value={settings.siteDescription}
-                        onChange={handleChange}
-                        rows={3}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
-                        placeholder="شاهد جميع حلقات أنمي سلام دانك..."
-                    />
-                    <p className="text-xs text-slate-500 mt-1">يظهر في محركات البحث (SEO).</p>
-                </div>
-
-                <div>
-                    <label className="block text-slate-400 text-sm font-medium mb-2">رابط الشعار (Logo URL)</label>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            name="logoUrl"
-                            value={settings.logoUrl}
-                            onChange={handleChange}
-                            className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
-                            placeholder="/logo.png"
-                        />
-                        <div className="relative">
-                            <input
-                                type="file"
-                                id="logo-upload"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => handleFileUpload(e, 'logo')}
-                            />
-                            <label
-                                htmlFor="logo-upload"
-                                className="h-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-lg cursor-pointer transition-colors border border-slate-700"
-                            >
-                                {uploadingLogo ? <Loader2 className="animate-spin w-5 h-5" /> : <ImageIcon size={20} />}
-                            </label>
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/[0.08]">
+                <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#dc2626] to-[#991b1b] p-0.5 shadow-xl shadow-red-950/40 shrink-0">
+                        <div className="w-full h-full bg-[#131317] rounded-[14px] flex items-center justify-center text-[#ffb4ab]">
+                            <Settings size={28} />
                         </div>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">يمكنك إدخال رابط مباشر أو رفع صورة من جهازك.</p>
-
-                    {settings.logoUrl && (
-                        <div className="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-lg inline-block">
-                            <p className="text-xs text-slate-500 mb-2">معاينة الشعار:</p>
-                            <img src={settings.logoUrl} alt="Logo Preview" className="h-12 object-contain" />
+                    <div>
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <h1 className="font-cairo font-black text-2xl sm:text-3xl text-white">إعدادات وهوية الموقع</h1>
+                            <span className="px-3 py-0.5 rounded-full bg-[#ffb95f]/15 border border-[#ffb95f]/30 text-[#ffb95f] font-cairo text-[11px] font-bold">
+                                بنية الخدمات المستقلة
+                            </span>
                         </div>
-                    )}
-                </div>
-
-                <div>
-                    <label className="block text-slate-400 text-sm font-medium mb-2">رابط الأيقونة (Favicon URL)</label>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            name="faviconUrl"
-                            value={settings.faviconUrl}
-                            onChange={handleChange}
-                            className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
-                            placeholder="/favicon.ico"
-                        />
-                        <div className="relative">
-                            <input
-                                type="file"
-                                id="favicon-upload"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => handleFileUpload(e, 'favicon')}
-                            />
-                            <label
-                                htmlFor="favicon-upload"
-                                className="h-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-lg cursor-pointer transition-colors border border-slate-700"
-                            >
-                                {uploadingFavicon ? <Loader2 className="animate-spin w-5 h-5" /> : <ImageIcon size={20} />}
-                            </label>
-                        </div>
-                    </div>
-                    <p className="text-xs text-slate-500 mt-1">تظهر هذه الأيقونة في لسان المتصفح.</p>
-
-                    {settings.faviconUrl && (
-                        <div className="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-lg inline-block">
-                            <p className="text-xs text-slate-500 mb-2">معاينة الأيقونة:</p>
-                            <img src={settings.faviconUrl} alt="Favicon Preview" className="w-8 h-8 object-contain" />
-                        </div>
-                    )}
-                </div>
-
-                <div>
-                    <label className="block text-slate-400 text-sm font-medium mb-2">العملة (Currency)</label>
-                    <input
-                        type="text"
-                        name="currency"
-                        value={settings.currency}
-                        onChange={handleChange}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors"
-                        placeholder="ج.م"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">العملة المستخدمة في عرض الخطط والدفع (مثال: ج.م، USD، SAR).</p>
-                </div>
-
-                <div className="pt-6 border-t border-slate-800">
-                    <h3 className="text-xl font-bold text-white mb-4">وسائل التواصل الاجتماعي</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2">
-                            <Facebook className="text-blue-500" size={20} />
-                            <input
-                                type="text"
-                                name="facebook"
-                                value={settings.socialLinks?.facebook}
-                                onChange={handleSocialChange}
-                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
-                                placeholder="رابط فيسبوك"
-                            />
-                        </div>
-                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2">
-                            <Twitter className="text-sky-400" size={20} />
-                            <input
-                                type="text"
-                                name="twitter"
-                                value={settings.socialLinks?.twitter}
-                                onChange={handleSocialChange}
-                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
-                                placeholder="رابط تويتر"
-                            />
-                        </div>
-                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2">
-                            <Instagram className="text-pink-500" size={20} />
-                            <input
-                                type="text"
-                                name="instagram"
-                                value={settings.socialLinks?.instagram}
-                                onChange={handleSocialChange}
-                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
-                                placeholder="رابط إنستجرام"
-                            />
-                        </div>
-                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2">
-                            <Youtube className="text-red-500" size={20} />
-                            <input
-                                type="text"
-                                name="youtube"
-                                value={settings.socialLinks?.youtube}
-                                onChange={handleSocialChange}
-                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
-                                placeholder="رابط يوتيوب"
-                            />
-                        </div>
-                        <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 md:col-span-2">
-                            <Send className="text-sky-500" size={20} />
-                            <input
-                                type="text"
-                                name="telegram"
-                                value={settings.socialLinks?.telegram}
-                                onChange={handleSocialChange}
-                                className="flex-1 bg-transparent border-none outline-none text-white text-sm"
-                                placeholder="رابط تليجرام"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="pt-6 border-t border-slate-800">
-                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <Film className="text-red-500" size={24} /> إدارة السلايدر الرئيسي
-                    </h3>
-                    <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="space-y-1">
-                            <p className="text-white font-bold">تحكم في الأعمال المميزة</p>
-                            <p className="text-slate-400 text-sm">تم نقل إعدادات السلايدر إلى قسم منفصل لتوفير تحكم أدق ومعاينة أسرع.</p>
-                        </div>
-                        <Link
-                            href="/admin/slider"
-                            className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-red-900/20 whitespace-nowrap"
-                        >
-                            انتقل إلى إدارة السلايدر
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="pt-6 border-t border-slate-800">
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h3 className="text-xl font-bold text-white">إعلانات AdMob (تطبيق الأندرويد)</h3>
-                            <p className="text-sm text-slate-400 mt-1">تحكم في ظهور الإعلانات داخل تطبيق الأندرويد.</p>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={handleAdMobToggle}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${settings.admob?.isEnabled ? 'bg-green-600' : 'bg-slate-700'
-                                }`}
-                        >
-                            <span
-                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.admob?.isEnabled ? 'translate-x-6' : 'translate-x-1'
-                                    }`}
-                            />
-                        </button>
-                    </div>
-
-                    <div className={`space-y-4 transition-all duration-300 ${settings.admob?.isEnabled ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-slate-400 text-xs font-medium mb-1.5 underline decoration-slate-800">App ID</label>
-                                <input
-                                    type="text"
-                                    name="appId"
-                                    value={settings.admob?.appId}
-                                    onChange={handleAdMobChange}
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600 transition-colors"
-                                    placeholder="ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-slate-400 text-xs font-medium mb-1.5 underline decoration-slate-800">Banner Unit ID</label>
-                                <input
-                                    type="text"
-                                    name="bannerId"
-                                    value={settings.admob?.bannerId}
-                                    onChange={handleAdMobChange}
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600 transition-colors"
-                                    placeholder="ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx"
-                                />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-slate-400 text-xs font-medium mb-1.5 underline decoration-slate-800">Interstitial Unit ID</label>
-                                <input
-                                    type="text"
-                                    name="interstitialId"
-                                    value={settings.admob?.interstitialId}
-                                    onChange={handleAdMobChange}
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600 transition-colors"
-                                    placeholder="ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx"
-                                />
-                            </div>
-                        </div>
-                        <p className="text-[10px] text-slate-500 bg-slate-900/50 p-2 rounded border border-slate-800">
-                            تنبيه: تأكد من استخدام معرفات صحيحة لتجنب توقف التطبيق أو تقييد الأرباح.
+                        <p className="font-tajawal text-xs sm:text-sm text-[#94a3b8] mt-1">
+                            التحكم الكامل في هوية وشعار منصة <span className="text-white font-bold">{settings.siteName}</span>، الألوان المعتمدة، والمحاكاة الحية
                         </p>
                     </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800">
+                {/* Quick Header Actions */}
+                <div className="flex items-center gap-2.5 flex-wrap">
                     <button
-                        type="submit"
-                        disabled={saving}
-                        className="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-800 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-red-900/10 active:scale-[0.98]"
+                        type="button"
+                        onClick={handleResetToDefaultBrand}
+                        className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-xs font-cairo font-bold text-[#e4e1e7] border border-white/[0.08] transition-all cursor-pointer"
+                        title="استرجاع شعار واسم أنمي دايز المعتمد"
                     >
-                        {saving ? (
-                            <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                        ) : (
-                            <>
-                                <Save size={20} />
-                                حفظ جميع التغييرات
-                            </>
-                        )}
+                        <RotateCcw size={14} className="text-[#ffb95f]" />
+                        <span>استعادة الشعار الرسمي</span>
                     </button>
+
+                    <Link
+                        href="/admin/slider"
+                        className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-xs font-cairo font-bold text-[#e4e1e7] border border-white/[0.08] transition-all"
+                    >
+                        <Film size={14} className="text-red-400" />
+                        <span>إدارة السلايدر</span>
+                    </Link>
+
+                    <Link
+                        href="/"
+                        target="_blank"
+                        className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-xs font-cairo font-bold text-[#e4e1e7] border border-white/[0.08] transition-all"
+                    >
+                        <ExternalLink size={14} className="text-[#94a3b8]" />
+                        <span>عرض الموقع</span>
+                    </Link>
                 </div>
-            </form>
+            </div>
+
+            {/* Modular Tab Navigation */}
+            <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#131317] border border-white/[0.08] max-w-fit">
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("logo")}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
+                        activeTab === "logo"
+                            ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
+                            : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                >
+                    <Layers size={16} />
+                    <span>الشعار والمحاكاة المرئية</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("identity")}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
+                        activeTab === "identity"
+                            ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
+                            : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                >
+                    <Palette size={16} />
+                    <span>الهوية والتسمية والألوان</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("system")}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
+                        activeTab === "system"
+                            ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
+                            : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                >
+                    <SlidersHorizontal size={16} />
+                    <span>النظام، الصيانة، والإعلانات</span>
+                </button>
+            </div>
+
+            {/* Tab 1: Logo & Visual Simulation */}
+            {activeTab === "logo" && (
+                <LogoManagerCard
+                    logoUrl={settings.logoUrl}
+                    faviconUrl={settings.faviconUrl || "/favicon.ico"}
+                    siteName={settings.siteName}
+                    onChangeLogo={(newLogo) => setSettings(prev => ({ ...prev, logoUrl: newLogo }))}
+                    onChangeFavicon={(newFavicon) => setSettings(prev => ({ ...prev, faviconUrl: newFavicon }))}
+                    onResetDefault={handleResetToDefaultBrand}
+                />
+            )}
+
+            {/* Tab 2: Identity & Branding */}
+            {activeTab === "identity" && (
+                <IdentitySettingsCard
+                    siteName={settings.siteName}
+                    siteNameEn={settings.siteNameEn || "ANIME DAZE"}
+                    siteDescription={settings.siteDescription}
+                    brandColor={settings.brandColor || "#dc2626"}
+                    accentColor={settings.accentColor || "#ffb95f"}
+                    onChangeField={(field, value) => setSettings(prev => ({ ...prev, [field]: value }))}
+                />
+            )}
+
+            {/* Tab 3: System, Maintenance & Ads */}
+            {activeTab === "system" && (
+                <SystemStatusCard
+                    maintenanceMode={!!settings.maintenanceMode}
+                    maintenanceMessage={settings.maintenanceMessage || ""}
+                    currency={settings.currency || "ج.م"}
+                    socialLinks={settings.socialLinks || {}}
+                    admob={settings.admob || { isEnabled: false }}
+                    onChangeField={(field, value) => setSettings(prev => ({ ...prev, [field]: value }))}
+                    onChangeSocial={(platform, value) => setSettings(prev => ({
+                        ...prev,
+                        socialLinks: {
+                            ...prev.socialLinks,
+                            [platform]: value
+                        }
+                    }))}
+                    onChangeAdmob={(field, value) => setSettings(prev => ({
+                        ...prev,
+                        admob: {
+                            ...prev.admob,
+                            isEnabled: prev.admob?.isEnabled || false,
+                            [field]: value
+                        }
+                    }))}
+                />
+            )}
+
+            {/* Floating / Sticky Save Bar */}
+            <div className="fixed bottom-6 inset-x-0 z-40 max-w-4xl mx-auto px-4">
+                <div className="bg-[#131317]/95 backdrop-blur-xl border border-white/[0.12] rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${isDirty ? "bg-amber-400 animate-ping" : "bg-emerald-500"}`} />
+                        <span className="font-cairo text-xs font-bold text-white hidden sm:inline">
+                            {isDirty ? "توجد تغييرات غير محفوظة حالياً" : "جميع الإعدادات متزامنة ومحفوظة"}
+                        </span>
+                        <span className="font-tajawal text-[11px] text-[#94a3b8] hidden md:inline">
+                            {isDirty ? "اضغط على زر الحفظ لتحديث الشعار والهوية فوراً" : "تحديث فوري لكل عناصر المنصة"}
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        {isDirty && (
+                            <button
+                                type="button"
+                                onClick={() => setSettings(originalSettings)}
+                                className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-xs font-cairo font-bold text-[#94a3b8] hover:text-white transition-all cursor-pointer"
+                            >
+                                إلغاء التعديلات
+                            </button>
+                        )}
+
+                        <button
+                            type="button"
+                            disabled={saving || !isDirty}
+                            onClick={handleSave}
+                            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#dc2626] to-[#b91c1c] hover:from-[#ef4444] hover:to-[#dc2626] disabled:opacity-40 disabled:cursor-not-allowed text-white font-cairo font-bold text-xs shadow-lg shadow-red-950/50 transition-all cursor-pointer active:scale-95"
+                        >
+                            {saving ? (
+                                <>
+                                    <Loader2 className="animate-spin" size={16} />
+                                    <span>جاري الحفظ...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Save size={16} />
+                                    <span>حفظ التغييرات</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
