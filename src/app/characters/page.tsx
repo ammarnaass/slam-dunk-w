@@ -1,16 +1,17 @@
 import CharacterCard from "@/components/CharacterCard";
-import { prisma } from "@/lib/prismadb";
+import { AnimeService } from "@/server/services/anime.service";
+import { CharacterService } from "@/server/services/character.service";
+
+export const dynamic = "force-dynamic";
 
 export default async function CharactersPage() {
-    // Fetch all animes that have characters (or just all animes)
-    const animes = await prisma.anime.findMany({
-        orderBy: { title: 'asc' }
-    });
+    const [animesData, charactersData] = await Promise.all([
+        AnimeService.getAnimes({ limit: 50, sort: "title" }),
+        CharacterService.getCharacters({ limit: 100 })
+    ]);
 
-    // Fetch all characters
-    const allCharacters = await prisma.character.findMany({
-        orderBy: { name: 'asc' }
-    });
+    const animes = animesData.items;
+    const allCharacters = charactersData.items;
 
     return (
         <main className="min-h-screen bg-slate-950 text-slate-200">

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
-import { prisma } from "@/lib/prismadb";
+import { SettingsService } from "@/server/services/settings.service";
 import AdmobProvider from "@/components/AdmobProvider";
 import BottomNav from "@/components/BottomNav";
 import Navbar from "@/components/Navbar";
@@ -16,12 +16,7 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  let settings = null;
-  try {
-    settings = await prisma.settings.findUnique({ where: { id: "global" } });
-  } catch (error) {
-    console.error("Layout generateMetadata settings fetch error:", error);
-  }
+  const settings = await SettingsService.getSettings();
 
   const siteName = settings?.siteName || "سلام دانك";
 
@@ -46,12 +41,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let settings = null;
-  try {
-    settings = await prisma.settings.findUnique({ where: { id: "global" } });
-  } catch (error) {
-    console.error("RootLayout settings fetch error:", error);
-  }
+  const settings = await SettingsService.getSettings();
+
 
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
