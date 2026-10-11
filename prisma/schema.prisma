@@ -25,6 +25,7 @@ model User {
   history       History[]
   reviews       Review[]
   subscription  UserSubscription?
+  sessions      Session[]
 }
 
 model UserSubscription {
@@ -163,4 +164,19 @@ model Character {
   animeId     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Session {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenHash String    @unique
+  deviceName       String?
+  userAgent        String?
+  ip               String?
+  createdAt        DateTime  @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+
+  @@index([userId])
 }

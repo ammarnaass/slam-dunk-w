@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&amp;family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-background":"#e4e1e7","on-tertiary-fixed":"#0d1c2d","primary-fixed":"#ffdad6","on-error":"#690005","secondary-container":"#ee9800","error-container":"#93000a","on-tertiary-fixed-variant":"#39485a","on-primary":"#690005","on-tertiary":"#233143","tertiary-fixed":"#d4e4fa","tertiary-fixed-dim":"#b9c8de","tertiary-container":"#647387","tertiary":"#b9c8de","on-primary-fixed":"#410002","surface-container-highest":"#353439","on-secondary-fixed":"#2a1700","primary":"#ffb4ab","on-secondary-container":"#5b3800","inverse-on-surface":"#303034","on-surface-variant":"#e6bdb8","surface-container":"#1f1f23","on-primary-container":"#fff6f5","surface-bright":"#39393d","error":"#ffb4ab","primary-container":"#dc2626","primary-fixed-dim":"#ffb4ab","surface-dim":"#131317","on-secondary":"#472a00","secondary":"#ffb95f","surface":"#131317","surface-variant":"#353439","background":"#131317","on-primary-fixed-variant":"#93000b","on-secondary-fixed-variant":"#653e00","surface-container-high":"#2a292e","surface-container-low":"#1b1b1f","secondary-fixed-dim":"#ffb95f","outline":"#ac8884","inverse-surface":"#e4e1e7","on-error-container":"#ffdad6","surface-tint":"#ffb4ab","secondary-fixed":"#ffddb8","surface-container-lowest":"#0e0e12","outline-variant":"#5c403c","on-tertiary-container":"#f6f8ff","inverse-primary":"#bf0715","on-surface":"#e4e1e7"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin-lg":"3.5rem","space-sm":"0.5rem","gutter-md":"1.5rem","margin":"1rem","space-lg":"1.25rem","margin-md":"2rem","gutter":"1rem","gutter-lg":"2rem","space-xs":"0.25rem","space-xl":"2rem","space-md":"0.75rem"},"fontFamily":{"body-lg":["Tajawal"],"headline-sm":["Cairo"],"body-md":["Tajawal"],"headline-lg-mobile":["Cairo"],"headline-hero":["Cairo"],"headline-md":["Cairo"],"headline-hero-mobile":["Cairo"],"label-md":["Tajawal"],"headline-lg":["Cairo"],"label-sm":["Tajawal"],"body-sm":["Tajawal"]},"fontSize":{"body-lg":["16px",{"lineHeight":"26px","fontWeight":"500"}],"headline-sm":["18px",{"lineHeight":"26px","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"700"}],"headline-hero":["48px",{"lineHeight":"56px","fontWeight":"800"}],"headline-md":["22px",{"lineHeight":"30px","fontWeight":"700"}],"headline-hero-mobile":["30px",{"lineHeight":"38px","fontWeight":"800"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","fontWeight":"700"}],"label-sm":["11px",{"lineHeight":"14px","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface min-h-screen"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 w-full px-margin-lg flex items-center justify-between gap-gutter"><div class="flex items-center gap-space-xl"><a class="flex items-center gap-space-sm group" data-path="home" href="#"><div class="w-3 h-3 rounded-full bg-primary-container shadow-[0_0_12px_rgba(220,38,38,0.85)]"></div><span class="font-headline-md text-headline-md tracking-wider text-on-primary-container drop-shadow-[0_0_16px_rgba(220,38,38,0.7)]">ANIME DAZE</span></a><nav class="hidden xl:flex items-center gap-space-sm" data-active-classes="text-on-primary-container bg-primary-container rounded-lg font-bold"><a class="px-space-md py-space-xs rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="home" href="#">الرئيسية</a><a aria-current="page" class="px-space-md py-space-xs transition-colors text-on-primary-container bg-primary-container rounded-lg font-bold" data-path="anime-directory" href="#">دليل الأنميات</a><a class="px-space-md py-space-xs rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="categories-and-planets" href="#">الكواكب والتصنيفات</a><a class="px-space-md py-space-xs rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="schedule" href="#">جدول الحلقات</a><a class="px-space-md py-space-xs rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="watchlist" href="#">المفضلة</a><a class="px-space-md py-space-xs rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="vip-membership" href="#">VIP</a></nav></div><div class="flex items-center gap-space-md"><div class="relative hidden md:flex items-center"><div class="flex items-center bg-surface-container-low rounded-lg px-space-md py-space-xs gap-space-sm w-64 shadow-[0_1px_8px_rgba(0,0,0,0.04)] focus-within:shadow-[0_0_16px_rgba(220,38,38,0.35)] transition-all"><span class="material-symbols-outlined text-outline text-[20px]">search</span><input class="bg-transparent border-0 outline-none w-full font-body-sm text-body-sm text-on-surface placeholder-outline" placeholder="ابحث عن أنمي، كوكب، أو بطل..." type="text"/></div></div><button aria-label="التنبيهات" class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors relative" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 left-2 w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_rgba(220,38,38,0.9)]"></span></button><a class="flex items-center gap-space-sm p-space-xs rounded-lg hover:bg-surface-container-high transition-colors" data-path="user-profile" href="#"><div class="relative flex items-center justify-center"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="absolute -bottom-1 -left-1 px-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm shadow-[0_0_8px_rgba(238,152,0,0.4)]">VIP</span></div></a></div></div></header><main class="w-full pt-20 bg-background"><div class="flex flex-col w-full">
+<!-- Subtle Ambient Glow Orbs (Contained) -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-32 right-1/4 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute top-48 left-10 w-80 h-80 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Hero Header & Cinematic Search Section -->
+<section class="w-full px-margin-lg pt-space-xl pb-space-lg flex flex-col gap-space-lg relative z-10">
+<!-- Title & Live Meta Stats Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs max-w-2xl">
+<div class="flex items-center gap-space-sm text-primary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">video_library</span>
+<span class="font-label-md text-label-md tracking-wider uppercase text-on-surface-variant">الأرشيف الرقمي الشامل</span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-primary-container shadow-[0_0_8px_rgba(220,38,38,0.9)]"></span>
+<span class="font-label-sm text-label-sm text-secondary">تحديث مباشر 2025</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            دليل الأنميات والمكتبة الشاملة
+          </h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            استكشف آلاف الأعمال والمسلسلات والأفلام مع إمكانية التصفية المتقدمة وفق الكواكب والتصنيفات ودقة العرض.
+          </p>
+</div>
+<!-- Quick Summary Badge -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex items-center gap-space-lg shadow-md self-start md:self-auto">
+<div class="flex flex-col text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant">إجمالي الأعمال المتوفرة</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">1,240 <span class="font-body-sm text-body-sm text-secondary">عمل</span></span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+</div>
+</div>
+</div>
+<!-- Main Search Box Container -->
+<div class="relative w-full max-w-5xl mx-auto flex flex-col gap-space-sm">
+<div class="relative w-full flex items-center bg-surface-container-low rounded-xl shadow-xl transition-all focus-within:shadow-[0_0_24px_rgba(220,38,38,0.4)] group">
+<!-- Search Icon Anchor (RTL Right) -->
+<div class="pr-space-lg pl-space-sm flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[26px]">search</span>
+</div>
+<!-- Main Input Field -->
+<input class="w-full bg-transparent py-4 text-on-surface font-body-lg text-body-lg placeholder-outline outline-none" dir="rtl" id="anime-search-input" placeholder="ابحث بالعنوان العربي، الإنجليزي، كوكب العرض، أو استوديو الإنتاج..." type="text" value="سولو ليفلينج"/>
+<!-- Input Controls Area (Left Side in RTL) -->
+<div class="flex items-center gap-space-xs pl-space-md pr-space-xs">
+<button aria-label="مسح نص البحث" class="w-8 h-8 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+<button aria-label="بحث صوتي" class="w-8 h-8 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high flex items-center justify-center transition-colors" title="البحث الصوتي الذكي" type="button">
+<span class="material-symbols-outlined text-[18px]">mic</span>
+</button>
+<!-- Keyboard Shortcut Pill -->
+<div class="hidden sm:flex items-center gap-1 bg-surface-container-high px-space-sm py-1 rounded-md text-on-surface-variant font-label-sm text-label-sm select-none">
+<span>Ctrl</span>
+<span>+</span>
+<span>K</span>
+</div>
+<!-- Crimson Action Trigger -->
+<button class="bg-primary-container text-on-primary-container px-space-lg py-2.5 rounded-lg font-headline-sm text-headline-sm flex items-center gap-space-xs hover:shadow-[0_0_16px_rgba(220,38,38,0.7)] transition-all" type="button">
+<span>بحث</span>
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+</button>
+</div>
+</div>
+<!-- Search Suggestions Dropdown Mockup (Active State) -->
+<div class="w-full bg-surface-container rounded-xl shadow-2xl p-space-md flex flex-col gap-space-md z-30">
+<!-- Recent Searches Row -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px]">history</span>
+                عمليات البحث الأخيرة
+              </span>
+<button class="font-label-sm text-label-sm text-outline hover:text-error transition-colors" type="button">
+                مسح السجل
+              </button>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs pt-1">
+<span class="inline-flex items-center gap-1.5 bg-surface-container-high text-on-surface px-space-md py-1 rounded-full font-body-sm text-body-sm hover:bg-surface-container-highest cursor-pointer transition-colors">
+<span>هجوم العمالقة</span>
+<button class="text-outline hover:text-error" type="button"><span class="material-symbols-outlined text-[14px]">cancel</span></button>
+</span>
+<span class="inline-flex items-center gap-1.5 bg-surface-container-high text-on-surface px-space-md py-1 rounded-full font-body-sm text-body-sm hover:bg-surface-container-highest cursor-pointer transition-colors">
+<span>سولو ليفلينج</span>
+<button class="text-outline hover:text-error" type="button"><span class="material-symbols-outlined text-[14px]">cancel</span></button>
+</span>
+<span class="inline-flex items-center gap-1.5 bg-surface-container-high text-on-surface px-space-md py-1 rounded-full font-body-sm text-body-sm hover:bg-surface-container-highest cursor-pointer transition-colors">
+<span>ون بيس</span>
+<button class="text-outline hover:text-error" type="button"><span class="material-symbols-outlined text-[14px]">cancel</span></button>
+</span>
+<span class="inline-flex items-center gap-1.5 bg-surface-container-high text-secondary px-space-md py-1 rounded-full font-body-sm text-body-sm hover:bg-surface-container-highest cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[14px]">rocket_launch</span>
+<span>كوكب الأكشن</span>
+<button class="text-outline hover:text-error" type="button"><span class="material-symbols-outlined text-[14px]">cancel</span></button>
+</span>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-px w-full bg-surface-container-highest/60"></div>
+<!-- Trending Suggestions Grid -->
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">trending_up</span>
+              الاقتراحات الرائجة الآن
+            </span>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm pt-1">
+<!-- Item 1 -->
+<a class="flex items-center justify-between p-space-xs rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-12 rounded bg-surface-container-highest overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Solo Leveling anime character glowing blue aura dark background digital illustration portrait shonen hero" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlZUu3WidAVNNteErISdGFRXZFsJ14PXOpM7d4umejvBq6BNJVxC0iIRMK32q44iIl0itdEwdDRKrTOj6LM3wyCrw_yjju-AzJpi2SYRFS2lJBaFzBURLnQCuOzooa-ECFYeWolzbUP3DUALNKErVGPNksVDBAfJFZUO2CXOumRKPkGnzJQ3ZRGc7uffzOR-huBWY1SHD4BBTtPH0fEndprP2QHkGs3Nt-yrxlSVP40qUf4qYSRhmh"/>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">سولو ليفلينج: النهوض من الظلال</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">أكشن • خيال مظلم • 2024</span>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-secondary-container/20 text-secondary px-2 py-0.5 rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>9.3</span>
+</div>
+</a>
+<!-- Item 2 -->
+<a class="flex items-center justify-between p-space-xs rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-12 rounded bg-surface-container-highest overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Attack on Titan Eren Jaeger dark sunset smoke apocalyptic anime poster style cinematic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwtB9aOHc0oUAve-mWXb1LETCzPdyUE1U7MHeY_dILOyx3vugRn9FWB2bTB95cA7rhydOS_L3RwMhSoe4aJvz75i3AP8FIDweEvpux_tTzPccC1Q6DrjCyxSp3-gkrSLoaIP0hRM4W15BkSND4FgxZVfQhV38jomuta7XxcMevcaGy7v-KJ4yT-zz2jbb_g1bZQ8XeqzoZmNI5E-2aCXsnC0BjIjWYhORWrAA3RoBhUyqjPgSjotal"/>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">هجوم العمالقة: الموسم الأخير</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">كوكب الأكشن • دراما عسكرية</span>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-secondary-container/20 text-secondary px-2 py-0.5 rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>9.8</span>
+</div>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Advanced Filter Matrix Section (شرائح الفلاتر المتقدمة) -->
+<section class="w-full px-margin-lg py-space-md flex flex-col gap-space-md bg-surface-container-lowest/60">
+<!-- Filter Row 1: Planets & Categories -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">public</span>
+            الكواكب والتصنيفات الرئيسية
+          </span>
+<span class="font-body-sm text-body-sm text-outline hidden sm:inline">اختر كوكباً لتصفية العوالم الأنميّة</span>
+</div>
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 no-scrollbar">
+<!-- Active Chip (Crimson Bloom) -->
+<button class="px-space-md py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md whitespace-nowrap shadow-[0_0_12px_rgba(220,38,38,0.7)] flex items-center gap-1 flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px]">apps</span>
+<span>الكل</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors flex items-center gap-1 flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">swords</span>
+<span>كوكب الأكشن والمغامرة</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors flex items-center gap-1 flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">sports_soccer</span>
+<span>كوكب الرياضة والحماس</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors flex items-center gap-1 flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary">psychology</span>
+<span>كوكب الغموض والخيال العلمي</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors flex items-center gap-1 flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px]">local_fire_department</span>
+<span>شونين</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors flex items-center gap-1 flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px]">favorite</span>
+<span>دراما ورومانسية</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors flex items-center gap-1 flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px]">sentiment_very_satisfied</span>
+<span>كوكب الكوميديا</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors flex items-center gap-1 flex-shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px]">magic_button</span>
+<span>خارق للطبيعة</span>
+</button>
+</div>
+</div>
+<!-- Filter Row 2: Status, Release Year, and Sorting Matrix -->
+<div class="flex flex-wrap items-center justify-between gap-space-md pt-space-xs">
+<div class="flex flex-wrap items-center gap-space-md">
+<!-- Status Group -->
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-xl">
+<button class="px-space-md py-1 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm font-bold" type="button">جميع الحالات</button>
+<button class="px-space-md py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-colors" type="button">مستمر</button>
+<button class="px-space-md py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-colors" type="button">مكتمل</button>
+<button class="px-space-md py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-colors" type="button">قريباً</button>
+</div>
+<!-- Year Chips -->
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-xl">
+<button class="px-space-md py-1 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm" type="button">2025</button>
+<button class="px-space-md py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-colors" type="button">2024</button>
+<button class="px-space-md py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-colors" type="button">2023</button>
+<button class="px-space-md py-1 rounded-lg text-secondary font-label-sm text-label-sm hover:text-secondary-fixed transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">token</span>
+<span>كلاسيكيات التسعينات</span>
+</button>
+</div>
+<!-- Dub/Sub Toggle -->
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-xl">
+<button class="px-space-md py-1 rounded-lg bg-primary-container/20 text-primary font-label-sm text-label-sm flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">record_voice_over</span>
+<span>مدبلج عربي</span>
+</button>
+<button class="px-space-md py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm" type="button">مترجم</button>
+</div>
+</div>
+<!-- Sorting & Reset Controls -->
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-2 bg-surface-container-low px-space-md py-1.5 rounded-xl">
+<span class="material-symbols-outlined text-outline text-[18px]">sort</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">الترتيب:</span>
+<select class="bg-transparent text-on-surface font-headline-sm text-headline-sm text-[13px] outline-none cursor-pointer">
+<option class="bg-surface-container text-on-surface" value="rating">الأعلى تقييماً ★</option>
+<option class="bg-surface-container text-on-surface" value="latest">الأحدث إضافةً</option>
+<option class="bg-surface-container text-on-surface" value="views">الأكثر مشاهدة</option>
+<option class="bg-surface-container text-on-surface" value="alpha">الترتيب الأبجدي</option>
+</select>
+</div>
+<button class="px-space-md py-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant hover:text-error font-body-sm text-body-sm flex items-center gap-1 transition-colors" title="مسح كافة التصنيفات المحددة" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+<span class="hidden sm:inline">إعادة ضبط</span>
+</button>
+</div>
+</div>
+<!-- Active Status & Counter Strip -->
+<div class="flex items-center justify-between pt-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_6px_rgba(255,185,95,0.8)]"></span>
+<span>عرض <strong class="text-on-surface">48</strong> عمل من أصل <strong class="text-on-surface">1,240</strong> عمل</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-outline">الدقة المفضلة:</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-on-surface">1080p / 4K</span>
+</div>
+</div>
+</section>
+<!-- Main Anime Directory Grid (5-6 Columns High-Density Layout) -->
+<section class="w-full px-margin-lg py-space-lg">
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-gutter">
+<!-- CARD 1 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<!-- Poster Image with Gradient Scrim -->
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Solo Leveling anime main character Sung Jinwoo wielding glowing daggers in dungeon blue lightning dark atmosphere high resolution" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmnlfHbAts9-1HUE_u-wbNb5BRJgjwPDw8Qaqe1nMbvBbj89EYkbBrQ3YrDa6XK_yWb1TpxY4K1VrDxBD5G5gAffVTpWRscTXWwLBEklzMTbvHqePvD3mqZDZTiEZ3w34-9XEw_I19J0zJzjRfoBEGv2blFIZP46VEOVQ7057SdOzEMFlvryFZtfBLa7HJpDVIVm8XwpLUT_vf4zLi4Xz1Sq17W2KTKUcX0DOifunKjsfRM4ahuYpz"/>
+<!-- Top Badges Overlay -->
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.3
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm shadow-[0_0_8px_rgba(220,38,38,0.7)]">
+                VIP
+              </span>
+</div>
+<!-- Bottom Scrim Gradient -->
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<!-- Quick Action Overlay on Hover -->
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+<button aria-label="معلومات التفاصيل" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-secondary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card Metadata Content -->
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors" title="سولو ليفلينج: النهوض من الظلال">
+              سولو ليفلينج: النهوض
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>حلقة 8/12</span>
+<span>•</span>
+<span class="text-secondary">مستمر</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">FHD 1080p</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-on-surface-variant">أكشن</span>
+</div>
+</div>
+</div>
+<!-- CARD 2 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Attack on Titan Season Final Eren Titan dramatic battle smoke embers crimson sky shonen cinematic poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYsdJlCYXmgCQ90MJap1f0O5IPvrwXrX6lkIsrIxhTurFdNQxMrBLtq2260wWxheDYPcPrHGhJHTUFbxpXGpVP29jDWu2-g5Uu9utuD8ZbuKQhDoD0m1kKGC87FNmi86IFRkFO8gmdlU8nq3fk1AEHerafmyM9wqH69y2Jsgb1oRcOPXi_1CA8zsHaf-64x7l_-Ix9XBGvPScvogzaNNWfVIMQcP2eDpfcJrixc2f19JCMzbPX9Ntn"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.8
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high/90 text-on-surface font-label-sm text-label-sm">
+                4K Ultra
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+<button aria-label="معلومات التفاصيل" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-secondary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors" title="هجوم العمالقة: الموسم الأخير">
+              هجوم العمالقة: الأخير
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>كوكب الأكشن</span>
+<span>•</span>
+<span class="text-tertiary">مكتمل</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">دبلجة + ترجمة</span>
+</div>
+</div>
+</div>
+<!-- CARD 3 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Demon Slayer Infinity Castle Tanjiro fire breath effect dark architectural infinity fortress vivid colors anime key visual" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiwK6QlDvne161HdzwgeJjBfuLUf7LtEzy4pFY1br89K-zu_SDjBe99WRwHTeKo0v9QZALSGiqqG-qGnMhah7omkbJ7saEQiNw4KmzOgD61YINL9jHlLy1wU2hVwCTWKwAieECnB9_C2K3xNabe6Qgl00BE7PBP2N-lDJ5Crukq7wX6yRWCtUJ-Xv6tN15r3cd3bR-1sGbXlVV7AZgb8wjATLZLSnoIWjJPX5oJRg8ofKRJJPRm4Sq"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.5
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm">
+                فيلم جديد
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+<button aria-label="معلومات التفاصيل" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-secondary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              قاتل الشياطين: اللانهاية
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>كوكب المغامرة</span>
+<span>•</span>
+<span>1080p</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">أنميشن سينمائي</span>
+</div>
+</div>
+</div>
+<!-- CARD 4 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Jujutsu Kaisen Gojo Satoru blindfold hollow purple energy blast dark city shonen anime art" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGYKclQvhVCSHopFiiABo8Hk6fLvgNVbDG1bHSEnSEEQjvK0T88GX5BNvXY3SpHCVx5wYS_DHjNv2vJ85HAUFcI0xjjMZnUe6FC-oIGsDuFtmB7zWD8UL77Djlkh7YpJCdNnHjLNKhu6shzbNeR4DYIy0JKYx-bBlxrkKiAKSlsDEnH5XMqnW-K2YxgiSRZpEgKTBlHX0OTAuMQcHJIZN4r78vEoQfnr2hiRJbVISqOcQL0lUqRYE6"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.1
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+                مستمر
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+<button aria-label="معلومات التفاصيل" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-secondary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              جوجيتسو كايسن
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>الموسم 2</span>
+<span>•</span>
+<span class="text-secondary">أكشن وخوارق</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">FHD</span>
+</div>
+</div>
+</div>
+<!-- CARD 5 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="One Piece Egghead Island futuristic Luffy Gear 5 white clouds dynamic anime colors ocean" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiUPyFESJLL8mbXy6MZkdOPXuu741S_WHznlPZ3UNze87y42TNgiafVnZzju8Rrjbxfshn7VMsomufuivd_l6PGh30XSLIHD9XnsRCBAkT6HUKghzV2C9BFLVhC7q4OhHXLO5yhyZA5s5_w7eWgL6g3AwyLTx88HWl3xZKiuBSUXQoKFJi7Fl3UGF3F88NY8YG7Sm1KHVB5kwGK7FoRjCuBDeBKjPWAOq9nSVrYGpcPMvBG3HnoAx6"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.4
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+                VIP مجاني
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+<button aria-label="معلومات التفاصيل" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-secondary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              ون بيس: إيغ هيد
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>حلقة 1120+</span>
+<span>•</span>
+<span class="text-secondary">مستمر</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">كوكب المغامرة</span>
+</div>
+</div>
+</div>
+<!-- CARD 6 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Inazuma Eleven soccer anime boy with fire tornado kick stadium lights nostalgic anime art style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXrxGqQHptlFXdABog83QDuILW9FW-kR_ISdKZ--rfdj_0Vt9NlYHDn4v_hojzun0soup2XiFuW90dYOGTZ8zu5ri3p3qJsIiCcO7mGZOJU-VGMZkSBhvfhMo8PKqncot_7jLOjZ9rJYZztW_cX1OQgNUqlm0syikjYjnY53c6NY7MLyQh0LUOs5c_1TKSnwm4MIzsmHm_NAHca_3Tqz2Nw-9LEa-hjrVeOvkE4ToW0ej9twME-w3s"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                8.9
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+                مدبلج سبيستون
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+<button aria-label="معلومات التفاصيل" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-secondary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              أبطال الكرة (إينازوما)
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>كوكب الرياضة</span>
+<span>•</span>
+<span class="text-tertiary">127 حلقة</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">مدبلج بالكامل</span>
+</div>
+</div>
+</div>
+<!-- CARD 7 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Vinland Saga Thorfinn historical viking landscape northern lights dramatic grim atmosphere anime cel" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0LO8l1yE1kfq4w2dHJd4d1jaGG_-X6ygcxNOeFjMN4B0RWzgyzePNRDA0AEBfhRDexLa5sQ-0nvrwpKrvG5Tf2xG7BF4YCDjPSmLSlNIQn1ahf5-noihwsokAdnb0JDl4wTj4U_bBVBL6Q4fTUk_z8-KDmKvN9hrVQgRObYcqhcJkPSZUBSD-UzT3Ui7tyBSgkTuK1CsEvtvdnqXFGKEJIVRwLZI9qR-UkVfg69KyRtljSbVU8pPC"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.2
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+                مكتمل
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              فينلاند ساجا
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>دراما وتاريخ</span>
+<span>•</span>
+<span>1080p</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">ملحمة الشونين</span>
+</div>
+</div>
+</div>
+<!-- CARD 8 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Bleach Thousand-Year Blood War Ichigo Kurosaki bankai sword release blue energy night city anime visual" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB3BV2iDRgiT0hrGJk-fh5TyF9L8VznGPjPnZ4eREyKgCYkZlZV8wy0lPLz8j-LRKeVgMtQ5kYlA7zYPg0s460VHvNjQ2qg-lP76Nliy27_awLZA_cq_jzaemySN6gkRAJ3k_BCiX1YYRHYrgBZ5ycdnq5l0D-fOqdRl86s8xLWyQg_KdDGb-Q8ydkreZFUX_SqYBuV5IlAIqRHEFrN_RH4cYF4DsVZZjXmGFfGDw8FRHS4VMPwAJl"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.4
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm">
+                FHD
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              بليتش: حرب الألف سنة
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>كوكب الأكشن</span>
+<span>•</span>
+<span class="text-secondary">الموسم 3</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">حرب الكوينشي</span>
+</div>
+</div>
+</div>
+<!-- CARD 9 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Fushigi Yuugi vintage 90s anime aesthetic priestess celestial maiden magic glowing scrolls retro anime illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn1dem-QoK7b6dCx536hNH4wUTysbZluZX17wALxo3RE3CeQVmepm4AvsjQ8z1rMDzhQwae7rqQDUdPxo-CG2Hi_LSueh2RhC5p-od-wiAs_9R9M8_MGx1BP0P2b3HSUZ1WpbPVBDiel6_3fJEqzFjRfW77X9Iwc8NNs8E72BLlpaib-AlgPbbi-qCI7zkKBViSc3wjyBF4fBKrWEAsQ1CkKCsOUKIhbVDzLIxmO9KJeKdcMlLWATP"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                8.7
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-label-sm text-label-sm">
+                كوكب الزمرد
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              فوشيغي يوغي
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>كلاسيكيات</span>
+<span>•</span>
+<span class="text-tertiary">مدبلج كامل</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">أرشيف سبيستون</span>
+</div>
+</div>
+</div>
+<!-- CARD 10 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Frieren Beyond Journeys End silver hair elf mage looking over grassy hill flowers peaceful fantasy anime art masterpiece" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9lI_wfsvaKLmjv08wbgv4ky_ItEnWFmfeA1CUww2XcpKf161YYmL9eO-T12zG3fKTY0hZolE95sJkriipclGkbuX0dtBBDv3dxg5cTuRNc_r64tjgOWDRggR00vtWoPaOIqmWBxWflpHwKUYiq8X7uycJafjq7CniF2Hnot-nHmaLXBYSpS_NEVHl-i_qBNxFgQyLU1LEJahnzwbmD6TqXl_MuHw2wwmPdQgkwfVlULMwIz9HkX59"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.6
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm">
+                تحفة بصرية
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              فريرين: ما وراء النهاية
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>مغامرة وفلسفة</span>
+<span>•</span>
+<span class="text-tertiary">مكتمل</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">4K HDR</span>
+</div>
+</div>
+</div>
+<!-- CARD 11 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Death Note Light Yagami holding black notebook red apple shinigami shadow dark psychological thriller anime visual" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_xSGh8eXg55XyKEGsJAGqaHZMX4kJreyMRBkACK7X3TJdpB9XgR362id4SlLqNJz-pviHXQX-oA7Muvc5Gg3Vdzh7YN4F-4iCZ8EMhSLfWnIx7WJRe3hVSLDEdH6BdMxKTR7JOnj1LJBW4Y_teBjEMrGoemaLYZkuljTUk38FIBK0agMD9_3zfNlsuGINO597yIDQX36skDUBezYz0gVyOrM7-dBk1wPTGo2HfLyCtSR1vtR5zqIE"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.0
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+                4K
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              مذكرة الموت
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>كوكب الغموض</span>
+<span>•</span>
+<span class="text-tertiary">37 حلقة</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">نفسي وإثارة</span>
+</div>
+</div>
+</div>
+<!-- CARD 12 -->
+<div class="group relative flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md hover:shadow-[0_8px_24px_-4px_rgba(220,38,38,0.4)] transition-all duration-300 hover:-translate-y-1">
+<div class="relative w-full aspect-[2/3] bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Haikyuu Karasuno Hinata jumping for volleyball spike high in gymnasium dramatic anime angle energetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVFlFndzJ1slNtMRHXbjeG-NzrcVoVYJ5QNCf228dRQr_ESPm1828vpjwRm1o6nDuglocdD63AYA34eRUthDREK3M3FnO-LHQYN4iofG3KmqpACf-qpzEtVXLCANZZipjSP6YhkucIXC4FKb_mGOSIeKNaBFlRpJLsGkPbAflSlaSgvjRu_T7YjvWwhIped98Y8tG05xXLpDDQUppoeiv9CaorHmHclNMKi01kAbuXjACTvSNiJzWV"/>
+<div class="absolute top-2 right-2 left-2 flex items-center justify-between z-10">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/90 backdrop-blur-md text-on-secondary-container font-label-sm text-label-sm shadow flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                9.3
+              </span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-label-sm text-label-sm">
+                ملهم
+              </span>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-transparent"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/70 opacity-0 group-hover:opacity-100 backdrop-blur-xs transition-opacity duration-300 flex flex-col items-center justify-center gap-space-sm p-space-md z-20">
+<a class="w-full py-2 bg-primary-container hover:bg-primary-container/90 text-on-primary-container font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-1 shadow-lg transition-transform hover:scale-105" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>شاهد الآن</span>
+</a>
+<div class="flex items-center gap-2">
+<button aria-label="أضف إلى المفضلة" class="w-9 h-9 rounded-lg bg-surface-container-high hover:text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-sm flex flex-col gap-1 text-right">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">
+              هايكيو!!: كاراسونو
+            </h3>
+<div class="flex flex-wrap items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span>كوكب الرياضة</span>
+<span>•</span>
+<span class="text-secondary">مكتمل</span>
+</div>
+<div class="flex items-center gap-1 pt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-outline">حماسي شبابي</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Infinite Scroll Loading Indicator & Skeleton Preview Rail -->
+<section class="w-full px-margin-lg py-space-xl flex flex-col items-center justify-center gap-space-lg">
+<!-- Pulsing Crimson Loader -->
+<div class="flex flex-col items-center gap-space-sm">
+<div class="relative flex items-center justify-center">
+<div class="w-12 h-12 rounded-full border-2 border-primary-container/20 border-t-primary-container animate-spin"></div>
+<span class="absolute w-3 h-3 rounded-full bg-primary-container shadow-[0_0_12px_rgba(220,38,38,0.9)] animate-pulse"></span>
+</div>
+<div class="flex flex-col items-center text-center">
+<span class="font-headline-sm text-headline-sm text-on-surface">جاري تحميل المزيد من الأنميات...</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">يتم سحب الحلقات والأعمال التالية من سحابة البث</span>
+</div>
+</div>
+<!-- Progressive Infinite Scroll Skeleton Cards Grid (Faded Edge) -->
+<div class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-gutter opacity-35 pointer-events-none">
+<div class="flex flex-col bg-surface-container-low rounded-xl overflow-hidden p-space-xs gap-2 animate-pulse">
+<div class="w-full aspect-[2/3] bg-surface-container-high rounded-lg"></div>
+<div class="h-4 w-3/4 bg-surface-container-high rounded"></div>
+<div class="h-3 w-1/2 bg-surface-container-high rounded"></div>
+</div>
+<div class="flex flex-col bg-surface-container-low rounded-xl overflow-hidden p-space-xs gap-2 animate-pulse">
+<div class="w-full aspect-[2/3] bg-surface-container-high rounded-lg"></div>
+<div class="h-4 w-3/4 bg-surface-container-high rounded"></div>
+<div class="h-3 w-1/2 bg-surface-container-high rounded"></div>
+</div>
+<div class="hidden sm:flex flex-col bg-surface-container-low rounded-xl overflow-hidden p-space-xs gap-2 animate-pulse">
+<div class="w-full aspect-[2/3] bg-surface-container-high rounded-lg"></div>
+<div class="h-4 w-3/4 bg-surface-container-high rounded"></div>
+<div class="h-3 w-1/2 bg-surface-container-high rounded"></div>
+</div>
+<div class="hidden md:flex flex-col bg-surface-container-low rounded-xl overflow-hidden p-space-xs gap-2 animate-pulse">
+<div class="w-full aspect-[2/3] bg-surface-container-high rounded-lg"></div>
+<div class="h-4 w-3/4 bg-surface-container-high rounded"></div>
+<div class="h-3 w-1/2 bg-surface-container-high rounded"></div>
+</div>
+<div class="hidden lg:flex flex-col bg-surface-container-low rounded-xl overflow-hidden p-space-xs gap-2 animate-pulse">
+<div class="w-full aspect-[2/3] bg-surface-container-high rounded-lg"></div>
+<div class="h-4 w-3/4 bg-surface-container-high rounded"></div>
+<div class="h-3 w-1/2 bg-surface-container-high rounded"></div>
+</div>
+<div class="hidden xl:flex flex-col bg-surface-container-low rounded-xl overflow-hidden p-space-xs gap-2 animate-pulse">
+<div class="w-full aspect-[2/3] bg-surface-container-high rounded-lg"></div>
+<div class="h-4 w-3/4 bg-surface-container-high rounded"></div>
+<div class="h-3 w-1/2 bg-surface-container-high rounded"></div>
+</div>
+</div>
+</section>
+</div>
+<!-- Floating Sticky Action Trigger (Return To Top & Filters Sheet) -->
+<aside class="fixed bottom-6 right-8 z-40 flex flex-col items-center gap-space-xs">
+<button aria-label="العودة لأعلى الصفحة" class="w-12 h-12 rounded-full bg-surface-container-high/90 hover:bg-primary-container text-on-surface hover:text-on-primary-container shadow-xl backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110 group border-0" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="الرجوع للأعلى" type="button">
+<span class="material-symbols-outlined text-[24px]">keyboard_arrow_up</span>
+</button>
+</aside>
+<!-- Script for Client Micro-interactions -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Keyboard shortcut Ctrl + K focuses search
+      window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          const searchInput = document.getElementById('anime-search-input');
+          if (searchInput) {
+            searchInput.focus();
+            searchInput.select();
+          }
+        }
+      });
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest"><div class="w-full px-margin-lg py-margin-lg flex flex-col gap-space-xl"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter-lg"><div class="flex flex-col gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-2.5 h-2.5 rounded-full bg-primary-container shadow-[0_0_10px_rgba(220,38,38,0.8)]"></div><span class="font-headline-sm text-headline-sm text-on-primary-container drop-shadow-[0_0_12px_rgba(220,38,38,0.5)]">ANIME DAZE</span></div><p class="font-body-md text-body-md text-on-surface-variant">منصة البث الرائدة للأنمي المدبلج والمترجم بروح الشونين الأصيلة وسحر سبيستون، بتجربة سينمائية عربية استثنائية.</p></div><div class="flex flex-col gap-space-sm"><span class="font-headline-sm text-headline-sm text-on-surface">الكواكب والتصنيفات</span><div class="flex flex-col gap-space-xs font-body-md text-body-md text-on-surface-variant"><a class="hover:text-on-surface transition-colors" href="#">كوكب الأكشن والمغامرة</a><a class="hover:text-on-surface transition-colors" href="#">كوكب الرياضة والتحدي</a><a class="hover:text-on-surface transition-colors" href="#">كوكب الكوميديا والمرح</a><a class="hover:text-on-surface transition-colors" href="#">أرشيف كلاسيكيات سبيستون</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-headline-sm text-headline-sm text-on-surface">روابط سريعة</span><div class="flex flex-col gap-space-xs font-body-md text-body-md text-on-surface-variant"><a class="hover:text-on-surface transition-colors" href="#">جدول البث الأسبوعي</a><a class="hover:text-on-surface transition-colors" href="#">باقات اشتراك VIP</a><a class="hover:text-on-surface transition-colors" href="#">دليل الرقابة الأبوية</a><a class="hover:text-on-surface transition-colors" href="#">طلب إضافة أنمي</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-headline-sm text-headline-sm text-on-surface">المجتمع والتواصل</span><p class="font-body-sm text-body-sm text-on-surface-variant">انضم إلى مجتمع الأوتاكو العربي لمتابعة النقاشات الحصرية ومواعيد العرض المباشر.</p><div class="flex items-center gap-space-md text-on-surface-variant"><a aria-label="مجتمع الدردشة" class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center hover:text-on-surface hover:bg-surface-container-high transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">forum</span></a><a aria-label="قناة البث" class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center hover:text-on-surface hover:bg-surface-container-high transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">podcasts</span></a><a aria-label="الدعم الفني" class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center hover:text-on-surface hover:bg-surface-container-high transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">support_agent</span></a></div></div></div><div class="pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md text-on-surface-variant font-body-sm text-body-sm"><p>© 2025 ANIME DAZE. جميع الحقوق محفوظة لعشاق الأنمي في العالم العربي.</p><div class="flex items-center gap-space-lg"><a class="hover:text-on-surface transition-colors" href="#">سياسة الخصوصية</a><a class="hover:text-on-surface transition-colors" href="#">شروط الاستخدام</a><a class="hover:text-on-surface transition-colors" href="#">مركز المساعدة</a></div></div></div></footer></body></html>

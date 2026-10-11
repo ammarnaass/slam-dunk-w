@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="ar"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><title>ANIME DAZE | لوحة الإدارة المركزية</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&amp;family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-tint":"#ffb4ab","on-secondary-fixed":"#2a1700","secondary-fixed":"#ffddb8","tertiary-container":"#647387","on-error":"#690005","error-container":"#93000a","inverse-on-surface":"#303034","surface":"#131317","on-secondary-container":"#5b3800","surface-container":"#1f1f23","on-primary-container":"#fff6f5","surface-dim":"#131317","tertiary-fixed-dim":"#b9c8de","primary-container":"#dc2626","outline":"#ac8884","on-tertiary-container":"#f6f8ff","surface-container-low":"#1b1b1f","on-primary-fixed":"#410002","primary":"#ffb4ab","surface-bright":"#39393d","on-secondary":"#472a00","on-background":"#e4e1e7","on-surface":"#e4e1e7","primary-fixed":"#ffdad6","secondary":"#ffb95f","error":"#ffb4ab","secondary-fixed-dim":"#ffb95f","background":"#131317","surface-container-high":"#2a292e","surface-variant":"#353439","secondary-container":"#ee9800","on-tertiary":"#233143","on-primary-fixed-variant":"#93000b","on-tertiary-fixed-variant":"#39485a","surface-container-highest":"#353439","on-tertiary-fixed":"#0d1c2d","outline-variant":"#5c403c","tertiary-fixed":"#d4e4fa","inverse-primary":"#bf0715","tertiary":"#b9c8de","on-secondary-fixed-variant":"#653e00","surface-container-lowest":"#0e0e12","on-error-container":"#ffdad6","inverse-surface":"#e4e1e7","on-surface-variant":"#e6bdb8","on-primary":"#690005","primary-fixed-dim":"#ffb4ab"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xs":"0.25rem","space-md":"0.75rem","margin-md":"2rem","gutter-md":"1.5rem","space-lg":"1.25rem","margin":"1rem","space-xl":"2rem","gutter":"1rem","gutter-lg":"2rem","space-sm":"0.5rem","margin-lg":"3.5rem"},"fontFamily":{"headline-lg-mobile":["Cairo"],"headline-lg":["Cairo"],"label-md":["Tajawal"],"body-sm":["Tajawal"],"body-md":["Tajawal"],"headline-md":["Cairo"],"headline-sm":["Cairo"],"headline-hero-mobile":["Cairo"],"headline-hero":["Cairo"],"label-sm":["Tajawal"],"body-lg":["Tajawal"]},"fontSize":{"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","fontWeight":"700"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"headline-md":["22px",{"lineHeight":"30px","fontWeight":"700"}],"headline-sm":["18px",{"lineHeight":"26px","fontWeight":"600"}],"headline-hero-mobile":["30px",{"lineHeight":"38px","fontWeight":"800"}],"headline-hero":["48px",{"lineHeight":"56px","fontWeight":"800"}],"label-sm":["11px",{"lineHeight":"14px","fontWeight":"700"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"500"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed right-0 top-0 h-full w-72 bg-surface-container-lowest z-50 flex flex-col justify-between py-space-lg"><div class="flex flex-col gap-space-lg"><div class="px-gutter-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(220,38,38,0.45)]"><span class="material-symbols-outlined text-on-primary-container text-[24px]">play_circle</span></div><div><span class="font-headline-sm text-headline-sm tracking-wide text-on-surface block leading-none">ANIME DAZE</span><span class="font-label-sm text-label-sm text-secondary-fixed block tracking-wider uppercase mt-1">CMS Control Core</span></div></div></div><nav class="flex flex-col gap-1 px-space-md" data-active-classes="bg-primary-container text-on-primary-container font-bold shadow-[0_4px_16px_rgba(220,38,38,0.3)]"><a aria-current="page" class="flex items-center justify-between px-space-md py-space-sm rounded-lg transition-all bg-primary-container text-on-primary-container font-bold shadow-[0_4px_16px_rgba(220,38,38,0.3)]" data-path="admin-dashboard" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-body-md text-body-md">لوحة المؤشرات</span></div><span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">v2</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="admin-anime" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">movie</span><span class="font-body-md text-body-md">مكتبة الأنمي والمواسم</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="admin-episodes-and-servers" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">video_settings</span><span class="font-body-md text-body-md">الحلقات وسيرفرات البث</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="admin-planets" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">public</span><span class="font-body-md text-body-md">الكواكب والتصنيفات</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="admin-subscriptions" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">workspace_premium</span><span class="font-body-md text-body-md">المشتركون وباقات VIP</span></div><span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-bold">PRO</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="admin-reports" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">report_problem</span><span class="font-body-md text-body-md">البلاغات والروابط المعطلة</span></div><span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-bold animate-pulse">14</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="admin-infrastructure" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">dns</span><span class="font-body-md text-body-md">الباندويث وشبكة CDN</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="admin-settings" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">tune</span><span class="font-body-md text-body-md">سجل العمليات والإعدادات</span></div></a></nav></div><div class="px-gutter-md flex flex-col gap-space-sm"><div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm text-tertiary">إصدار الكونسول</span><span class="font-label-sm text-label-sm text-on-surface">v2.4.0-admin</span></div><div class="font-label-sm text-label-sm text-on-surface-variant">Next.js 15 Fast API Engine</div></div><button class="w-full flex items-center justify-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-all" type="button"><span class="material-symbols-outlined text-[18px]">logout</span><span class="font-body-sm text-body-sm font-bold">تسجيل خروج آمن</span></button></div></aside><div class="pr-72"><header class="fixed top-0 right-72 left-0 h-16 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-gutter-md"><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm font-bold text-on-surface">لوحة الإدارة</span><span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-bold">Admin Portal</span></div><div class="h-4 w-px bg-surface-container-highest hidden md:block"></div><div class="hidden lg:flex items-center gap-2 px-space-md py-1 rounded-full bg-surface-container-low"><span class="w-2 h-2 rounded-full bg-secondary-fixed shadow-[0_0_8px_rgba(255,185,95,0.8)] animate-ping"></span><span class="w-2 h-2 rounded-full bg-secondary-fixed -mr-3"></span><span class="font-label-sm text-label-sm text-on-surface-variant font-mono">/api/v1/admin: متصل 99.98%</span></div></div><div class="flex items-center gap-gutter-md"><div class="relative w-80 hidden md:block"><span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span><input class="w-full h-9 pr-9 pl-4 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary-container" placeholder="بحث سريع (أنمي، حلقة، مستخدم، خادم)..." type="text"/></div><div class="flex items-center gap-space-sm"><button class="w-9 h-9 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="حالة الخوادم" type="button"><span class="material-symbols-outlined text-[20px]">terminal</span></button><button class="relative w-9 h-9 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="التنبيهات" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-primary-container shadow-[0_0_6px_rgba(220,38,38,0.8)]"></span></button></div><div class="h-5 w-px bg-surface-container-highest"></div><div class="flex items-center gap-space-md"><div class="flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface leading-tight text-right">عمر الأنصاري</span><span class="font-label-sm text-label-sm text-secondary-fixed leading-tight text-right">Super Admin • مدير النظام</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 bg-surface min-h-[calc(100vh-3.5rem)] px-gutter-lg py-gutter-md"><div class="flex flex-col w-full gap-space-xl">
+<!-- Top Command & Action Bar -->
+<section class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-lg p-space-lg rounded-xl bg-surface-container-low shadow-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-mono text-label-sm font-bold">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+          GET /api/v1/admin/overview
+        </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">sync</span>
+          متزامن • آخر تحديث: منذ 12 ثانية
+        </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mt-1">لوحة القيادة والعمليات المركزية</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">مراقبة تدفق البث السحابي، إدارة أرشيف الأنمي، واستقرار عقد الـ CDN لحظياً</p>
+</div>
+<!-- Quick Control Buttons -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<button class="flex items-center gap-2 px-space-md py-space-sm rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm font-bold transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary">download</span>
+<span>تصدير التقارير</span>
+</button>
+<button class="flex items-center gap-2 px-space-md py-space-sm rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm font-bold transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">cached</span>
+<span>تفريغ كاش الـ CDN</span>
+</button>
+<button class="flex items-center gap-2 px-space-md py-space-sm rounded-lg bg-surface-container-highest hover:bg-surface-bright text-on-surface font-body-sm font-bold transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">upload_file</span>
+<span>+ رفع دفعة حلقات</span>
+</button>
+<button class="flex items-center gap-2 px-space-lg py-space-sm rounded-lg bg-primary-container hover:bg-inverse-primary text-on-primary-container font-body-md font-bold transition-all shadow-[0_8px_20px_-4px_rgba(220,38,38,0.45)]" type="button">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span>+ إضافة أنمي جديد</span>
+</button>
+</div>
+</section>
+<!-- Key Metrics Row (4 Columns Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-lg">
+<!-- Card 1: Anime & Episodes Library -->
+<div class="relative overflow-hidden p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between gap-space-md group hover:bg-surface-container transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold">المكتبة الرقمية والأعمال</span>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight mt-1">1,248</span>
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+            +14 عمل مرخص هذا الأسبوع
+          </span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-primary-fixed shadow-inner">
+<span class="material-symbols-outlined text-[26px]">video_library</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm bg-surface-container-high/50 p-2 rounded-lg">
+<span class="font-body-sm text-body-sm text-on-surface-variant">الحلقات النشطة:</span>
+<span class="font-mono font-bold text-on-surface text-body-sm">28,490 حلقة HLS</span>
+</div>
+</div>
+<!-- Card 2: Live Viewers & Streams -->
+<div class="relative overflow-hidden p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between gap-space-md group hover:bg-surface-container transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold">المشاهدات اللحظية المباشرة</span>
+<span class="inline-block w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight mt-1">42,810</span>
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">sensors</span>
+            تدفق نشط عبر 12 خادم بث
+          </span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary shadow-[0_0_16px_rgba(220,38,38,0.25)]">
+<span class="material-symbols-outlined text-[26px]">stream</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm bg-surface-container-high/50 p-2 rounded-lg">
+<span class="font-body-sm text-body-sm text-on-surface-variant">معدل البث المتزامن:</span>
+<span class="font-mono font-bold text-secondary text-body-sm">3,567 جلسة / خادم</span>
+</div>
+</div>
+<!-- Card 3: VIP Subscriptions & Revenue -->
+<div class="relative overflow-hidden p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between gap-space-md group hover:bg-surface-container transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold">مشتركو باقات VIP الفعالة</span>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight mt-1">8,920</span>
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">arrow_circle_up</span>
+            +18% نمو شهري متسارع
+          </span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-secondary-container/20 flex items-center justify-center text-secondary shadow-inner">
+<span class="material-symbols-outlined text-[26px]">workspace_premium</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm bg-surface-container-high/50 p-2 rounded-lg">
+<span class="font-body-sm text-body-sm text-on-surface-variant">معدل تجديد الاشتراك:</span>
+<span class="font-mono font-bold text-on-surface text-body-sm">92.4% شهرياً</span>
+</div>
+</div>
+<!-- Card 4: CDN Health & Incident Reports -->
+<div class="relative overflow-hidden p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between gap-space-md group hover:bg-surface-container transition-all">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold">صحة الـ CDN واستقرار الشبكة</span>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight mt-1">99.94%</span>
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+            7 بلاغات روابط بحاجة لفحص
+          </span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-tertiary-fixed shadow-inner">
+<span class="material-symbols-outlined text-[26px]">lan</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm bg-surface-container-high/50 p-2 rounded-lg">
+<span class="font-body-sm text-body-sm text-on-surface-variant">زمن الاستجابة (Latency):</span>
+<span class="font-mono font-bold text-tertiary-fixed-dim text-body-sm">14ms معدل كلي</span>
+</div>
+</div>
+</section>
+<!-- Traffic, Bandwidth & Video Telemetry Grid -->
+<section class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg">
+<!-- Left: 24h Streaming Bandwidth SVG Graph (8 Cols) -->
+<div class="xl:col-span-8 flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-sm gap-space-md">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">سجلات استهلاك النطاق الترددي</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">استهلاك الباندويث اللحظي (24 ساعة)</h2>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-1 text-label-sm font-label-sm px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span>الذروة الحالية: 142 Gbps</span>
+</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm px-2.5 py-1 rounded-full bg-surface-container-high text-tertiary">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span>متوسط النطاق: 98 Gbps</span>
+</div>
+</div>
+</div>
+<!-- Vector Spark Area Chart -->
+<div class="relative w-full h-64 bg-surface-container-lowest/80 rounded-lg p-space-sm flex flex-col justify-end overflow-hidden">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 800 220">
+<defs>
+<lineargradient id="streamGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#dc2626" stop-opacity="0.55"></stop>
+<stop offset="100%" stop-color="#dc2626" stop-opacity="0.0"></stop>
+</lineargradient>
+<lineargradient id="apiGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#b9c8de" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#b9c8de" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Subtle grid guides -->
+<line stroke="#2a292e" stroke-dasharray="4,4" stroke-width="1" x1="0" x2="800" y1="40" y2="40"></line>
+<line stroke="#2a292e" stroke-dasharray="4,4" stroke-width="1" x1="0" x2="800" y1="100" y2="100"></line>
+<line stroke="#2a292e" stroke-dasharray="4,4" stroke-width="1" x1="0" x2="800" y1="160" y2="160"></line>
+<!-- Background Secondary Curve (Total Traffic) -->
+<path d="M0,170 C100,160 160,140 250,110 C340,80 430,95 520,70 C610,45 710,55 800,40 L800,220 L0,220 Z" fill="url(#apiGrad)"></path>
+<path d="M0,170 C100,160 160,140 250,110 C340,80 430,95 520,70 C610,45 710,55 800,40" fill="none" stroke="#b9c8de" stroke-width="2"></path>
+<!-- Primary Red High-Tension Curve (Video CDN Delivery) -->
+<path d="M0,185 C90,175 180,150 270,120 C360,90 450,105 540,60 C620,20 710,35 800,18 L800,220 L0,220 Z" fill="url(#streamGrad)"></path>
+<path d="M0,185 C90,175 180,150 270,120 C360,90 450,105 540,60 C620,20 710,35 800,18" fill="none" stroke="#dc2626" stroke-width="3"></path>
+<!-- High Peak Indicator Circle -->
+<circle cx="800" cy="18" fill="#dc2626" r="5"></circle>
+<circle cx="540" cy="60" fill="#ffb4ab" r="4"></circle>
+</svg>
+<!-- Time Marker Axis -->
+<div class="flex items-center justify-between font-mono text-label-sm text-on-surface-variant pt-2 border-t-0 px-2">
+<span>00:00 (منتصف الليل)</span>
+<span>06:00 (صباحاً)</span>
+<span>12:00 (ظهراً)</span>
+<span>18:00 (مساءً)</span>
+<span class="text-primary font-bold">الآن (ذروة البث 22:30)</span>
+</div>
+</div>
+<!-- Quick Metrics Ribbon below chart -->
+<div class="grid grid-cols-3 gap-space-sm pt-2">
+<div class="p-space-sm rounded-lg bg-surface-container-high flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">البيانات المنقولة اليوم</span>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface font-mono">1.18 Petabyte</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-high flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">معدل التخزين المؤقت (Cache Hit)</span>
+<span class="font-headline-sm text-headline-sm font-bold text-secondary font-mono">98.2% Direct Edge</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-high flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">متوسط سرعة تشغيل البث (TTFB)</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary font-mono">180ms Ultra-Fast</span>
+</div>
+</div>
+</div>
+<!-- Right: Video Qualities & API Health Telemetry (4 Cols) -->
+<div class="xl:col-span-4 flex flex-col gap-space-md p-space-lg rounded-xl bg-surface-container-low shadow-sm justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">أنماط الدقة وجودة البث</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">hd</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">توزيع دقة المشاهدات</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">نسب تدفق جلسات المشاهدين حسب البروفايل المشفر</p>
+<!-- Quality Progress Bars -->
+<div class="flex flex-col gap-space-md mt-space-lg">
+<!-- 1080p FHD -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-label-md font-label-md">
+<span class="text-on-surface font-bold">1080p FHD (الأكثر استقراراً)</span>
+<span class="text-primary font-mono font-bold">54%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 54%"></div>
+</div>
+</div>
+<!-- 4K Ultra VIP -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-label-md font-label-md">
+<span class="text-on-surface font-bold">4K Ultra HD (مقتصر على VIP)</span>
+<span class="text-secondary font-mono font-bold">28%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 28%"></div>
+</div>
+</div>
+<!-- 720p HD -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-label-md font-label-md">
+<span class="text-on-surface font-bold">720p HD (الهواتف المحمولة)</span>
+<span class="text-tertiary font-mono font-bold">18%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 18%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- API Diagnostics Status Box -->
+<div class="p-space-md rounded-xl bg-surface-container-high flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+            زمن استجابة محرك FastAPI
+          </span>
+<span class="font-mono text-label-sm text-secondary font-bold">42ms avg</span>
+</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+          حمل المعالجة المركزية لعقد التحويل والتشفير التلقائي: 31% تحت السعة التصميمية القصوى.
+        </div>
+</div>
+</div>
+</section>
+<!-- Recent Anime Library Fast CMS Control (Main Interactive Table) -->
+<section class="flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-sm gap-space-lg">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">سجل المحتوى المركزي</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-bold text-label-sm">تحديث مباشر</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold mt-1">أحدث إضافات وتعديلات مكتبة الأنمي</h2>
+</div>
+<!-- Table Filters & Quick Actions -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="relative">
+<input class="h-9 pr-8 pl-3 rounded-lg bg-surface-container-high text-on-surface text-body-sm focus:outline-none focus:ring-1 focus:ring-primary-container" placeholder="تصفية بالعنوان، الكوكب، أو الكود..." type="text"/>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">filter_list</span>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-body-sm font-bold flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">sort</span>
+<span>الأحدث نشراً</span>
+</button>
+</div>
+</div>
+<!-- Responsive Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-high/60 text-on-surface-variant font-label-md text-label-md">
+<th class="py-3 px-4 rounded-r-lg">العمل والبوستر الفني</th>
+<th class="py-3 px-4">التصنيف والكوكب</th>
+<th class="py-3 px-4">أحدث حلقة</th>
+<th class="py-3 px-4">حالة النشر</th>
+<th class="py-3 px-4">نوع الوصول</th>
+<th class="py-3 px-4">سيرفرات البث والجودة</th>
+<th class="py-3 px-4 rounded-l-lg text-center">إجراءات CMS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-transparent font-body-sm text-body-sm">
+<!-- Item 1: Solo Leveling S2 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest shadow-md relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Dark gritty anime poster of solo leveling hunter with glowing purple daggers standing in obsidian dungeon, ultra cinematic dramatic lighting, anime daze art style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJQzPS6hApFrOj53rOFFYbI3zbsR8Mf2VNHs5nc6nsVAa8evMnnpKTSbRPghsDwttLsw3ZHN0TGO_N_T9L7VWpaEXQxHYlWuYhJoJoTDzlDxp9LfAwLNFJJZNEWjZYf81hckkRIF710oHmK4AZmvQUSo31ujsw5IraIcXOyN4f-SKxSRosyREmSiYwDg4jF7M05fxVdvuWjdFyom6M2s0Mf6WgoH-dw1aXj6WKnI2PmKICacJUSMIj"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">سولو ليفلينغ: النهوض من الظلال (موسم 2)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono mt-0.5">SL-S02-KR • Ar Sub / Dubbed</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-container/20 text-primary font-bold text-label-sm">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+                كوكب الأكشن والشونين
+              </span>
+</td>
+<td class="py-3.5 px-4 font-mono font-bold text-on-surface">الحلقة 14</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-secondary font-bold text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                منشور ومتاح
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-bold text-label-sm">
+<span class="material-symbols-outlined text-[13px]">lock_open</span>
+                VIP حصرية أولاً
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-mono">6 سيرفرات</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container text-label-sm font-bold">4K Multi</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-on-surface transition-all" title="تعديل التفاصيل" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container flex items-center justify-center text-on-surface transition-all" title="إضافة حلقة" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-tertiary transition-all" title="فحص الروابط" type="button">
+<span class="material-symbols-outlined text-[16px]">dns</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Item 2: Jujutsu Kaisen Culling Game -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest shadow-md relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Anime sorcerer warrior with white hair and blindfold surrounded by fiery blue cursed energy runes, dark night Tokyo backdrop, intense cinematic focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-T_y4SJo5mLqLnIQeaBgB36MaZzfElJoywDNRfCfnWnC_uqhzeftsJEPmBchhzEKajAYsE2sLzpZhk_rixJ4LbStaQ5lUQmao83bAf7Dfwar2sJ4i-o_8vAEjjrGG6s93KdeLXBFFXRky9cYHTigrtzE0wu8YDZq-t_XCBb06saFH6z3WINZIRZs3jSFjTMlgtnqrhN19leK_kQm3fVuhYQnX2NXB1dBJdwQcokUCgtW6DVB5Q0up"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">جوجيتسو كايسن: ألعاب الإبادة</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono mt-0.5">JJK-S03-JP • Subbed</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-bold text-label-sm">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+                قوى خارقة وخوارق
+              </span>
+</td>
+<td class="py-3.5 px-4 font-mono font-bold text-on-surface">الحلقة 08</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-secondary font-bold text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                منشور ومتاح
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-bold text-label-sm">
+                مجاني للجميع
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-mono">5 سيرفرات</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface text-label-sm font-bold">1080p FHD</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-on-surface transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container flex items-center justify-center text-on-surface transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-tertiary transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">dns</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Item 3: Grendizer U Classic Spacetoon Universe -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest shadow-md relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Iconic giant super robot mecha with golden horns and crimson armor hovering over Earth orbit, nostalgic golden era anime tribute style, ultra high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgnj4vILfYLDy3gBkMTJ8UnmXc3ZN9ORY0ZJyi9j31fJsIM2NaY2I5x6efR0SO74tJCZaCFb3lImmhy5aUF5ycG4r4E00Ut8MFhJo-eu0inExXyn8A38WoQpQTvS44ckcoJNxKcvZf9zwFUgI51zbBek-s5GLrMs1myD0pYBFBwn3hs1wZUFFAkllNu1ihTt_v0WFPdxw4xM73yeHIn8XbxUQFmh0qWtn0KtHbSKnNkmHTz9I-7_n-"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">مغامرات الفضاء: غرندايزر يو (النسخة المعربة)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono mt-0.5">GRD-U-2024 • دبلجة عربية مركز الزهرة</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary font-bold text-label-sm">
+<span class="material-symbols-outlined text-[14px]">rocket_launch</span>
+                كوكب مغامرات وكلاسيكيات
+              </span>
+</td>
+<td class="py-3.5 px-4 font-mono font-bold text-on-surface">الحلقة 13 (الأخيرة)</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-tertiary font-bold text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                مكتمل الأرشفة
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-bold text-label-sm">
+<span class="material-symbols-outlined text-[13px]">lock_open</span>
+                VIP + صوت نقي Master
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-mono">8 سيرفرات</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container text-label-sm font-bold">4K Dolby 5.1</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-on-surface transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container flex items-center justify-center text-on-surface transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-tertiary transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">dns</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Item 4: Frieren Beyond Journey's End -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-highest shadow-md relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Elven mage girl holding magic staff looking at golden sunset over fantasy medieval meadow, serene and emotional anime aesthetic with vivid color contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLZPaufJH-knTzpRfvJePGnz94mJpfbYy1Pzh-U_EhzQCHmPDMM218QqCIll4vmzK6F9EneyAd2mUdwMBGqzLN3qQ7mSsK0ZFbiEqi-m97LcvZQX3rBe2p_Y8QDqC6B8k1VGi1H_puVAdImu135-PyxhdyNA6IAVj55YaCsg7lp78eqAfVss4Dvn0YFCyJTh5BACo-jMQdgftqGUhUZ03-B0y8fvnvGxen2addov9bzIIPXVF9cfXL"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">فريرين: ما بعد نهاية الرحلة</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono mt-0.5">FRIEREN-S01 • مترجم + مدبلج</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-tertiary font-bold text-label-sm">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+                كوكب الزمرد والخيال
+              </span>
+</td>
+<td class="py-3.5 px-4 font-mono font-bold text-on-surface">الحلقة 28</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-secondary font-bold text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                منشور ومتاح
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-bold text-label-sm">
+                مجاني للجميع
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-mono">4 سيرفرات</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface text-label-sm font-bold">1080p FHD</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-on-surface transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container flex items-center justify-center text-on-surface transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-tertiary transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">dns</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination / Summary Footer -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-space-sm pt-space-sm bg-surface-container-high/30 p-space-md rounded-lg">
+<span class="font-body-sm text-body-sm text-on-surface-variant">عرض 1 إلى 4 من أصل 1,248 عملاً مسجلاً في قاعدة بيانات الإنتاج</span>
+<div class="flex items-center gap-1">
+<button class="px-3 py-1 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface text-label-sm font-bold" type="button">السابق</button>
+<button class="px-3 py-1 rounded bg-primary-container text-on-primary-container text-label-sm font-bold" type="button">1</button>
+<button class="px-3 py-1 rounded bg-surface-container-high text-on-surface text-label-sm font-bold" type="button">2</button>
+<button class="px-3 py-1 rounded bg-surface-container-high text-on-surface text-label-sm font-bold" type="button">3</button>
+<button class="px-3 py-1 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface text-label-sm font-bold" type="button">التالي</button>
+</div>
+</div>
+</section>
+<!-- Live Incident Queue & CDN Datacenter Status (Bento Split) -->
+<section class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg mb-space-md">
+<!-- Broken Links & User Reports Queue (8 Cols) -->
+<div class="xl:col-span-8 flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-sm gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined text-[18px]">report_problem</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">طابور فحص البلاغات والروابط المعطلة</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">تقارير فورية واردة من زر «الإبلاغ عن عطل» في مشغل الفيديو</span>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-primary-container text-on-primary-container text-label-sm font-bold animate-pulse">7 بلاغات معلقة</span>
+</div>
+<!-- Incident Items -->
+<div class="flex flex-col gap-space-sm mt-space-sm">
+<!-- Incident 1 -->
+<div class="p-space-md rounded-xl bg-surface-container-high flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-highest transition-all">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">link_off</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">ون بيس (One Piece) • الحلقة 1120</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-primary font-mono text-label-sm">سيرفر MegaCDN-03</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">«الشاشة تتوقف عند الدقيقة 14:22 ويظهر خطأ 403 Forbidden في تدفق HLS m3u8»</p>
+<div class="flex items-center gap-space-md mt-2 text-label-sm font-label-sm text-on-surface-variant font-mono">
+<span>المبلغ: أحمد_VIP (#44921)</span>
+<span>•</span>
+<span class="text-secondary">منذ 4 دقائق</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-primary-container hover:text-on-primary-container text-on-surface text-label-sm font-bold flex items-center gap-1 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">flaky</span>
+<span>فحص آلي</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container text-label-sm font-bold flex items-center gap-1 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">swap_calls</span>
+<span>استبدال السيرفر</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest hover:bg-surface-bright text-on-surface-variant flex items-center justify-center" title="إغلاق البلاغ" type="button">
+<span class="material-symbols-outlined text-[16px]">done</span>
+</button>
+</div>
+</div>
+<!-- Incident 2 -->
+<div class="p-space-md rounded-xl bg-surface-container-high flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-highest transition-all">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-secondary flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">speed</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">بليتش: حرب الألف عام • الحلقة 04</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-secondary font-mono text-label-sm">سيرفر FastDrive-Stream</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">«تقطيع مستمر وتأخر تحميل في جودة 1080p FHD للمشاهدين من دول الخليج»</p>
+<div class="flex items-center gap-space-md mt-2 text-label-sm font-label-sm text-on-surface-variant font-mono">
+<span>المبلغ: زائر مجهول (IP: Riyadh)</span>
+<span>•</span>
+<span class="text-on-surface-variant">منذ 11 دقيقة</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-primary-container hover:text-on-primary-container text-on-surface text-label-sm font-bold flex items-center gap-1 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">flaky</span>
+<span>فحص آلي</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-highest hover:bg-surface-bright text-on-surface text-label-sm font-bold flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">autorenew</span>
+<span>إعادة توجيه Edge</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest hover:bg-surface-bright text-on-surface-variant flex items-center justify-center" title="إغلاق البلاغ" type="button">
+<span class="material-symbols-outlined text-[16px]">done</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Center Nodes & Realtime Infrastructure Status (4 Cols) -->
+<div class="xl:col-span-4 flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-sm gap-space-md justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">البنية التحتية العالمية</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">cloud_done</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">مراكز البث السحابي (CDN Edges)</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">حالة الجاهزية والضغط على خوادم تسليم الفيديو المباشر</p>
+<div class="flex flex-col gap-space-sm mt-space-md">
+<!-- Riyadh Edge -->
+<div class="p-space-sm rounded-lg bg-surface-container-high flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary shadow-[0_0_8px_rgba(255,185,95,0.7)]"></span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">عقدة الرياض (Riyadh Edge Node)</span>
+<span class="font-mono text-label-sm text-on-surface-variant">STC / Mobily peering • Latency: 9ms</span>
+</div>
+</div>
+<span class="font-mono font-bold text-secondary text-label-sm">48 Gbps (34%)</span>
+</div>
+<!-- Frankfurt Hub -->
+<div class="p-space-sm rounded-lg bg-surface-container-high flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary shadow-[0_0_8px_rgba(255,185,95,0.7)]"></span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">محور فرانكفورت (Frankfurt Central)</span>
+<span class="font-mono text-label-sm text-on-surface-variant">Core Transcoding cluster • Latency: 42ms</span>
+</div>
+</div>
+<span class="font-mono font-bold text-secondary text-label-sm">74 Gbps (52%)</span>
+</div>
+<!-- Amsterdam Stream -->
+<div class="p-space-sm rounded-lg bg-surface-container-high flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary shadow-[0_0_8px_rgba(255,185,95,0.7)]"></span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">أمستردام للوسائط (AMS Storage-01)</span>
+<span class="font-mono text-label-sm text-on-surface-variant">Master Cold Storage &amp; VOD • Latency: 55ms</span>
+</div>
+</div>
+<span class="font-mono font-bold text-secondary text-label-sm">20 Gbps (18%)</span>
+</div>
+</div>
+</div>
+<!-- Quick Action Alert -->
+<div class="p-space-sm rounded-lg bg-primary-container/10 border-0 flex items-center justify-between mt-2">
+<div class="flex items-center gap-2 text-primary font-label-sm font-bold">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span>حماية Cloudflare DDoS نشطة بالكامل</span>
+</div>
+<button class="text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface underline" type="button">إدارة WAF</button>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Micro-interaction: Subtle highlight when action buttons are clicked
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.classList.add('scale-95');
+      setTimeout(() => this.classList.remove('scale-95'), 120);
+    });
+  });
+</script></main><footer class="h-14 bg-surface-container-lowest flex items-center justify-between px-gutter-lg"><div class="font-label-sm text-label-sm text-on-surface-variant">© 2025 شبكة ANIME DAZE الترفيهية • بوابة التحكم والمراقبة المركزية</div><div class="flex items-center gap-space-md font-label-sm text-label-sm text-on-surface-variant"><span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Edge Nodes: Riyadh / Tokyo / Frankfurt</span><span>•</span><span class="font-mono">Latency: 14ms</span></div></footer></div></body></html>
