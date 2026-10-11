@@ -180,3 +180,65 @@ model Session {
 
   @@index([userId])
 }
+
+model WatchProgress {
+  id              String   @id @default(uuid())
+  userId          String
+  episodeId       String
+  positionSeconds Float    @default(0)
+  durationSeconds Float    @default(0)
+  completed       Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, episodeId])
+  @@index([userId])
+}
+
+model Favorite {
+  id         String   @id @default(uuid())
+  userId     String
+  targetType String   // 'anime' | 'episode'
+  targetId   String   // animeId or episodeId
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, targetType, targetId])
+  @@index([userId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  userId    String
+  userName  String?
+  avatar    String?
+  episodeId String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([episodeId])
+  @@index([userId])
+}
+
+model EpisodeRating {
+  id        String   @id @default(uuid())
+  userId    String
+  episodeId String
+  rating    Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, episodeId])
+  @@index([episodeId])
+}
+
+model Report {
+  id         String   @id @default(uuid())
+  userId     String?
+  targetType String   // 'comment' | 'link'
+  targetId   String   // commentId or episodeId
+  reason     String
+  status     String   @default("pending") // 'pending' | 'resolved' | 'dismissed'
+  createdAt  DateTime @default(now())
+
+  @@index([status])
+}
+
