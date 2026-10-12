@@ -6,6 +6,7 @@ import HomeSlider from "@/components/HomeSlider";
 import AnimeCard from "@/components/AnimeCard";
 import EpisodeCard from "@/components/EpisodeCard";
 import CharacterCard from "@/components/CharacterCard";
+import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
 
 export const dynamic = "force-dynamic";
 
@@ -95,6 +96,14 @@ export default async function Home() {
             console.error("Fallback settings read error:", e);
         }
     }
+
+    let localSettings: any = null;
+    if (fs.existsSync(path.join(dataDir, "settings.json"))) {
+        try {
+            localSettings = JSON.parse(fs.readFileSync(path.join(dataDir, "settings.json"), "utf-8"));
+        } catch (_) {}
+    }
+    const promoBanner = settings?.promoBanner || localSettings?.promoBanner || DEFAULT_PROMO_BANNER;
 
     if (latestEpisodesData.length === 0 && fs.existsSync(path.join(dataDir, "episodes.json"))) {
         try {
@@ -431,85 +440,88 @@ export default async function Home() {
                 </section>
             )}
 
-            {/* 8. PWA APP DOWNLOAD & VIP PROMO BANNER */}
-            <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-                <div className="max-w-7xl mx-auto">
-                    <div className="relative rounded-3xl bg-surface-container-low overflow-hidden p-6 sm:p-8 lg:p-12 shadow-2xl border border-white/[0.06]">
-                        {/* Ambient Red/Amber Gradients */}
-                        <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary-container/20 blur-3xl pointer-events-none" />
-                        <div className="absolute -left-20 -top-20 w-80 h-80 rounded-full bg-secondary-container/15 blur-3xl pointer-events-none" />
-                        
-                        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-center">
-                            {/* Content Side (8 Cols) */}
-                            <div className="lg:col-span-8 space-y-space-md">
-                                <div className="inline-flex items-center gap-2 px-space-md py-1 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-bold shadow-[0_0_12px_rgba(220,38,38,0.5)]">
-                                    <span className="material-symbols-outlined text-sm">install_mobile</span>
-                                    تجربة بث سينمائية بدون تقطيع
-                                </div>
-                                <h2 className="font-headline-lg text-headline-lg text-on-surface font-extrabold max-w-xl">
-                                    ثبّت تطبيق ANIME DAZE كـ PWA خفيف على هاتفك وشاشتك الذكية
-                                </h2>
-                                <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
-                                    استمتع بمشاهدة بدون إعلانات نهائياً، سرعة تشغيل فورية، تنبيهات عند صدور الحلقات المترجمة في نفس دقيقة نزولها في اليابان، مع إمكانية التحميل للمشاهدة بدون إنترنت.
-                                </p>
-                                
-                                {/* Features Highlights Grid */}
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
-                                    <div className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-primary text-xl">block</span>
-                                        <span className="font-label-md text-label-md text-on-surface">صفر إعلانات</span>
+            {/* 8. DYNAMIC PWA APP DOWNLOAD & VIP PROMO BANNER */}
+            {promoBanner && promoBanner.isEnabled && (
+                <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="relative rounded-3xl bg-surface-container-low overflow-hidden p-6 sm:p-8 lg:p-12 shadow-2xl border border-white/[0.06]">
+                            {/* Ambient Red/Amber Gradients */}
+                            <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary-container/20 blur-3xl pointer-events-none" />
+                            <div className="absolute -left-20 -top-20 w-80 h-80 rounded-full bg-secondary-container/15 blur-3xl pointer-events-none" />
+                            
+                            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-center">
+                                {/* Content Side (8 Cols) */}
+                                <div className="lg:col-span-8 space-y-space-md">
+                                    <div className="flex items-center gap-3 flex-wrap">
+                                        <div className="inline-flex items-center gap-2 px-space-md py-1 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-bold shadow-[0_0_12px_rgba(220,38,38,0.5)]">
+                                            <span className="material-symbols-outlined text-sm">{promoBanner.badgeIcon || "install_mobile"}</span>
+                                            {promoBanner.badgeText}
+                                        </div>
+                                        {promoBanner.appIconUrl && (
+                                            <div className="w-7 h-7 rounded-lg overflow-hidden bg-white/10 shrink-0 border border-white/20 shadow-md">
+                                                <img src={promoBanner.appIconUrl} alt="App Icon" className="w-full h-full object-cover" />
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-secondary text-xl">bolt</span>
-                                        <span className="font-label-md text-label-md text-on-surface">مشغل فائق السرعة</span>
+                                    <h2 className="font-headline-lg text-headline-lg text-on-surface font-extrabold max-w-xl">
+                                        {promoBanner.title}
+                                    </h2>
+                                    <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                                        {promoBanner.description}
+                                    </p>
+                                    
+                                    {/* Features Highlights Grid */}
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
+                                        {(promoBanner.features || []).map((feat: any, idx: number) => (
+                                            <div key={feat.id || idx} className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
+                                                <span className={`material-symbols-outlined text-xl ${idx % 2 === 0 ? "text-primary" : "text-secondary"}`}>
+                                                    {feat.icon}
+                                                </span>
+                                                <span className="font-label-md text-label-md text-on-surface">{feat.text}</span>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <div className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-primary text-xl">download_for_offline</span>
-                                        <span className="font-label-md text-label-md text-on-surface">تحميل أوفلاين</span>
-                                    </div>
-                                    <div className="p-space-sm rounded-xl bg-surface-container flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-secondary text-xl">notifications_active</span>
-                                        <span className="font-label-md text-label-md text-on-surface">تنبيهات فورية</span>
+
+                                    <div className="pt-space-sm flex flex-wrap items-center gap-space-md">
+                                        <Link
+                                            href={promoBanner.primaryButtonLink || "/pricing"}
+                                            className="flex items-center gap-space-sm px-space-xl py-space-md rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm shadow-[0_0_24px_rgba(220,38,38,0.4)] hover:brightness-110 active:scale-95 transition-all"
+                                        >
+                                            <span className="material-symbols-outlined text-xl">{promoBanner.primaryButtonIcon || "diamond"}</span>
+                                            <span>{promoBanner.primaryButtonText}</span>
+                                        </Link>
+                                        <Link
+                                            href={promoBanner.secondaryButtonLink || "/animes"}
+                                            className="flex items-center gap-space-sm px-space-lg py-space-md rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-label-md text-label-md"
+                                        >
+                                            <span>{promoBanner.secondaryButtonText}</span>
+                                        </Link>
                                     </div>
                                 </div>
 
-                                <div className="pt-space-sm flex flex-wrap items-center gap-space-md">
-                                    <Link
-                                        href="/pricing"
-                                        className="flex items-center gap-space-sm px-space-xl py-space-md rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm shadow-[0_0_24px_rgba(220,38,38,0.4)] hover:brightness-110 active:scale-95 transition-all"
-                                    >
-                                        <span className="material-symbols-outlined text-xl">diamond</span>
-                                        <span>ترقية إلى VIP بخصم 40%</span>
-                                    </Link>
-                                    <Link
-                                        href="/animes"
-                                        className="flex items-center gap-space-sm px-space-lg py-space-md rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-label-md text-label-md"
-                                    >
-                                        <span>تصفح المكتبة المجانية</span>
-                                    </Link>
-                                </div>
-                            </div>
-
-                            {/* Graphic Promo Side (4 Cols) */}
-                            <div className="lg:col-span-4 hidden lg:flex justify-center">
-                                <div className="relative w-64 aspect-[3/4] rounded-2xl overflow-hidden bg-surface-container-highest border border-white/10 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
-                                    <img
-                                        src="/hero-bg.jpg"
-                                        alt="ANIME DAZE App Preview"
-                                        className="w-full h-full object-cover"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent" />
-                                    <div className="absolute bottom-4 inset-x-4 p-3 rounded-xl bg-surface-container/90 backdrop-blur-md text-center">
-                                        <span className="font-headline-sm text-xs font-bold text-secondary">
-                                            تجربة سبيستون الكلاسيكية الحديثة
-                                        </span>
+                                {/* Graphic Promo Side (4 Cols) */}
+                                <div className="lg:col-span-4 hidden lg:flex justify-center">
+                                    <div className="relative w-64 aspect-[3/4] rounded-2xl overflow-hidden bg-surface-container-highest border border-white/10 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+                                        <img
+                                            src={promoBanner.imageUrl || "/hero-bg.jpg"}
+                                            alt={promoBanner.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent" />
+                                        {promoBanner.imageCaption && (
+                                            <div className="absolute bottom-4 inset-x-4 p-3 rounded-xl bg-surface-container/90 backdrop-blur-md text-center">
+                                                <span className="font-headline-sm text-xs font-bold text-secondary">
+                                                    {promoBanner.imageCaption}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
         </div>
     );

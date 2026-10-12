@@ -6,7 +6,8 @@ import {
     SiteIdentity, 
     FullSiteSettings, 
     UpdateSiteIdentityDto, 
-    UpdateSiteSettingsDto 
+    UpdateSiteSettingsDto,
+    PromoBannerConfig 
 } from "@/server/types/settings.types";
 import { 
     updateSiteIdentitySchema, 
@@ -25,6 +26,11 @@ export const DEFAULT_SITE_IDENTITY: SiteIdentity = {
     accentColor: "#ffb95f"
 };
 
+import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
+import { DEFAULT_FOOTER_CONFIG } from "@/lib/footer-presets";
+import { DEFAULT_API_APP_CONFIG } from "@/lib/app-presets";
+export { DEFAULT_PROMO_BANNER, DEFAULT_FOOTER_CONFIG, DEFAULT_API_APP_CONFIG };
+
 function loadLocalSettings(): any {
     try {
         const filePath = path.join(DATA_DIR, "settings.json");
@@ -40,7 +46,10 @@ function loadLocalSettings(): any {
         maintenanceMode: false,
         maintenanceMessage: "الموقع في وضع الصيانة حالياً. سنعود قريباً!",
         socialLinks: {},
-        sliderAnimeIds: ["slam-dunk"]
+        sliderAnimeIds: ["slam-dunk"],
+        promoBanner: DEFAULT_PROMO_BANNER,
+        footer: DEFAULT_FOOTER_CONFIG,
+        apiApp: DEFAULT_API_APP_CONFIG
     };
 }
 
@@ -85,8 +94,26 @@ export class SettingsService {
                 bannerId: dbSettings?.admobBannerId ?? "",
                 interstitialId: dbSettings?.admobInterstitialId ?? ""
             },
-            apiApp: local.apiApp || {},
-            sliderAnimeIds: local.sliderAnimeIds || ["slam-dunk"]
+            apiApp: local.apiApp ? {
+                ...DEFAULT_API_APP_CONFIG,
+                ...local.apiApp,
+                releaseNotes: Array.isArray(local.apiApp.releaseNotes)
+                    ? local.apiApp.releaseNotes
+                    : DEFAULT_API_APP_CONFIG.releaseNotes
+            } : DEFAULT_API_APP_CONFIG,
+            sliderAnimeIds: local.sliderAnimeIds || ["slam-dunk"],
+            promoBanner: local.promoBanner ? {
+                ...DEFAULT_PROMO_BANNER,
+                ...local.promoBanner,
+                features: local.promoBanner.features || DEFAULT_PROMO_BANNER.features
+            } : DEFAULT_PROMO_BANNER,
+            footer: local.footer ? {
+                ...DEFAULT_FOOTER_CONFIG,
+                ...local.footer,
+                socialLinks: local.footer.socialLinks || DEFAULT_FOOTER_CONFIG.socialLinks,
+                exploreLinks: local.footer.exploreLinks || DEFAULT_FOOTER_CONFIG.exploreLinks,
+                helpLinks: local.footer.helpLinks || DEFAULT_FOOTER_CONFIG.helpLinks,
+            } : DEFAULT_FOOTER_CONFIG
         };
     }
 
@@ -183,9 +210,17 @@ export class SettingsService {
                 ...(validated.admob || {})
             },
             apiApp: {
-                ...(currentLocal.apiApp || {}),
+                ...(currentLocal.apiApp || DEFAULT_API_APP_CONFIG),
                 ...(validated.apiApp || {})
-            }
+            },
+            promoBanner: validated.promoBanner ? {
+                ...(currentLocal.promoBanner || DEFAULT_PROMO_BANNER),
+                ...validated.promoBanner
+            } : (currentLocal.promoBanner || DEFAULT_PROMO_BANNER),
+            footer: validated.footer ? {
+                ...(currentLocal.footer || DEFAULT_FOOTER_CONFIG),
+                ...validated.footer
+            } : (currentLocal.footer || DEFAULT_FOOTER_CONFIG)
         };
 
         // 1. Persist locally

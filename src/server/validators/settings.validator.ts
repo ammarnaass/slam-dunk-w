@@ -40,6 +40,79 @@ export const updateSiteSettingsSchema = z.object({
         interstitialId: z.string().optional().default(""),
         rewardedId: z.string().optional().default("")
     }).optional(),
-    apiApp: z.record(z.string(), z.any()).optional(),
-    sliderAnimeIds: z.array(z.string()).optional()
+    apiApp: z.object({
+        isMaintenance: z.boolean().optional().default(false),
+        maintenanceTitle: z.string().optional().default("صيانة دورية مجدولة"),
+        maintenanceMessage: z.string().optional().default("نقوم حالياً بتحسين وتحديث سيرفرات المشاهدة لتوفير تجربة أسرع وأعلى جودة بدون تقطيع. سنعود خلال وقت قصير!"),
+        maintenanceEndTime: z.string().optional().default(""),
+        devBypassKey: z.string().optional().default("SLAM_DEV_2026"),
+        latestVersion: z.string().optional().default("1.2.0"),
+        latestBuild: z.number().optional().default(14),
+        minSupportedVersion: z.string().optional().default("1.0.0"),
+        minSupportedBuild: z.number().optional().default(10),
+        forceUpdate: z.boolean().optional().default(false),
+        updateUrl: z.string().optional().default(""),
+        directApkUrl: z.string().optional().default(""),
+        releaseNotes: z.array(z.string()).optional().default([]),
+        apiUrl: z.string().optional().default("https://slam-dunk-w.vercel.app/api/mobile/v1"),
+        apiKey: z.string().optional().default("slam_live_app_key_2026"),
+        defaultQuality: z.string().optional().default("1080p"),
+        defaultServer: z.string().optional().default("Mega"),
+        allowDownloads: z.boolean().optional().default(true),
+        interstitialInterval: z.number().optional().default(2)
+    }).optional(),
+    sliderAnimeIds: z.array(z.string()).optional(),
+    promoBanner: z.object({
+        isEnabled: z.boolean().optional().default(true),
+        badgeText: z.string().optional().default("تجربة بث سينمائية بدون تقطيع"),
+        badgeIcon: z.string().optional().default("install_mobile"),
+        title: z.string().optional().default("ثبّت تطبيق ANIME DAZE كـ PWA خفيف على هاتفك وشاشتك الذكية"),
+        description: z.string().optional().default("استمتع بمشاهدة بدون إعلانات نهائياً، سرعة تشغيل فورية، تنبيهات عند صدور الحلقات المترجمة في نفس دقيقة نزولها في اليابان، مع إمكانية التحميل للمشاهدة بدون إنترنت."),
+        features: z.array(z.object({
+            id: z.string(),
+            icon: z.string(),
+            text: z.string()
+        })).optional(),
+        primaryButtonText: z.string().optional().default("ترقية إلى VIP بخصم 40%"),
+        primaryButtonLink: z.string().optional().default("/pricing"),
+        primaryButtonIcon: z.string().optional().default("diamond"),
+        secondaryButtonText: z.string().optional().default("تصفح المكتبة المجانية"),
+        secondaryButtonLink: z.string().optional().default("/animes"),
+        imageUrl: z.string().optional().default("/hero-bg.jpg"),
+        imageCaption: z.string().optional().default("تجربة سبيستون الكلاسيكية الحديثة"),
+        appIconUrl: z.string().optional()
+    }).optional(),
+    footer: z.object({
+        subtitle: z.string().optional().default("سبيس تون & أنمي كلاسيك"),
+        description: z.string().optional().default("منصة البث السينمائية الأولى لعشاق الأنمي في العالم العربي."),
+        socialLinks: z.array(z.object({
+            id: z.string(),
+            name: z.string(),
+            icon: z.string(),
+            url: z.string(),
+            isEnabled: z.boolean()
+        })).optional(),
+        exploreTitle: z.string().optional().default("استكشف المنصة"),
+        exploreLinks: z.array(z.object({
+            id: z.string(),
+            label: z.string(),
+            href: z.string(),
+            isVip: z.boolean().optional()
+        })).optional(),
+        helpTitle: z.string().optional().default("المساعدة والدعم"),
+        helpLinks: z.array(z.object({
+            id: z.string(),
+            label: z.string(),
+            href: z.string(),
+            isVip: z.boolean().optional()
+        })).optional(),
+        appCardTitle: z.string().optional().default("تطبيق ANIME DAZE"),
+        appCardDescription: z.string().optional().default("ثبّت التطبيق الآن على جهازك واستمتع بالمشاهدة بلا انقطاع وبدون اتصال بالإنترنت وتجربة شاشة كاملة."),
+        appCardButtonText: z.string().optional().default("تثبيت التطبيق (PWA)"),
+        appCardButtonIcon: z.string().optional().default("download"),
+        isAppCardEnabled: z.boolean().optional().default(true),
+        copyrightText: z.string().optional().default("جميع الحقوق محفوظة لروائع الرسوم المتحركة وعشاق الأنمي في العالم العربي."),
+        serverStatusText: z.string().optional().default("خوادم البث المباشر نشطة ومستقرة"),
+        isStatusIndicatorActive: z.boolean().optional().default(true)
+    }).optional()
 });

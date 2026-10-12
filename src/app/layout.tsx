@@ -7,6 +7,8 @@ import BottomNav from "@/components/BottomNav";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { NotificationProvider } from "@/context/NotificationContext";
+import NotificationBottomModal from "@/components/notifications/NotificationBottomModal";
 
 export const viewport: Viewport = {
   themeColor: "#0b0b0f",
@@ -64,16 +66,19 @@ export default async function RootLayout({
         className="font-tajawal bg-[#0e0e12] text-[#e4e1e7] min-h-screen antialiased selection:bg-[#dc2626] selection:text-[#fff6f5] pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0 overflow-x-hidden w-full relative"
       >
         <AuthProvider>
-          <AdmobProvider>
-            <NextTopLoader color="#dc2626" showSpinner={false} />
-            <Navbar settings={settings || {}} />
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <Footer settings={settings || {}} />
-            <BottomNav />
-            <script src="https://accounts.google.com/gsi/client" async defer></script>
-          </AdmobProvider>
+          <NotificationProvider>
+            <AdmobProvider>
+              <NextTopLoader color="#dc2626" showSpinner={false} />
+              <Navbar settings={settings || {}} />
+              <main className="min-h-screen">
+                {children}
+              </main>
+              <Footer settings={settings || {}} />
+              <BottomNav />
+              <NotificationBottomModal />
+              <script src="https://accounts.google.com/gsi/client" async defer></script>
+            </AdmobProvider>
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>

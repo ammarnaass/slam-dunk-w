@@ -3,10 +3,17 @@
 import { useState } from "react";
 import { Anime } from "@/types";
 import { useRouter } from "next/navigation";
-import { Loader2, Save, Film, CheckCircle, Plus, Trash2, Image as ImageIcon } from "lucide-react";
+import { Save, ArrowRight } from "lucide-react";
+import Link from "next/link";
+
+import AnimeIdentityCard from "@/app/admin/animes/components/AnimeIdentityCard";
+import AnimePlanetAndGenresCard from "@/app/admin/animes/components/AnimePlanetAndGenresCard";
+import AnimeMediaAndStreamingCard from "@/app/admin/animes/components/AnimeMediaAndStreamingCard";
+import AnimePromotionCard from "@/app/admin/animes/components/AnimePromotionCard";
+import AnimeLivePreviewSimulator from "@/app/admin/animes/components/AnimeLivePreviewSimulator";
 
 interface AnimeFormProps {
-    initialData?: Anime;
+    initialData?: any;
     isEdit?: boolean;
 }
 
@@ -15,33 +22,49 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
     const [saving, setSaving] = useState(false);
     const [msg, setMsg] = useState({ type: "", text: "" });
 
-    const [formData, setFormData] = useState<Partial<Anime>>({
+    const [formData, setFormData] = useState({
+        id: initialData?.id || "",
         title: initialData?.title || "",
+        title_en: initialData?.title_en || "",
+        title_jp: initialData?.title_jp || "",
         description: initialData?.description || "",
         coverImage: initialData?.coverImage || "",
+        bannerImage: initialData?.bannerImage || "",
+        trailerUrl: initialData?.trailerUrl || "",
         type: initialData?.type || "TV Series",
         status: initialData?.status || "Ongoing",
         totalEpisodes: initialData?.totalEpisodes || 0,
-        releaseYear: initialData?.releaseYear || null,
-        genres: initialData?.genres || [],
+        releaseYear: initialData?.releaseYear || new Date().getFullYear(),
+        genres: initialData?.genres || ["رياضة", "حماسي"],
+        rating: initialData?.rating || 9.2,
         isFeatured: initialData?.isFeatured || false,
-        bannerImage: initialData?.bannerImage || "",
+        isTrending: initialData?.isTrending || false,
+        planet: initialData?.planet || "رياضة",
+        studio: initialData?.studio || "Toei Animation",
+        ageRating: initialData?.ageRating || "+16",
+        audioLanguage: initialData?.audioLanguage || "dubbed",
+        quality: initialData?.quality || "4K"
     });
 
-    const handleGenreChange = (index: number, value: string) => {
-        const newGenres = [...(formData.genres || [])];
-        newGenres[index] = value;
-        setFormData({ ...formData, genres: newGenres });
+    const handleChangeField = (field: string, value: any) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: value
+        }));
     };
 
-    const addGenre = () => {
-        setFormData({ ...formData, genres: [...(formData.genres || []), ""] });
-    };
+    // Auto-generate clean slug
+    const handleGenerateSlug = () => {
+        const source = formData.title_en?.trim() || formData.title.trim();
+        let slug = source
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)+/g, "");
 
-    const removeGenre = (index: number) => {
-        const newGenres = [...(formData.genres || [])];
-        newGenres.splice(index, 1);
-        setFormData({ ...formData, genres: newGenres });
+        if (!slug) {
+            slug = "anime-" + Math.random().toString(36).substring(2, 6);
+        }
+        setFormData(prev => ({ ...prev, id: slug }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -64,204 +87,127 @@ export default function AnimeForm({ initialData, isEdit = false }: AnimeFormProp
                 throw new Error(data.error || "فشلت العملية");
             }
 
-            setMsg({ type: "success", text: "تم الحفظ بنجاح" });
-            if (!isEdit) {
+            setMsg({ type: "success", text: isEdit ? "تم تحديث العمل بنجاح! 🎉" : "تمت إضافة العمل بنجاح إلى المنصة! 🎉" });
+            
+            setTimeout(() => {
                 router.push("/admin/animes");
-            }
-            router.refresh();
+                router.refresh();
+            }, 1200);
         } catch (error: any) {
             setMsg({ type: "error", text: error.message || "حدث خطأ أثناء الحفظ" });
-        } finally {
             setSaving(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            {/* Feedback Message */}
             {msg.text && (
-                <div className={`p-4 rounded-lg text-center ${msg.type === 'success' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>
+                <div className={`p-4 rounded-2xl text-center text-xs font-bold border backdrop-blur-xl animate-in zoom-in-95 duration-200 ${
+                    msg.type === "success" 
+                        ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.2)]" 
+                        : "bg-red-950/80 text-red-300 border-red-500/30 shadow-[0_0_20px_rgba(220,38,38,0.2)]"
+                }`}>
                     {msg.text}
                 </div>
             )}
 
-            <div className="grid md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 space-y-6">
-                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg">
-                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 border-b border-slate-800 pb-4">
-                            <Film size={20} className="text-red-500" /> تفاصيل العمل
-                        </h2>
+            {/* Main 2-Column Responsive Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                {/* Right Primary Form Column (8 Cols in LG) */}
+                <div className="lg:col-span-8 space-y-6">
+                    {/* 1. Identity & Titles */}
+                    <AnimeIdentityCard
+                        title={formData.title}
+                        titleEn={formData.title_en}
+                        titleJp={formData.title_jp}
+                        slug={formData.id}
+                        description={formData.description}
+                        onChangeField={handleChangeField}
+                        onGenerateSlug={handleGenerateSlug}
+                    />
 
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-slate-400 mb-2 text-sm">عنوان الأنمي</label>
-                                <input
-                                    type="text"
-                                    value={formData.title}
-                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                    required
-                                />
-                            </div>
+                    {/* 2. Spacetoon Planets & Genres */}
+                    <AnimePlanetAndGenresCard
+                        currentPlanet={formData.planet}
+                        genres={formData.genres}
+                        ageRating={formData.ageRating}
+                        onChangeField={handleChangeField}
+                    />
 
-                            <div>
-                                <label className="block text-slate-400 mb-2 text-sm">الوصف</label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600 min-h-[120px]"
-                                    required
-                                />
-                            </div>
+                    {/* 3. Media Assets & Streaming Settings */}
+                    <AnimeMediaAndStreamingCard
+                        coverImage={formData.coverImage}
+                        bannerImage={formData.bannerImage}
+                        trailerUrl={formData.trailerUrl}
+                        audioLanguage={formData.audioLanguage}
+                        quality={formData.quality}
+                        onChangeField={handleChangeField}
+                    />
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-slate-400 mb-2 text-sm">النوع</label>
-                                    <select
-                                        value={formData.type || "TV Series"}
-                                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                    >
-                                        <option value="TV Series">TV Series</option>
-                                        <option value="Movie">Movie</option>
-                                        <option value="OVA">OVA</option>
-                                        <option value="Special">Special</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-slate-400 mb-2 text-sm">الحالة</label>
-                                    <select
-                                        value={formData.status || "Ongoing"}
-                                        onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                    >
-                                        <option value="Ongoing">مستمر</option>
-                                        <option value="Completed">مكتمل</option>
-                                        <option value="Coming Soon">قريباً</option>
-                                    </select>
-                                </div>
-                            </div>
+                    {/* 4. Production Specifications & Promotions */}
+                    <AnimePromotionCard
+                        type={formData.type}
+                        status={formData.status}
+                        totalEpisodes={formData.totalEpisodes}
+                        releaseYear={formData.releaseYear}
+                        studio={formData.studio}
+                        rating={formData.rating}
+                        isFeatured={formData.isFeatured}
+                        isTrending={formData.isTrending}
+                        onChangeField={handleChangeField}
+                    />
+                </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-slate-400 mb-2 text-sm">عدد الحلقات</label>
-                                    <input
-                                        type="number"
-                                        value={formData.totalEpisodes || 0}
-                                        onChange={(e) => setFormData({ ...formData, totalEpisodes: Number(e.target.value) })}
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-slate-400 mb-2 text-sm">سنة الإصدار</label>
-                                    <input
-                                        type="text"
-                                        value={formData.releaseYear || ""}
-                                        onChange={(e) => setFormData({ ...formData, releaseYear: e.target.value ? Number(e.target.value) : null })}
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                        placeholder="YYYY"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                {/* Left Live Preview Simulator Column (4 Cols in LG) */}
+                <div className="lg:col-span-4 space-y-6">
+                    <AnimeLivePreviewSimulator
+                        title={formData.title}
+                        description={formData.description}
+                        coverImage={formData.coverImage}
+                        bannerImage={formData.bannerImage}
+                        planet={formData.planet}
+                        genres={formData.genres}
+                        rating={formData.rating}
+                        status={formData.status}
+                        type={formData.type}
+                        totalEpisodes={formData.totalEpisodes}
+                        quality={formData.quality}
+                        isFeatured={formData.isFeatured}
+                        isTrending={formData.isTrending}
+                    />
 
-                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg">
-                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 border-b border-slate-800 pb-4">
-                            <CheckCircle size={20} className="text-green-500" /> التصنيفات (Genres)
-                        </h2>
-                        <div className="space-y-3">
-                            {formData.genres?.map((genre, index) => (
-                                <div key={index} className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={genre}
-                                        onChange={(e) => handleGenreChange(index, e.target.value)}
-                                        className="flex-1 bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                        placeholder="تصنيف (أكشن، رياضة...)"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => removeGenre(index)}
-                                        className="bg-slate-800 hover:bg-red-900/30 text-slate-400 hover:text-red-400 p-3 rounded-lg transition-colors border border-slate-700"
-                                    >
-                                        <Trash2 size={20} />
-                                    </button>
-                                </div>
-                            ))}
-                            <button
-                                type="button"
-                                onClick={addGenre}
-                                className="w-full py-3 border-2 border-dashed border-slate-700 rounded-lg text-slate-400 hover:text-white hover:border-slate-500 hover:bg-slate-800/50 transition-colors flex items-center justify-center gap-2 font-medium"
-                            >
-                                <Plus size={20} /> إضافة تصنيف
-                            </button>
-                        </div>
+                    {/* Save Action Card */}
+                    <div className="bg-[#121217] rounded-2xl border border-white/[0.06] p-5 shadow-xl space-y-3">
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white font-cairo font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(220,38,38,0.45)] hover:shadow-[0_0_30px_rgba(220,38,38,0.7)] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 cursor-pointer text-sm"
+                        >
+                            {saving ? (
+                                <>
+                                    <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                                    <span>جاري حفظ العمل...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Save size={18} />
+                                    <span>{isEdit ? "حفظ التعديلات والتحديث" : "نشر وإضافة العمل للمنصة"}</span>
+                                </>
+                            )}
+                        </button>
+
+                        <Link
+                            href="/admin/animes"
+                            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#181820] hover:bg-[#20202a] text-[#94a3b8] hover:text-white text-xs font-bold transition-all border border-white/5"
+                        >
+                            <ArrowRight size={14} />
+                            <span>إلغاء والعودة للقائمة</span>
+                        </Link>
                     </div>
                 </div>
 
-                <div className="space-y-6">
-                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg">
-                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 border-b border-slate-800 pb-4">
-                            <ImageIcon size={20} className="text-blue-500" /> الصور والسلايدر
-                        </h2>
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                                <div className="space-y-1">
-                                    <label className="block text-white font-bold text-sm">عرض في السلايدر الرئيسي</label>
-                                    <p className="text-slate-400 text-xs">سيظهر هذا الأنمي في واجهة الموقع الرئيسية</p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData({ ...formData, isFeatured: !formData.isFeatured })}
-                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${formData.isFeatured ? 'bg-red-600' : 'bg-slate-700'}`}
-                                >
-                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isFeatured ? 'translate-x-6' : 'translate-x-1'}`} />
-                                </button>
-                            </div>
-
-                            <div>
-                                <label className="block text-slate-400 mb-2 text-sm">صورة الغلاف (Portrait)</label>
-                                <input
-                                    type="text"
-                                    value={formData.coverImage}
-                                    onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                    placeholder="https://example.com/cover.jpg"
-                                    required
-                                />
-                                {formData.coverImage && (
-                                    <div className="mt-2 rounded-lg overflow-hidden border border-slate-700 max-w-[120px] mx-auto">
-                                        <img src={formData.coverImage} alt="Cover" className="w-full h-auto" />
-                                    </div>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-slate-400 mb-2 text-sm">صورة السلايدر (Banner/Landscape)</label>
-                                <input
-                                    type="text"
-                                    value={formData.bannerImage || ""}
-                                    onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-600"
-                                    placeholder="https://example.com/banner.jpg"
-                                />
-                                {formData.bannerImage && (
-                                    <div className="mt-2 rounded-lg overflow-hidden border border-slate-700 w-full">
-                                        <img src={formData.bannerImage} alt="Banner" className="w-full h-auto aspect-video object-cover" />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={saving}
-                        className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-red-900/20 transition-all hover:scale-[1.01]"
-                    >
-                        {saving ? <Loader2 className="animate-spin" /> : <><Save size={20} /> {isEdit ? "حفظ التعديلات" : "إضافة العمل"}</>}
-                    </button>
-                </div>
             </div>
         </form>
     );

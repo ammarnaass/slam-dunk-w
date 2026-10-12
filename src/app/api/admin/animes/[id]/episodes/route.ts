@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prismadb";
 import { verifyAuth } from "@/lib/auth";
+import fs from "fs";
+import path from "path";
 
 // GET /api/admin/animes/[id]/episodes - Get episodes for an anime
 export async function GET(
@@ -8,25 +10,28 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
+    let episodes: any[] = [];
 
-    // Fetch from Prisma
-    const episodes = await prisma.episode.findMany({
-        where: { animeId: id },
-        orderBy: { createdAt: 'asc' }, // Fallback to creation time
-        include: {
-            servers: true
+    try {
+        episodes = await prisma.episode.findMany({
+            where: { animeId: id },
+            orderBy: { episodeNumber: 'asc' },
+            include: {
+                servers: true
+            }
+        });
+    } catch (dbErr) {
+        console.warn("Neon DB error in admin animes episodes, using fallback:", dbErr);
+    }
+
+    if (!episodes || episodes.length === 0) {
+        const filePath = path.join(process.cwd(), "src/data/episodes.json");
+        if (fs.existsSync(filePath)) {
+            const raw = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+            const list = Array.isArray(raw) ? raw : [];
+            episodes = list.filter((ep: any) => ep.animeId === id || !ep.animeId || id === "slam-dunk");
         }
-    });
-
-    // Map to legacy structure if needed, but returning clean list is better for admin?
-    // Admin likely expects list.
-    // We can map servers back to flat fields if the admin frontend relies on them, 
-    // but better to return the full object so admin can see servers.
-    // Existing frontend might break if it expects "mega_link" property directly.
-    // But since "video_url" and "mega_link" were separate, maybe I should map the first server?
-    // Let's return the Prisma object structure. The admin panel might need update if it uses specific fields, 
-    // but usually admin panels are flexible or I can't see the frontend code for admin easy.
-    // I will return the Prisma structure.
+    }
 
     return NextResponse.json(episodes);
 }
@@ -81,8 +86,6 @@ export async function POST(
             }
         });
 
-        // Optionally update Anime totalEpisodes? 
-        // We can do a count and update.
         const count = await prisma.episode.count({ where: { animeId: id } });
         await prisma.anime.update({
             where: { id: id },

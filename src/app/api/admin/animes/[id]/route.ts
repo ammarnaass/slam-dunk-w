@@ -1,31 +1,23 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prismadb";
 import { verifyAuth } from "@/lib/auth";
+import { AnimeAdminService } from "@/server/services/anime-admin.service";
+import { AppError } from "@/server/types/errors";
 
 // GET /api/admin/animes/[id] - Get single anime
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
-
-    // Using Prisma to fetch logic
-    const anime = await prisma.anime.findUnique({
-        where: { id: id },
-        include: {
-            // Include counts or minimal info if needed, usually details view needs it
-            // For now just basic fields as per original API
-            _count: {
-                select: { episodes: true }
-            }
+    try {
+        const { id } = await params;
+        const anime = await AnimeAdminService.getAnimeById(id);
+        return NextResponse.json(anime);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            return NextResponse.json({ error: error.message }, { status: error.statusCode });
         }
-    });
-
-    if (!anime) {
-        return NextResponse.json({ error: "Anime not found" }, { status: 404 });
+        return NextResponse.json({ error: "العمل غير موجود" }, { status: 404 });
     }
-
-    return NextResponse.json(anime);
 }
 
 // PUT /api/admin/animes/[id] - Update anime
@@ -33,36 +25,23 @@ export async function PUT(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
-    const auth = await verifyAuth(request);
-    if (!auth || auth.role?.toUpperCase() !== "ADMIN") {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-
     try {
-        const updatedAnime = await prisma.anime.update({
-            where: { id: id },
-            data: {
-                title: body.title,
-                description: body.description,
-                coverImage: body.coverImage,
-                bannerImage: body.bannerImage,
-                type: body.type,
-                status: body.status,
-                releaseYear: body.releaseYear ? Number(body.releaseYear) : undefined,
-                totalEpisodes: body.totalEpisodes ? Number(body.totalEpisodes) : undefined,
-                genres: body.genres,
-                isFeatured: body.isFeatured
-            }
-        });
+        const { id } = await params;
+        const auth = await verifyAuth(request);
+        if (!auth || auth.role?.toUpperCase() !== "ADMIN") {
+            return NextResponse.json({ error: "غير مصرح، يتطلب صلاحيات المشرف" }, { status: 401 });
+        }
 
-        return NextResponse.json(updatedAnime);
-    } catch (error) {
-        // P2025 = Record not found
+        const body = await request.json();
+        const updated = await AnimeAdminService.updateAnime(id, body);
+
+        return NextResponse.json(updated);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            return NextResponse.json({ error: error.message }, { status: error.statusCode });
+        }
         console.error("Admin Anime Update Error:", error);
-        return NextResponse.json({ error: "Anime not found or update failed" }, { status: 404 });
+        return NextResponse.json({ error: error?.message || "فشل تحديث العمل" }, { status: 500 });
     }
 }
 
@@ -71,27 +50,17 @@ export async function DELETE(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params;
-    const auth = await verifyAuth(request);
-    if (!auth || auth.role?.toUpperCase() !== "ADMIN") {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     try {
-        // Manual Cascade Delete if not set in DB
-        // Delete episodes first
-        await prisma.episode.deleteMany({
-            where: { animeId: id }
-        });
+        const { id } = await params;
+        const auth = await verifyAuth(request);
+        if (!auth || auth.role?.toUpperCase() !== "ADMIN") {
+            return NextResponse.json({ error: "غير مصرح، يتطلب صلاحيات المشرف" }, { status: 401 });
+        }
 
-        // Delete anime
-        await prisma.anime.delete({
-            where: { id: id }
-        });
-
+        await AnimeAdminService.deleteAnime(id);
         return NextResponse.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Admin Anime Delete Error:", error);
-        return NextResponse.json({ error: "Failed to delete anime" }, { status: 500 });
+        return NextResponse.json({ error: "فشل حذف العمل" }, { status: 500 });
     }
 }

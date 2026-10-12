@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { mobileSuccess, mobileError } from "@/lib/mobile-api";
 import fs from "fs";
 import path from "path";
+import { DEFAULT_API_APP_CONFIG } from "@/lib/app-presets";
+import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
 
 export const dynamic = "force-dynamic";
 
@@ -15,26 +17,14 @@ function getSettings() {
         console.error("Failed to read settings in mobile config:", e);
     }
     return {
-        siteName: "سلام دانك",
-        logoUrl: "",
+        siteName: "أنمي دايز",
+        siteNameEn: "ANIME DAZE",
+        siteDescription: "منصة البث السينمائية الأولى لعشاق الأنمي في العالم العربي. مكتبة حصرية تجمع بين روائع الجيل الذهبي وأحدث إصدارات الأنمي المترجمة والمدبلجة بجودة فائقة 4K.",
+        logoUrl: "https://lh3.googleusercontent.com/aida/AEtjO1UiSLhyw_pFl8EO-8FgL4HrDL2d9Oh8xf35S6mPsvN6CLAeTTpeY_Y4zm4rjsRuYww9UNqCIq98rij14h5osYHduHU73DQq5klCpJEZFM7q4WFwh529QyN14MBCOgwBQCafVH2D7Zqj8RtA7YeHEf53boMtjjIUflj41hkrmwwiWjLsz5RNzpHujzyYnwEwKNuokWsaRntGYjD842E14qpqp84ozsbd8Inmm-2ENPd6K5e0xdj7TSIckg",
+        brandColor: "#dc2626",
+        accentColor: "#ffb95f",
         admob: { isEnabled: false },
-        apiApp: {
-            isMaintenance: false,
-            maintenanceTitle: "صيانة دورية",
-            maintenanceMessage: "التطبيق في وضع الصيانة حالياً. سنعود قريباً!",
-            latestVersion: "1.2.0",
-            latestBuild: 12,
-            minSupportedVersion: "1.0.0",
-            minSupportedBuild: 10,
-            forceUpdate: false,
-            updateUrl: "",
-            directApkUrl: "",
-            releaseNotes: [],
-            defaultQuality: "720p",
-            defaultServer: "Mega",
-            allowDownloads: true,
-            interstitialInterval: 2
-        }
+        apiApp: DEFAULT_API_APP_CONFIG
     };
 }
 
@@ -45,11 +35,14 @@ export async function GET(request: Request) {
         const clientBuild = parseInt(searchParams.get("build") || request.headers.get("x-build-number") || "0", 10);
 
         const settings = getSettings();
-        const apiApp = settings.apiApp || {};
+        const apiApp = {
+            ...DEFAULT_API_APP_CONFIG,
+            ...(settings.apiApp || {})
+        };
         const admob = settings.admob || {};
 
         const minBuild = Number(apiApp.minSupportedBuild) || 1;
-        const latestBuild = Number(apiApp.latestBuild) || 12;
+        const latestBuild = Number(apiApp.latestBuild) || 14;
 
         // Check if update is required or available
         const isOutdated = clientBuild > 0 && clientBuild < minBuild;
@@ -58,17 +51,21 @@ export async function GET(request: Request) {
 
         const configData = {
             app: {
-                name: settings.siteName || "سلام دانك",
-                slogan: "عالم كرة السلة والأنمي الكلاسيكي بجودة عالية",
+                name: settings.siteNameEn || "ANIME DAZE",
+                name_ar: settings.siteName || "أنمي دايز",
+                subtitle: "سبيس تون & أنمي كلاسيك",
+                slogan: settings.siteDescription || "منصة البث السينمائية الأولى لعشاق الأنمي في العالم العربي.",
                 logo_url: settings.logoUrl || "https://slam-dunk-w.vercel.app/logo.png",
-                support_email: "support@slamdunk.com",
-                privacy_policy_url: "https://slam-dunk-w.vercel.app/privacy",
+                brand_color: settings.brandColor || "#dc2626",
+                accent_color: settings.accentColor || "#ffb95f",
+                support_email: "support@animedaze.com",
+                privacy_policy_url: "https://slam-dunk-w.vercel.app/terms",
                 terms_url: "https://slam-dunk-w.vercel.app/terms"
             },
             maintenance: {
                 is_active: !!apiApp.isMaintenance,
                 title: apiApp.maintenanceTitle || "صيانة دورية مجدولة",
-                message: apiApp.maintenanceMessage || "نقوم حالياً بتحسين خوادم البث. سنعود قريباً جداً!",
+                message: apiApp.maintenanceMessage || "نقوم حالياً بتحسين وتحديث سيرفرات المشاهدة لتوفير تجربة أسرع وأعلى جودة بدون تقطيع. سنعود خلال وقت قصير!",
                 estimated_end_time: apiApp.maintenanceEndTime || null,
                 allow_dev_bypass: true,
                 dev_bypass_key: apiApp.devBypassKey || "SLAM_DEV_2026"
@@ -80,15 +77,11 @@ export async function GET(request: Request) {
                 min_supported_build: minBuild,
                 force_update: isForceUpdateRequired,
                 has_update: hasUpdate,
-                store_url: apiApp.updateUrl || "https://play.google.com/store/apps/details?id=com.slamdunk.app",
-                direct_apk_url: apiApp.directApkUrl || "https://slam-dunk-w.vercel.app/downloads/slamdunk-latest.apk",
+                store_url: apiApp.updateUrl || "https://play.google.com/store/apps/details?id=com.animedaze.app",
+                direct_apk_url: apiApp.directApkUrl || "https://slam-dunk-w.vercel.app/downloads/animedaze-latest.apk",
                 release_notes: Array.isArray(apiApp.releaseNotes) && apiApp.releaseNotes.length > 0
                     ? apiApp.releaseNotes
-                    : [
-                        "دعم سيرفرات المشاهدة بدقة FHD 1080p",
-                        "تسريع تحميل الحلقات بنسبة 40%",
-                        "تحسين مشغل الفيديو ومزامنة سجل المشاهدة"
-                    ]
+                    : DEFAULT_API_APP_CONFIG.releaseNotes
             },
             ads: {
                 enabled: !!admob.isEnabled,
@@ -100,14 +93,30 @@ export async function GET(request: Request) {
                 interstitial_interval: Number(apiApp.interstitialInterval) || 2
             },
             player_settings: {
-                default_quality: apiApp.defaultQuality || "720p",
+                default_quality: apiApp.defaultQuality || "1080p",
                 default_server: apiApp.defaultServer || "Mega",
                 allow_download: apiApp.allowDownloads !== false,
                 auto_next_episode: true
             },
+            promo_banner: {
+                is_enabled: !!(settings.promoBanner?.isEnabled ?? DEFAULT_PROMO_BANNER.isEnabled),
+                badge_text: settings.promoBanner?.badgeText || DEFAULT_PROMO_BANNER.badgeText,
+                badge_icon: settings.promoBanner?.badgeIcon || DEFAULT_PROMO_BANNER.badgeIcon,
+                title: settings.promoBanner?.title || DEFAULT_PROMO_BANNER.title,
+                description: settings.promoBanner?.description || DEFAULT_PROMO_BANNER.description,
+                primary_button_text: settings.promoBanner?.primaryButtonText || DEFAULT_PROMO_BANNER.primaryButtonText,
+                primary_button_link: settings.promoBanner?.primaryButtonLink || DEFAULT_PROMO_BANNER.primaryButtonLink,
+                primary_button_icon: settings.promoBanner?.primaryButtonIcon || DEFAULT_PROMO_BANNER.primaryButtonIcon,
+                secondary_button_text: settings.promoBanner?.secondaryButtonText || DEFAULT_PROMO_BANNER.secondaryButtonText,
+                secondary_button_link: settings.promoBanner?.secondaryButtonLink || DEFAULT_PROMO_BANNER.secondaryButtonLink,
+                image_url: settings.promoBanner?.imageUrl || DEFAULT_PROMO_BANNER.imageUrl,
+                image_caption: settings.promoBanner?.imageCaption || DEFAULT_PROMO_BANNER.imageCaption,
+                app_icon_url: settings.promoBanner?.appIconUrl || DEFAULT_PROMO_BANNER.appIconUrl,
+                features: settings.promoBanner?.features || DEFAULT_PROMO_BANNER.features
+            },
             api_info: {
                 base_url: apiApp.apiUrl || "https://slam-dunk-w.vercel.app/api/mobile/v1",
-                version: "v1.0",
+                version: "v1.2",
                 status: "healthy",
                 timestamp: new Date().toISOString()
             }

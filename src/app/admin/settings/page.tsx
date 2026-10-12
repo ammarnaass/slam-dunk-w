@@ -14,12 +14,20 @@ import {
     Palette, 
     Layers, 
     Film,
-    Loader2
+    Loader2,
+    Columns,
+    Smartphone
 } from "lucide-react";
 import LogoManagerCard from "./components/LogoManagerCard";
 import IdentitySettingsCard from "./components/IdentitySettingsCard";
 import SystemStatusCard from "./components/SystemStatusCard";
+import PromoBannerCard from "./components/PromoBannerCard";
+import FooterManagerCard from "./components/FooterManagerCard";
+import ApiAppCard from "./components/ApiAppCard";
 import { FullSiteSettings } from "@/server/types/settings.types";
+import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
+import { DEFAULT_FOOTER_CONFIG } from "@/lib/footer-presets";
+import { DEFAULT_API_APP_CONFIG } from "@/lib/app-presets";
 
 const INITIAL_SETTINGS: FullSiteSettings = {
     siteName: "أنمي دايز",
@@ -45,7 +53,11 @@ const INITIAL_SETTINGS: FullSiteSettings = {
         appId: "",
         bannerId: "",
         interstitialId: "",
-    }
+        rewardedId: "",
+    },
+    promoBanner: DEFAULT_PROMO_BANNER,
+    footer: DEFAULT_FOOTER_CONFIG,
+    apiApp: DEFAULT_API_APP_CONFIG
 };
 
 export default function SettingsPage() {
@@ -53,7 +65,7 @@ export default function SettingsPage() {
     const [originalSettings, setOriginalSettings] = useState<FullSiteSettings>(INITIAL_SETTINGS);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<"logo" | "identity" | "system">("logo");
+    const [activeTab, setActiveTab] = useState<"logo" | "identity" | "system" | "promo" | "footer" | "app">("logo");
     const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
     // Check if there are unsaved changes
@@ -94,7 +106,31 @@ export default function SettingsPage() {
                     admob: {
                         ...INITIAL_SETTINGS.admob,
                         ...(data.admob || {})
-                    }
+                    },
+                    promoBanner: data.promoBanner ? {
+                        ...INITIAL_SETTINGS.promoBanner,
+                        ...data.promoBanner
+                    } : INITIAL_SETTINGS.promoBanner,
+                    footer: data.footer ? {
+                        ...INITIAL_SETTINGS.footer,
+                        ...data.footer,
+                        socialLinks: Array.isArray(data.footer.socialLinks)
+                            ? data.footer.socialLinks
+                            : INITIAL_SETTINGS.footer?.socialLinks,
+                        exploreLinks: Array.isArray(data.footer.exploreLinks)
+                            ? data.footer.exploreLinks
+                            : INITIAL_SETTINGS.footer?.exploreLinks,
+                        helpLinks: Array.isArray(data.footer.helpLinks)
+                            ? data.footer.helpLinks
+                            : INITIAL_SETTINGS.footer?.helpLinks,
+                    } : INITIAL_SETTINGS.footer,
+                    apiApp: data.apiApp ? {
+                        ...INITIAL_SETTINGS.apiApp,
+                        ...data.apiApp,
+                        releaseNotes: Array.isArray(data.apiApp.releaseNotes)
+                            ? data.apiApp.releaseNotes
+                            : (INITIAL_SETTINGS.apiApp?.releaseNotes || [])
+                    } : INITIAL_SETTINGS.apiApp
                 };
                 setSettings(merged);
                 setOriginalSettings(merged);
@@ -271,6 +307,45 @@ export default function SettingsPage() {
                     <SlidersHorizontal size={16} />
                     <span>النظام، الصيانة، والإعلانات</span>
                 </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("promo")}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
+                        activeTab === "promo"
+                            ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
+                            : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                >
+                    <Sparkles size={16} />
+                    <span>بانر الترويج وتطبيق PWA</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("footer")}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
+                        activeTab === "footer"
+                            ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
+                            : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                >
+                    <Columns size={16} />
+                    <span>الشريط السفلي (Footer)</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("app")}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
+                        activeTab === "app"
+                            ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
+                            : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                >
+                    <Smartphone size={16} />
+                    <span>تطبيق الأندرويد و API</span>
+                </button>
             </div>
 
             {/* Tab 1: Logo & Visual Simulation */}
@@ -321,6 +396,32 @@ export default function SettingsPage() {
                             [field]: value
                         }
                     }))}
+                />
+            )}
+
+            {/* Tab 4: Promo & PWA Banner */}
+            {activeTab === "promo" && (
+                <PromoBannerCard
+                    promo={settings.promoBanner}
+                    onChange={(updatedPromo) => setSettings(prev => ({ ...prev, promoBanner: updatedPromo }))}
+                />
+            )}
+
+            {/* Tab 5: Footer Management */}
+            {activeTab === "footer" && (
+                <FooterManagerCard
+                    footer={settings.footer}
+                    siteName={settings.siteName}
+                    logoUrl={settings.logoUrl}
+                    onChange={(updatedFooter) => setSettings(prev => ({ ...prev, footer: updatedFooter }))}
+                />
+            )}
+
+            {/* Tab 6: Android App & API Integration */}
+            {activeTab === "app" && (
+                <ApiAppCard
+                    apiApp={settings.apiApp}
+                    onChange={(updatedApp) => setSettings(prev => ({ ...prev, apiApp: updatedApp }))}
                 />
             )}
 

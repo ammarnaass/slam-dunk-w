@@ -13,12 +13,25 @@
   {
     "id": "admin-system-id",
     "name": "مدير النظام",
-    "username": "admin",
+    "username": "مدير النظام",
     "email": "admin@slamdunk.com",
     "password": "$2b$10$rlh3Ekdxp/Y5e1DqJj/j3.01nWGjp9F1Rzo7nEerXVyUhpIN4jN6O",
     "role": "ADMIN",
     "watchlist": [],
     "createdAt": "2026-10-10T07:00:00.000Z",
-    "avatar": "/logoep.jpg"
+    "avatar": "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&auto=format&fit=crop&q=80",
+    "profileImage": "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&auto=format&fit=crop&q=80",
+    "bannerImage": "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1200&auto=format&fit=crop&q=80",
+    "bio": "أبحث عن الون بيس في أعماق الغراند لاين 🏴‍☠️🌊",
+    "otakuTitle": "صقر شوهوكو",
+    "auraColor": "gold",
+    "gender": "male",
+    "phoneNumber": "",
+    "preferences": {
+      "audioLanguage": "dubbed",
+      "quality": "1080p",
+      "autoplay": true,
+      "favoritePlanet": "مغامرات"
+    }
   }
 ]

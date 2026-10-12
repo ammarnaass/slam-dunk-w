@@ -2,26 +2,16 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcryptjs";
-import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
-import { OAuth2Client } from "google-auth-library";
 import { prisma } from "@/lib/prismadb";
 import { AppError, ErrorCode } from "../types/errors";
-
-const JWT_SECRET = process.env.JWT_SECRET || "slam-dunk-secret-key-123";
-const JWT_KEY = new TextEncoder().encode(JWT_SECRET);
-const ACCESS_TOKEN_TTL = "15m";
-const REFRESH_TOKEN_TTL_DAYS = 30;
+import { TokenService, TokenUserPayload, REFRESH_TOKEN_TTL_DAYS } from "./token.service";
+import { OAuthService } from "./oauth.service";
 
 const DATA_DIR = path.join(process.cwd(), "src/data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 
 // In-memory sessions store as resilient fallback when DB is unreachable
 const memorySessions = new Map<string, any>();
-
-function hashToken(token: string): string {
-    return crypto.createHash("sha256").update(token).digest("hex");
-}
 
 function loadLocalUsers(): any[] {
     try {
@@ -55,24 +45,24 @@ export interface ClientMeta {
 
 export class AuthService {
     /**
-     * Generate Access Token (15 minutes lifespan)
+     * Generate Access Token (delegated to TokenService)
      */
-    static async generateAccessToken(payload: { id: string; email: string; name: string; role: string }) {
-        return await new SignJWT({ user: payload })
-            .setProtectedHeader({ alg: "HS256" })
-            .setIssuedAt()
-            .setExpirationTime(ACCESS_TOKEN_TTL)
-            .sign(JWT_KEY);
+    static async generateAccessToken(payload: TokenUserPayload) {
+        return TokenService.generateAccessToken(payload);
+    }
+
+    /**
+     * Authenticate an incoming request (delegated to TokenService)
+     */
+    static async authenticateRequest(request: Request) {
+        return TokenService.authenticateRequest(request);
     }
 
     /**
      * Create a new session and issue Access & Refresh tokens
      */
     static async createSession(user: any, meta: ClientMeta = {}) {
-        const refreshTokenRaw = crypto.randomBytes(40).toString("hex");
-        const refreshTokenHash = hashToken(refreshTokenRaw);
-        const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000);
-
+        const { raw: refreshTokenRaw, hash: refreshTokenHash, expiresAt } = TokenService.generateRefreshTokenPair();
         let sessionId: string = crypto.randomUUID();
 
         try {
@@ -102,7 +92,7 @@ export class AuthService {
             });
         }
 
-        const userPayload = {
+        const userPayload: TokenUserPayload = {
             id: user.id,
             email: user.email,
             name: user.name,
@@ -110,7 +100,7 @@ export class AuthService {
             avatar: user.avatar || null
         };
 
-        const accessToken = await this.generateAccessToken(userPayload);
+        const accessToken = await TokenService.generateAccessToken(userPayload);
 
         return {
             user: userPayload,
@@ -247,31 +237,13 @@ export class AuthService {
     }
 
     /**
-     * Google Sign-In with idToken / Credential
+     * Google Sign-In with verified OAuth payload
      */
     static async googleLogin(idTokenOrCredential: string, meta: ClientMeta = {}) {
-        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-        const client = new OAuth2Client(clientId);
-        
-        let payload: any = null;
-        try {
-            const ticket = await client.verifyIdToken({
-                idToken: idTokenOrCredential,
-                audience: clientId,
-            });
-            payload = ticket.getPayload();
-        } catch (e: any) {
-            console.error("Google ID Token verification failed:", e);
-            throw new AppError(ErrorCode.INVALID_TOKEN, "رمز Google غير صالح أو منتهي الصلاحية", 400);
-        }
+        const googleProfile = await OAuthService.verifyGoogleIdToken(idTokenOrCredential);
+        const email = googleProfile.email;
 
-        if (!payload || !payload.email) {
-            throw new AppError(ErrorCode.INVALID_TOKEN, "فشل استرداد البريد الإلكتروني من Google", 400);
-        }
-
-        const email = payload.email.toLowerCase().trim();
         let user: any = null;
-
         try {
             user = await prisma.user.findUnique({
                 where: { email },
@@ -289,8 +261,8 @@ export class AuthService {
             user = {
                 id: newUserId,
                 email,
-                name: payload.name || email.split("@")[0],
-                avatar: payload.picture || "/logoep.jpg",
+                name: googleProfile.name,
+                avatar: googleProfile.avatar,
                 role: "USER",
                 password: "",
                 createdAt: new Date(),
@@ -324,7 +296,7 @@ export class AuthService {
             throw new AppError(ErrorCode.BAD_REQUEST, "رمز التجديد مطلوب", 400);
         }
 
-        const hashed = hashToken(refreshTokenRaw);
+        const hashed = TokenService.hashToken(refreshTokenRaw);
 
         let session: any = null;
         try {
@@ -359,9 +331,7 @@ export class AuthService {
         }
 
         // Rotate token
-        const newRefreshTokenRaw = crypto.randomBytes(40).toString("hex");
-        const newRefreshTokenHash = hashToken(newRefreshTokenRaw);
-        const newExpiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000);
+        const { raw: newRefreshTokenRaw, hash: newRefreshTokenHash, expiresAt: newExpiresAt } = TokenService.generateRefreshTokenPair();
 
         try {
             await prisma.session.update({
@@ -394,7 +364,7 @@ export class AuthService {
             };
         }
 
-        const userPayload = {
+        const userPayload: TokenUserPayload = {
             id: user.id,
             email: user.email,
             name: user.name,
@@ -402,7 +372,7 @@ export class AuthService {
             avatar: user.avatar || null
         };
 
-        const newAccessToken = await this.generateAccessToken(userPayload);
+        const newAccessToken = await TokenService.generateAccessToken(userPayload);
 
         return {
             accessToken: newAccessToken,
@@ -416,7 +386,7 @@ export class AuthService {
      */
     static async logout(refreshTokenRaw?: string, userId?: string) {
         if (refreshTokenRaw) {
-            const hashed = hashToken(refreshTokenRaw);
+            const hashed = TokenService.hashToken(refreshTokenRaw);
             try {
                 await prisma.session.updateMany({
                     where: { refreshTokenHash: hashed },
@@ -427,12 +397,8 @@ export class AuthService {
             }
         }
 
-        // If called from web, clear cookie
-        try {
-            const cookieStore = await cookies();
-            cookieStore.delete("session");
-            cookieStore.delete("refreshToken");
-        } catch (_) {}
+        // Clear web auth cookies
+        await TokenService.clearSessionCookies();
 
         return { loggedOut: true };
     }
@@ -491,39 +457,6 @@ export class AuthService {
         } catch (_) {}
 
         return { revoked: true };
-    }
-
-    /**
-     * Authenticate an incoming request (Bearer Token or Cookie)
-     */
-    static async authenticateRequest(request: Request) {
-        // 1. Authorization Bearer Token
-        const authHeader = request.headers.get("authorization") || request.headers.get("Authorization");
-        if (authHeader && authHeader.startsWith("Bearer ")) {
-            const token = authHeader.substring(7).trim();
-            try {
-                const { payload } = await jwtVerify(token, JWT_KEY, { algorithms: ["HS256"] });
-                if (payload && payload.user) {
-                    return payload.user as { id: string; email: string; name: string; role: string };
-                }
-            } catch (_) {
-                throw new AppError(ErrorCode.TOKEN_EXPIRED, "انتهت صلاحية رمز الدخول، يرجى تجديده", 401);
-            }
-        }
-
-        // 2. Cookie fallback for Web
-        try {
-            const cookieStore = await cookies();
-            const sessionCookie = cookieStore.get("session")?.value;
-            if (sessionCookie) {
-                const { payload } = await jwtVerify(sessionCookie, JWT_KEY, { algorithms: ["HS256"] });
-                if (payload && payload.user) {
-                    return payload.user as { id: string; email: string; name: string; role: string };
-                }
-            }
-        } catch (_) {}
-
-        throw new AppError(ErrorCode.UNAUTHORIZED, "يرجى تسجيل الدخول للمتابعة", 401);
     }
 
     /**

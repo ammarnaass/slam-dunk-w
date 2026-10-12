@@ -1,28 +1,15 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prismadb";
 import { verifyAuth } from "@/lib/auth";
+import { AnimeAdminService } from "@/server/services/anime-admin.service";
+import { AppError } from "@/server/types/errors";
 
 // GET /api/admin/animes - List all animes
 export async function GET() {
     try {
-        const animes = await prisma.anime.findMany({
-            orderBy: { updatedAt: 'desc' }
-        });
-        return NextResponse.json(animes);
-    } catch (error) {
-        console.warn("Admin Animes GET Error, using local fallback:", error);
-        try {
-            const fs = await import("fs");
-            const path = await import("path");
-            const filePath = path.join(process.cwd(), "src/data/animes.json");
-            if (fs.existsSync(filePath)) {
-                const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-                const list = Array.isArray(data) ? data : (data.animes || []);
-                return NextResponse.json(list);
-            }
-        } catch (fallbackError) {
-            console.error("Local JSON fallback failed:", fallbackError);
-        }
+        const list = await AnimeAdminService.getAllAnimes();
+        return NextResponse.json(list);
+    } catch (error: any) {
+        console.error("Admin Animes GET Error:", error);
         return NextResponse.json({ error: "Failed to fetch animes" }, { status: 500 });
     }
 }
@@ -32,54 +19,18 @@ export async function POST(request: Request) {
     try {
         const auth = await verifyAuth(request);
         if (!auth || auth.role?.toUpperCase() !== "ADMIN") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            return NextResponse.json({ error: "غير مصرح، يتطلب صلاحيات المشرف" }, { status: 401 });
         }
 
         const body = await request.json();
-        const { title, description, coverImage, type, totalEpisodes, genres, status, releaseYear } = body;
+        const created = await AnimeAdminService.createAnime(body);
 
-        if (!title || !description || !coverImage) {
-            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        return NextResponse.json(created, { status: 201 });
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            return NextResponse.json({ error: error.message }, { status: error.statusCode });
         }
-
-        // Generate simple ID from title
-        let id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-
-        // Fallback if title is non-latin (e.g. Arabic)
-        if (!id) {
-            id = 'anime-' + Math.random().toString(36).substr(2, 5);
-        }
-
-        // Check if ID exists
-        const existingAnime = await prisma.anime.findUnique({
-            where: { id }
-        });
-
-        if (existingAnime) {
-            // Append random string to make it unique or fail?
-            // User might prefer fail to avoid duplicates, but original code failed.
-            return NextResponse.json({ error: "Anime with this title already exists" }, { status: 409 });
-        }
-
-        const newAnime = await prisma.anime.create({
-            data: {
-                id,
-                title,
-                description,
-                coverImage,
-                type: type || "TV Series",
-                status: status || "ongoing", // Schema default lower
-                totalEpisodes: Number(totalEpisodes) || 0,
-                releaseYear: releaseYear ? Number(releaseYear) : null,
-                genres: genres || [],
-                isFeatured: body.isFeatured || false,
-                bannerImage: body.bannerImage || null
-            }
-        });
-
-        return NextResponse.json(newAnime, { status: 201 });
-    } catch (error) {
         console.error("Admin Animes POST Error:", error);
-        return NextResponse.json({ error: "Failed to create anime" }, { status: 500 });
+        return NextResponse.json({ error: error?.message || "فشل إنشاء العمل الجديد" }, { status: 500 });
     }
 }
