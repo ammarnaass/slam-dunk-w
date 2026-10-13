@@ -127,7 +127,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     <input
                         ref={inputRef}
                         type="text"
-                        placeholder="ابحث عن أنمي، شخصية، أو حلقة... (اضغط ESC للإغلاق)"
+                        placeholder="ابحث عن أنمي أو حلقة... (اضغط ESC للإغلاق)"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-white text-base sm:text-lg placeholder:text-[#94a3b8]/50 font-tajawal"
@@ -302,7 +302,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                                     <span className="material-symbols-outlined text-3xl">saved_search</span>
                                 </div>
                                 <h4 className="font-cairo font-bold text-base text-white">
-                                    ابدأ الكتابة للبحث الفوري عن عملك أو حلقتك المفضلة
+                                    ابدأ الكتابة للبحث الفوري عن عملك أو حلقتك المفضلة..
                                 </h4>
                                 <p className="font-tajawal text-xs text-[#94a3b8] max-w-md mx-auto">
                                     ابحث باسم الأنمي، رقم الحلقة، أو أسماء أبطال الدبلجة في ثوانٍ معدودة.
