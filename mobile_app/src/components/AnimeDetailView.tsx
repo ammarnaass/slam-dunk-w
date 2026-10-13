@@ -11,78 +11,16 @@ import {
 } from 'react-native';
 import { THEME } from '../constants/theme';
 import { Anime, Episode, Character } from '../types';
-import { EpisodeCard } from './EpisodeCard';
-import { CharacterCard } from './CharacterCard';
 import { Icon } from './Icon';
+import { EpisodesTab } from './anime-detail/EpisodesTab';
+import { CharactersTab } from './anime-detail/CharactersTab';
+import { StoryTab } from './anime-detail/StoryTab';
+import { CommentsTab } from './anime-detail/CommentsTab';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+export { DEFAULT_CHARACTERS } from './anime-detail/CharactersTab';
+export { EPISODE_RANGES } from './anime-detail/EpisodesTab';
 
 type DetailTab = 'episodes' | 'story' | 'characters' | 'comments';
-
-const EPISODE_RANGES = [
-  { label: '1 - 25', start: 1, end: 25 },
-  { label: '26 - 50', start: 26, end: 50 },
-  { label: '51 - 75', start: 51, end: 75 },
-  { label: '76 - 101', start: 76, end: 101 },
-];
-
-const DEFAULT_CHARACTERS: Character[] = [
-  {
-    id: 'sakuragi',
-    name: 'حسان',
-    name_ar: 'حسان',
-    number: '10',
-    position: 'لاعب ارتكاز (PF)',
-    role: 'الملتقط البارع',
-    description: 'الملتقط البارع',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBay2pNFvEP6okJNNuEvpHzuEVvNakcGDCWWDAmOvdJZeul6pC3BodMEu14ne2FnDGa8wvKjVIwn8a-xBviRbDCTDIikOPsiNQV3xMoHPvi3khhH8tUs7L1kXpXfsHEKhyqOA-EpQhzNTHooB7zCwa5AXMZoasYDuaB62BZUUPyQjlHygseJsWCuqGNxj5DAmcU5117TQEAXXx19g3yLq-mdUUmDuCAKFi3AJcRogWhiW5RTRWuuvee',
-  },
-  {
-    id: 'rukawa',
-    name: 'فادي',
-    name_ar: 'فادي',
-    number: '11',
-    position: 'جناح (SF)',
-    role: 'الهداف الأول',
-    description: 'الهداف الأول',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBY9Oe4UW-RkjU3Aa1WpIqZ2KHzFPVTRjOM8l0Jw1ZpBbKo-ey_0UNBpITLi2BwPSA511RuCabriVm7fSM_UTJaEPBflekSUUnzliYAQbyWo_qF3qArq3g9KjIPQhS0HKZ0SShpFG7IsfI5SOD5S5xtO8Z38WWSmy4vUba3kal-SCkbh409d_Rz8BegmAQLI5J65IwzSbEevZowgHA3LFcbMBOicIHverACdS2EwKF-8grIdBmgr-qP',
-  },
-  {
-    id: 'akagi',
-    name: 'سعد',
-    name_ar: 'سعد',
-    number: '4',
-    position: 'وسط (C)',
-    role: 'قائد الفريق',
-    description: 'قائد الفريق',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuA7sHPlqoJzhro2mLsetVPnN2mlUNGPJHYBrGFuAGKxX7xEJzSF4gntCZ2TWcZ6l9RGFFMhgkKU50sS6uuX2GbRiJ80a8bJE6FLV5oD7d5o9kBJvzJ8DZZYvnRHiZrJta7Xz1hIrywUeAAoDwMfMcc3mxl0FVCFoNbCtrL8xugj9ORnQDa-9Mjav9FLzSrPMv1RfDlVh3HV4joBq8AMebBAHcr7CRf7-R4CUXvLDtgb9NQs3G_XlQxV',
-  },
-  {
-    id: 'miyagi',
-    name: 'بدر',
-    name_ar: 'بدر',
-    number: '7',
-    position: 'صانع ألعاب (PG)',
-    role: 'البرق السريع',
-    description: 'البرق السريع',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCqSFt_4ghEuGAvubvgi9yK1jxXuChE7KsKGa_m4tayq-sZkRwoOOYoffdrVnHubf8LNhZ1rYAUBuothXqqSo6sTwSFy5yo5xWrhBea6g7bBQqjPTHQKfGDKfPtuPrbtxxiCosSPq3PSerB4Rqkwb9GZDl3m5SR4RUnQ6700uvh2QUWhYSlFFUxQvKPn34qZis4qlRFWhC65YMLSBWox_CG3ILF02Y9jt21eMDlrJ7yB99WtG5WturR',
-  },
-  {
-    id: 'mitsui',
-    name: 'جواد',
-    name_ar: 'جواد',
-    number: '14',
-    position: 'مدافع مسدد (SG)',
-    role: 'قناص الثلاثيات',
-    description: 'قناص الثلاثيات',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuB2L0QzTucO0k5-IEPwNIsk-xSXUXEL1fOvHfj_CPhdJqUUNj-ZifftMoTuKmm4yLCl3llzgmmem6ya3MJRr9Rva6pjpIQoPhwvOjMVJhOa0obXUMer8SarhS09lTUpTrNblMCyj2GZ3Ig43HDZK0XH6ieonmSIA0PwqpJ_qba4kjravri9Z8CEHO63JeQhYgnkyAcpqJQ9O3X4P-D4-PH_pf7f3XqifVRjDmShObANWs1amR-pzMSr',
-  },
-];
 
 interface AnimeDetailViewProps {
   anime: Anime;
@@ -105,23 +43,7 @@ export const AnimeDetailView: React.FC<AnimeDetailViewProps> = ({
 }) => {
   const handleEpisodeSelect = onEpisodePress || onSelectEpisode || (() => {});
   const [activeTab, setActiveTab] = useState<DetailTab>('episodes');
-  const [activeRange, setActiveRange] = useState(0);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [sortAscending, setSortAscending] = useState(true);
-
-  const range = EPISODE_RANGES[activeRange];
-  const filteredEpisodes = episodes
-    .filter((ep) => {
-      const num = ep.episode_number || ep.episodeNumber || 0;
-      return num >= range.start && num <= range.end;
-    })
-    .sort((a, b) => {
-      const aNum = a.episode_number || a.episodeNumber || 0;
-      const bNum = b.episode_number || b.episodeNumber || 0;
-      return sortAscending ? aNum - bNum : bNum - aNum;
-    });
-
-  const displayList = filteredEpisodes.length > 0 ? filteredEpisodes : episodes.slice(0, 25);
 
   const handleShare = async () => {
     try {
@@ -359,162 +281,26 @@ export const AnimeDetailView: React.FC<AnimeDetailViewProps> = ({
       </ScrollView>
 
       {/* TAB CONTENT */}
-
-      {/* TAB 1: EPISODES */}
       {activeTab === 'episodes' && (
-        <View style={styles.episodesTabContent}>
-          {/* Episodes Range Selector & Sorter */}
-          <View style={styles.rangeSelectorRow}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.rangesScroll}>
-              {EPISODE_RANGES.map((r, idx) => {
-                const isSelected = activeRange === idx;
-                return (
-                  <TouchableOpacity
-                    key={idx}
-                    style={[
-                      styles.rangeBtn,
-                      isSelected ? styles.rangeBtnActive : styles.rangeBtnInactive,
-                    ]}
-                    onPress={() => setActiveRange(idx)}
-                    activeOpacity={0.8}
-                  >
-                    <Text
-                      style={[
-                        styles.rangeText,
-                        isSelected && styles.rangeTextActive,
-                      ]}
-                    >
-                      {r.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-
-            <TouchableOpacity
-              style={styles.sortToggleBtn}
-              onPress={() => setSortAscending(!sortAscending)}
-              activeOpacity={0.7}
-              accessibilityLabel="عكس الترتيب"
-            >
-              <Icon name="swap_vert" size={20} color={THEME.colors.onSurfaceVariant} />
-            </TouchableOpacity>
-          </View>
-
-          {/* Episode Cards List */}
-          <View style={styles.episodeCardsList}>
-            {displayList.map((ep, idx) => (
-              <EpisodeCard
-                key={ep.id || idx}
-                episode={ep}
-                onPress={handleEpisodeSelect}
-                isPlaying={idx === 0}
-                progress={idx === 0 ? 0.75 : undefined}
-              />
-            ))}
-          </View>
-        </View>
+        <EpisodesTab
+          episodes={episodes}
+          onSelectEpisode={handleEpisodeSelect}
+        />
       )}
 
-      {/* TAB 2: STORY & DETAILS */}
       {activeTab === 'story' && (
-        <View style={styles.storyTabContent}>
-          <View style={styles.storyCard}>
-            <Text style={styles.storyHeading}>قصة العمل</Text>
-            <Text style={styles.storyParagraph}>
-              {anime.description ||
-                'انضم لمسيرة حسان وفريق الصقور في صراع حماسي مشتعل لتحقيق حلم البطولة الوطنية. النسخة المرممة بأعلى نقاوة صوتية مع الدبلجة الأصلية من استوديوهات الزهرة.'}
-            </Text>
-          </View>
-
-          <View style={styles.specsCard}>
-            <View style={styles.specItem}>
-              <Text style={styles.specLabel}>الاستوديو الأصلي</Text>
-              <Text style={styles.specValue}>{anime.studio || 'Toei Animation'}</Text>
-            </View>
-            <View style={styles.specDivider} />
-            <View style={styles.specItem}>
-              <Text style={styles.specLabel}>استوديو الدبلجة</Text>
-              <Text style={styles.specValue}>مركز الزهرة • سبيستون</Text>
-            </View>
-            <View style={styles.specDivider} />
-            <View style={styles.specItem}>
-              <Text style={styles.specLabel}>التصنيف العمري</Text>
-              <Text style={styles.specValue}>{anime.ageRating || 'مناسب لجميع الفئات (+13)'}</Text>
-            </View>
-            <View style={styles.specDivider} />
-            <View style={styles.specItem}>
-              <Text style={styles.specLabel}>عدد الحلقات</Text>
-              <Text style={styles.specValue}>{anime.totalEpisodes || 101} حلقة كاملة</Text>
-            </View>
-          </View>
-        </View>
+        <StoryTab anime={anime} />
       )}
 
-      {/* TAB 3: CHARACTERS */}
       {activeTab === 'characters' && (
-        <View style={styles.charactersTabContent}>
-          <View style={styles.charactersGrid}>
-            {(characters && characters.length > 0 ? characters : DEFAULT_CHARACTERS).map(
-              (char) => (
-                <CharacterCard
-                  key={char.id}
-                  character={char}
-                  onPress={() => {}}
-                  width={(SCREEN_WIDTH - THEME.spacing.margin * 2 - 16) / 2}
-                />
-              )
-            )}
-          </View>
-        </View>
+        <CharactersTab
+          characters={characters}
+          onCharacterPress={() => {}}
+        />
       )}
 
-      {/* TAB 4: COMMENTS */}
       {activeTab === 'comments' && (
-        <View style={styles.commentsTabContent}>
-          {/* Comment 1 */}
-          <View style={styles.commentItem}>
-            <View style={styles.commentHeader}>
-              <View style={styles.commentUserRow}>
-                <View style={styles.commentAvatar}>
-                  <Text style={styles.commentAvatarText}>ط</Text>
-                </View>
-                <View>
-                  <View style={styles.commentNameRow}>
-                    <Text style={styles.commentName}>طارق الأسطورة</Text>
-                    <View style={styles.commentVipPill}>
-                      <Text style={styles.commentVipText}>عضو VIP</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.commentTime}>منذ 15 دقيقة</Text>
-                </View>
-              </View>
-              <Icon name="star" size={14} color={THEME.colors.secondary} filled />
-            </View>
-            <Text style={styles.commentBody}>
-              العمل المفضل عبر كل العصور! جودة الترميم هنا مذهلة والصوت كأنك تشاهده لأول مرة.
-            </Text>
-          </View>
-
-          {/* Comment 2 */}
-          <View style={styles.commentItem}>
-            <View style={styles.commentHeader}>
-              <View style={styles.commentUserRow}>
-                <View style={styles.commentAvatar}>
-                  <Text style={styles.commentAvatarText}>ر</Text>
-                </View>
-                <View>
-                  <Text style={styles.commentName}>ريم الفهد</Text>
-                  <Text style={styles.commentTime}>منذ 45 دقيقة</Text>
-                </View>
-              </View>
-              <Icon name="star" size={14} color={THEME.colors.secondary} filled />
-            </View>
-            <Text style={styles.commentBody}>
-              دبلجة سبيستون جزء من الروح، شكراً على توفير السلسلة كاملة بهذه السلاسة!
-            </Text>
-          </View>
-        </View>
+        <CommentsTab />
       )}
     </ScrollView>
   );
@@ -537,7 +323,7 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.surfaceContainerLowest,
   },
   heroBackdropImage: {
-    ...StyleSheet.absoluteFill as object,
+    ...(StyleSheet.absoluteFill as object),
     width: '100%',
     height: '100%',
   },
@@ -550,16 +336,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(15, 19, 28, 0.95)',
   },
   heroGradientSoft: {
-    ...StyleSheet.absoluteFill as object,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(15, 19, 28, 0.35)',
   },
   backBtn: {
     position: 'absolute',
-    top: 16,
+    top: 40,
     right: 16,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: 'rgba(15, 19, 28, 0.75)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -569,14 +359,14 @@ const styles = StyleSheet.create({
     position: 'relative',
     zIndex: 10,
     paddingHorizontal: THEME.spacing.margin,
-    paddingBottom: THEME.spacing.spaceMd,
-    gap: 8,
+    paddingBottom: 16,
+    gap: 10,
   },
   badgesRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
     flexWrap: 'wrap',
-    gap: 6,
   },
   scoreBadge: {
     flexDirection: 'row',
@@ -585,65 +375,67 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.secondaryContainer,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: THEME.radius.full,
+    borderRadius: THEME.radius.xs,
   },
   scoreBadgeText: {
-    ...THEME.typography.labelMd,
+    ...THEME.typography.labelSm,
     color: THEME.colors.onSecondaryContainer,
     fontWeight: '800',
   },
   infoPill: {
     backgroundColor: THEME.colors.surfaceContainerHigh,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: THEME.radius.full,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: THEME.radius.xs,
   },
   infoPillText: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurface,
+    ...THEME.typography.labelSm,
+    color: THEME.colors.onSurfaceVariant,
   },
   tagIconic: {
-    backgroundColor: 'rgba(214, 49, 53, 0.3)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: THEME.radius.full,
+    backgroundColor: 'rgba(220, 38, 38, 0.25)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: THEME.radius.xs,
+    borderWidth: 1,
+    borderColor: 'rgba(220, 38, 38, 0.4)',
   },
   tagIconicText: {
     ...THEME.typography.labelSm,
-    color: THEME.colors.tertiary,
+    color: THEME.colors.primaryContainer,
     fontWeight: '700',
   },
   titleSection: {
-    marginTop: 4,
+    gap: 2,
   },
   displayTitle: {
-    ...THEME.typography.displayHeroMobile,
-    fontSize: 32,
+    ...THEME.typography.headlineLg,
     color: THEME.colors.onSurface,
+    fontSize: 28,
     fontWeight: '900',
     textAlign: 'right',
   },
   displaySubtitle: {
-    ...THEME.typography.labelLg,
+    ...THEME.typography.titleSm,
     color: THEME.colors.onSurfaceVariant,
-    marginTop: 2,
+    fontSize: 12,
     textAlign: 'right',
   },
   genreChipsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 6,
-    marginTop: 4,
+    flexWrap: 'wrap',
   },
   genreChip: {
     backgroundColor: THEME.colors.surfaceContainerLow,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: THEME.radius.xs,
   },
   genreChipText: {
     ...THEME.typography.labelSm,
     color: THEME.colors.onSurfaceVariant,
+    fontSize: 11,
   },
   actionsSection: {
     paddingHorizontal: THEME.spacing.margin,
@@ -770,171 +562,5 @@ const styles = StyleSheet.create({
   tabPillTextActive: {
     color: THEME.colors.primaryContainer,
     fontWeight: '700',
-  },
-  episodesTabContent: {
-    paddingHorizontal: THEME.spacing.margin,
-    marginTop: 14,
-    gap: 12,
-  },
-  rangeSelectorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
-  },
-  rangesScroll: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-  },
-  rangeBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  rangeBtnActive: {
-    backgroundColor: THEME.colors.primaryContainer,
-  },
-  rangeBtnInactive: {
-    backgroundColor: THEME.colors.surfaceContainer,
-  },
-  rangeText: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurfaceVariant,
-  },
-  rangeTextActive: {
-    color: THEME.colors.onPrimaryContainer,
-    fontWeight: '800',
-  },
-  sortToggleBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 8,
-    backgroundColor: THEME.colors.surfaceContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  episodeCardsList: {
-    gap: 10,
-    marginTop: 6,
-  },
-  storyTabContent: {
-    paddingHorizontal: THEME.spacing.margin,
-    marginTop: 14,
-    gap: 14,
-  },
-  storyCard: {
-    backgroundColor: THEME.colors.surfaceContainer,
-    padding: 16,
-    borderRadius: THEME.radius.lg,
-    gap: 8,
-  },
-  storyHeading: {
-    ...THEME.typography.titleMd,
-    color: THEME.colors.onSurface,
-  },
-  storyParagraph: {
-    ...THEME.typography.bodyMd,
-    color: THEME.colors.onSurfaceVariant,
-    lineHeight: 24,
-    textAlign: 'right',
-  },
-  specsCard: {
-    backgroundColor: THEME.colors.surfaceContainer,
-    padding: 16,
-    borderRadius: THEME.radius.lg,
-    gap: 10,
-  },
-  specItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  specLabel: {
-    ...THEME.typography.bodySm,
-    color: THEME.colors.onSurfaceVariant,
-  },
-  specValue: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurface,
-    fontWeight: '700',
-  },
-  specDivider: {
-    height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  charactersTabContent: {
-    paddingHorizontal: THEME.spacing.margin,
-    marginTop: 14,
-  },
-  charactersGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  commentsTabContent: {
-    paddingHorizontal: THEME.spacing.margin,
-    marginTop: 14,
-    gap: 10,
-  },
-  commentItem: {
-    backgroundColor: THEME.colors.surfaceContainer,
-    padding: 14,
-    borderRadius: THEME.radius.lg,
-    gap: 8,
-  },
-  commentHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  commentUserRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  commentAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: THEME.colors.primaryContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  commentAvatarText: {
-    color: THEME.colors.white,
-    fontWeight: 'bold',
-  },
-  commentNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  commentName: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurface,
-    fontWeight: '700',
-  },
-  commentVipPill: {
-    backgroundColor: 'rgba(238, 152, 0, 0.2)',
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: 3,
-  },
-  commentVipText: {
-    color: THEME.colors.secondary,
-    fontSize: 9,
-    fontWeight: '800',
-  },
-  commentTime: {
-    ...THEME.typography.labelSm,
-    fontSize: 10,
-    color: THEME.colors.onSurfaceVariant,
-  },
-  commentBody: {
-    ...THEME.typography.bodySm,
-    color: THEME.colors.onSurface,
-    lineHeight: 20,
-    textAlign: 'right',
   },
 });

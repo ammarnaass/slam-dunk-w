@@ -4,30 +4,22 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { 
     Compass, 
-    Sparkles, 
     Plus, 
     RotateCcw, 
-    Check, 
-    X, 
     ExternalLink, 
     Loader2, 
-    Edit3, 
-    Trash2, 
-    ArrowUp, 
-    ArrowDown, 
-    Eye, 
-    EyeOff, 
     Tv, 
     Search, 
-    Filter, 
     Layers, 
-    SlidersHorizontal,
-    Star,
     CheckCircle2,
     AlertCircle
 } from "lucide-react";
-import { AdminPlanetItem, DEFAULT_ADMIN_PLANETS } from "@/lib/planets-presets";
+import { AdminPlanetItem } from "@/lib/planets-presets";
 import { Anime } from "@/types";
+import { EditPlanetModal } from "./components/EditPlanetModal";
+import { CreatePlanetModal } from "./components/CreatePlanetModal";
+import { ViewPlanetAnimesModal } from "./components/ViewPlanetAnimesModal";
+import { PlanetCardItem } from "./components/PlanetCardItem";
 
 export default function AdminPlanetsPage() {
     const [planets, setPlanets] = useState<Array<AdminPlanetItem & { worksCount?: number }>>([]);
@@ -37,27 +29,12 @@ export default function AdminPlanetsPage() {
     const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all");
     const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-    // Modals
+    // Modals state
     const [editingPlanet, setEditingPlanet] = useState<AdminPlanetItem | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [viewingAnimesPlanet, setViewingAnimesPlanet] = useState<AdminPlanetItem | null>(null);
     const [animesList, setAnimesList] = useState<Anime[]>([]);
     const [loadingAnimes, setLoadingAnimes] = useState(false);
-
-    // New planet form state
-    const [newPlanetForm, setNewPlanetForm] = useState<Partial<AdminPlanetItem>>({
-        id: "",
-        name: "",
-        arabicGenre: "",
-        genreKey: "Action",
-        badge: "🪐",
-        icon: "explore",
-        slogan: "",
-        description: "",
-        color: "#dc2626",
-        flagshipWorks: [],
-        isEnabled: true
-    });
 
     useEffect(() => {
         fetchPlanets();
@@ -121,7 +98,6 @@ export default function AdminPlanetsPage() {
         updated[index] = updated[targetIndex];
         updated[targetIndex] = temp;
 
-        // Reassign order
         const reordered = updated.map((p, idx) => ({ ...p, order: idx + 1 }));
         setPlanets(reordered);
 
@@ -165,22 +141,20 @@ export default function AdminPlanetsPage() {
         }
     };
 
-    const handleSaveEdit = async () => {
-        if (!editingPlanet) return;
-
+    const handleSaveEdit = async (updatedPlanet: AdminPlanetItem) => {
         try {
             setSaving(true);
             const res = await fetch("/api/admin/planets", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "update", planet: editingPlanet })
+                body: JSON.stringify({ action: "update", planet: updatedPlanet })
             });
 
             if (res.ok) {
                 const json = await res.json();
                 setPlanets(json.data);
                 setEditingPlanet(null);
-                setToast({ type: "success", message: `تم حفظ تعديلات ${editingPlanet.name} بنجاح!` });
+                setToast({ type: "success", message: `تم حفظ تعديلات ${updatedPlanet.name} بنجاح!` });
             }
         } catch (error) {
             console.error("Save edit error:", error);
@@ -190,33 +164,7 @@ export default function AdminPlanetsPage() {
         }
     };
 
-    const handleCreatePlanet = async () => {
-        if (!newPlanetForm.name?.trim()) {
-            alert("يرجى إدخال اسم الكوكب");
-            return;
-        }
-
-        const id = newPlanetForm.id?.trim() || `planet-${Date.now()}`;
-        const planetPayload: AdminPlanetItem = {
-            id,
-            name: newPlanetForm.name.trim(),
-            arabicGenre: newPlanetForm.arabicGenre?.trim() || newPlanetForm.name.replace(/^كوكب\s*/, ""),
-            genreKey: newPlanetForm.genreKey || "Action",
-            badge: newPlanetForm.badge || "🪐",
-            icon: newPlanetForm.icon || "explore",
-            slogan: newPlanetForm.slogan || "كوكب المغامرات والبطولة",
-            description: newPlanetForm.description || "رحلة لاكتشاف عوالم الأنمي الفريدة.",
-            color: newPlanetForm.color || "#dc2626",
-            bgClass: "bg-red-500/15 border-red-500/30 text-red-400",
-            glowColor: "rgba(220, 38, 38, 0.4)",
-            flagshipWorks: typeof newPlanetForm.flagshipWorks === "string" 
-                ? (newPlanetForm.flagshipWorks as string).split(",").map(s => s.trim()).filter(Boolean)
-                : (newPlanetForm.flagshipWorks || []),
-            isEnabled: true,
-            order: planets.length + 1,
-            isCustom: true
-        };
-
+    const handleCreatePlanet = async (planetPayload: AdminPlanetItem) => {
         try {
             setSaving(true);
             const res = await fetch("/api/admin/planets", {
@@ -229,19 +177,6 @@ export default function AdminPlanetsPage() {
                 const json = await res.json();
                 setPlanets(json.data);
                 setIsCreateModalOpen(false);
-                setNewPlanetForm({
-                    id: "",
-                    name: "",
-                    arabicGenre: "",
-                    genreKey: "Action",
-                    badge: "🪐",
-                    icon: "explore",
-                    slogan: "",
-                    description: "",
-                    color: "#dc2626",
-                    flagshipWorks: [],
-                    isEnabled: true
-                });
                 setToast({ type: "success", message: `تمت إضافة ${planetPayload.name} بنجاح إلى المنصة!` });
             }
         } catch (error) {
@@ -453,7 +388,7 @@ export default function AdminPlanetsPage() {
                     <button
                         type="button"
                         onClick={() => setFilterStatus("all")}
-                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all ${
+                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                             filterStatus === "all" ? "bg-red-600 text-white" : "bg-white/[0.04] text-[#94a3b8] hover:text-white"
                         }`}
                     >
@@ -462,7 +397,7 @@ export default function AdminPlanetsPage() {
                     <button
                         type="button"
                         onClick={() => setFilterStatus("active")}
-                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all ${
+                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                             filterStatus === "active" ? "bg-emerald-600 text-white" : "bg-white/[0.04] text-[#94a3b8] hover:text-white"
                         }`}
                     >
@@ -471,7 +406,7 @@ export default function AdminPlanetsPage() {
                     <button
                         type="button"
                         onClick={() => setFilterStatus("inactive")}
-                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all ${
+                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                             filterStatus === "inactive" ? "bg-red-950 text-red-300" : "bg-white/[0.04] text-[#94a3b8] hover:text-white"
                         }`}
                     >
@@ -495,540 +430,45 @@ export default function AdminPlanetsPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredPlanets.map((planet, idx) => (
-                        <div
+                        <PlanetCardItem
                             key={planet.id}
-                            className={`rounded-3xl bg-[#131317] border transition-all duration-300 relative overflow-hidden flex flex-col justify-between group shadow-xl ${
-                                planet.isEnabled 
-                                    ? "border-white/[0.08] hover:border-white/20" 
-                                    : "border-red-950/40 opacity-60 bg-[#0e0e12]"
-                            }`}
-                        >
-                            {/* Ambient Glow */}
-                            <div 
-                                className="absolute -top-16 -right-16 w-36 h-36 rounded-full blur-3xl pointer-events-none transition-opacity opacity-40 group-hover:opacity-75"
-                                style={{ backgroundColor: planet.color || "#dc2626" }}
-                            />
-
-                            {/* Card Header */}
-                            <div className="p-6 relative z-10 space-y-4">
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="flex items-center gap-3.5">
-                                        {/* Large Emoji Badge */}
-                                        <div 
-                                            className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-xl transition-transform group-hover:scale-105 shrink-0"
-                                            style={{ 
-                                                backgroundColor: `${planet.color}22`,
-                                                border: `1px solid ${planet.color}44`
-                                            }}
-                                        >
-                                            <span>{planet.badge || "🪐"}</span>
-                                        </div>
-
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="font-cairo font-black text-lg text-white group-hover:text-amber-400 transition-colors">
-                                                    {planet.name}
-                                                </h3>
-                                                {planet.isCustom && (
-                                                    <span className="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30 font-cairo text-[10px] font-bold">
-                                                        مخصص
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="flex items-center gap-2 mt-0.5">
-                                                <span className="text-[11px] font-mono text-[#94a3b8]">/{planet.id}</span>
-                                                <span className="text-white/20">•</span>
-                                                <span className="text-[11px] font-cairo text-amber-400 font-bold">{planet.genreKey}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Enable / Disable Toggle Switch */}
-                                    <button
-                                        type="button"
-                                        onClick={() => handleToggleEnabled(planet.id)}
-                                        className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer p-0.5 shrink-0 ${
-                                            planet.isEnabled ? "bg-emerald-500" : "bg-white/10"
-                                        }`}
-                                        title={planet.isEnabled ? "تعطيل الكوكب" : "تفعيل الكوكب"}
-                                    >
-                                        <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                                            planet.isEnabled ? "-translate-x-5" : "translate-x-0"
-                                        }`} />
-                                    </button>
-                                </div>
-
-                                {/* Slogan */}
-                                {planet.slogan && (
-                                    <p className="font-cairo font-bold text-xs text-[#ffb95f] leading-snug">
-                                        ✨ &quot;{planet.slogan}&quot;
-                                    </p>
-                                )}
-
-                                {/* Description */}
-                                <p className="font-tajawal text-xs text-[#94a3b8] line-clamp-2 leading-relaxed">
-                                    {planet.description}
-                                </p>
-
-                                {/* Flagship Works Chips */}
-                                {planet.flagshipWorks && planet.flagshipWorks.length > 0 && (
-                                    <div className="space-y-1.5 pt-1">
-                                        <span className="text-[10px] font-cairo font-bold text-[#94a3b8]/70 block">
-                                            الأعمال البارزة في الكوكب:
-                                        </span>
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {planet.flagshipWorks.map((work, wIdx) => (
-                                                <span 
-                                                    key={wIdx} 
-                                                    className="px-2.5 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.06] font-tajawal text-[11px] text-white/80"
-                                                >
-                                                    {work}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Card Footer Actions Strip */}
-                            <div className="p-4 bg-white/[0.02] border-t border-white/[0.06] flex items-center justify-between gap-2 relative z-10">
-                                {/* Works Count & View Button */}
-                                <button
-                                    type="button"
-                                    onClick={() => handleOpenAnimesModal(planet)}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-cairo font-bold text-[#ffb4ab] border border-white/5 transition-all cursor-pointer"
-                                    title="عرض الأنميات المصنفة في هذا الكوكب"
-                                >
-                                    <Tv size={14} />
-                                    <span>{planet.worksCount || 0} عملاً</span>
-                                </button>
-
-                                {/* Action Buttons */}
-                                <div className="flex items-center gap-1.5">
-                                    {/* Order Up */}
-                                    <button
-                                        type="button"
-                                        onClick={() => handleMoveOrder(idx, "up")}
-                                        disabled={idx === 0}
-                                        className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] disabled:opacity-20 text-[#94a3b8] hover:text-white transition-all cursor-pointer"
-                                        title="تقديم الترتيب"
-                                    >
-                                        <ArrowUp size={14} />
-                                    </button>
-
-                                    {/* Order Down */}
-                                    <button
-                                        type="button"
-                                        onClick={() => handleMoveOrder(idx, "down")}
-                                        disabled={idx === planets.length - 1}
-                                        className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] disabled:opacity-20 text-[#94a3b8] hover:text-white transition-all cursor-pointer"
-                                        title="تأخير الترتيب"
-                                    >
-                                        <ArrowDown size={14} />
-                                    </button>
-
-                                    {/* Edit Modal Button */}
-                                    <button
-                                        type="button"
-                                        onClick={() => setEditingPlanet(planet)}
-                                        className="p-1.5 rounded-lg bg-white/[0.04] hover:bg-amber-500/20 text-[#94a3b8] hover:text-amber-400 border border-white/5 transition-all cursor-pointer"
-                                        title="تعديل بيانات الكوكب"
-                                    >
-                                        <Edit3 size={14} />
-                                    </button>
-
-                                    {/* Preview on website */}
-                                    <Link
-                                        href={`/planets?planet=${encodeURIComponent(planet.id)}`}
-                                        target="_blank"
-                                        className="p-1.5 rounded-lg bg-white/[0.04] hover:bg-blue-500/20 text-[#94a3b8] hover:text-blue-400 border border-white/5 transition-all"
-                                        title="معاينة الكوكب في الموقع العام"
-                                    >
-                                        <ExternalLink size={14} />
-                                    </Link>
-
-                                    {/* Delete if custom */}
-                                    {planet.isCustom && (
-                                        <button
-                                            type="button"
-                                            onClick={() => handleDeletePlanet(planet)}
-                                            className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all cursor-pointer"
-                                            title="حذف هذا الكوكب"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                            planet={planet}
+                            index={idx}
+                            totalPlanets={planets.length}
+                            onToggleEnabled={handleToggleEnabled}
+                            onMoveOrder={handleMoveOrder}
+                            onEdit={setEditingPlanet}
+                            onOpenAnimes={handleOpenAnimesModal}
+                            onDelete={handleDeletePlanet}
+                        />
                     ))}
                 </div>
             )}
 
             {/* Modal: Edit Planet */}
-            {editingPlanet && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-                    <div className="bg-[#131317] border border-white/10 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-5 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
-                            <div className="flex items-center gap-3">
-                                <span className="text-3xl">{editingPlanet.badge}</span>
-                                <div>
-                                    <h3 className="font-cairo font-black text-lg text-white">تعديل {editingPlanet.name}</h3>
-                                    <span className="font-mono text-xs text-[#94a3b8]">ID: {editingPlanet.id}</span>
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setEditingPlanet(null)}
-                                className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[#94a3b8] hover:text-white transition-all cursor-pointer"
-                            >
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">اسم الكوكب</label>
-                                <input
-                                    type="text"
-                                    value={editingPlanet.name}
-                                    onChange={(e) => setEditingPlanet({ ...editingPlanet, name: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block font-cairo font-bold text-xs text-white mb-1.5">الرمز التعبيري (Badge)</label>
-                                    <input
-                                        type="text"
-                                        value={editingPlanet.badge}
-                                        onChange={(e) => setEditingPlanet({ ...editingPlanet, badge: e.target.value })}
-                                        className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block font-cairo font-bold text-xs text-white mb-1.5">التصنيف المرتبط في النظام</label>
-                                    <select
-                                        value={editingPlanet.genreKey}
-                                        onChange={(e) => setEditingPlanet({ ...editingPlanet, genreKey: e.target.value })}
-                                        className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-cairo font-bold focus:outline-none focus:border-red-500"
-                                    >
-                                        <option value="Action">Action (أكشن)</option>
-                                        <option value="Sports">Sports (رياضة)</option>
-                                        <option value="Adventure">Adventure (مغامرات)</option>
-                                        <option value="Comedy">Comedy (كوميديا)</option>
-                                        <option value="Drama">Drama (زمردة / دراما)</option>
-                                        <option value="Mystery">Mystery (غموض)</option>
-                                        <option value="Sci-Fi">Sci-Fi (علوم وخيال)</option>
-                                        <option value="Historical">Historical (تاريخ)</option>
-                                        <option value="Movie">Movie (أفلام)</option>
-                                        <option value="Kids">Kids (بون بون / أطفال)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">الشعار الترويجي (Slogan)</label>
-                                <input
-                                    type="text"
-                                    value={editingPlanet.slogan}
-                                    onChange={(e) => setEditingPlanet({ ...editingPlanet, slogan: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">الوصف الكوني</label>
-                                <textarea
-                                    rows={3}
-                                    value={editingPlanet.description}
-                                    onChange={(e) => setEditingPlanet({ ...editingPlanet, description: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">الأعمال البارزة (مفصولة بفواصل)</label>
-                                <input
-                                    type="text"
-                                    value={(editingPlanet.flagshipWorks || []).join(", ")}
-                                    onChange={(e) => setEditingPlanet({ 
-                                        ...editingPlanet, 
-                                        flagshipWorks: e.target.value.split(",").map(s => s.trim()).filter(Boolean) 
-                                    })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                    placeholder="سلام دانك, كابتن ماجد, بي بليد..."
-                                />
-                            </div>
-
-                            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] border border-white/5">
-                                <div>
-                                    <span className="font-cairo font-bold text-xs text-white block">حالة تفعيل الكوكب</span>
-                                    <span className="font-tajawal text-[11px] text-[#94a3b8]">إظهاره للمستخدمين في القوائم والصفحات</span>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setEditingPlanet({ ...editingPlanet, isEnabled: !editingPlanet.isEnabled })}
-                                    className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
-                                        editingPlanet.isEnabled 
-                                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" 
-                                            : "bg-red-500/20 text-red-400 border border-red-500/30"
-                                    }`}
-                                >
-                                    {editingPlanet.isEnabled ? "الكوكب نشط" : "الكوكب معطل"}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.08]">
-                            <button
-                                type="button"
-                                onClick={() => setEditingPlanet(null)}
-                                className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-xs font-cairo font-bold text-[#94a3b8] hover:text-white transition-all cursor-pointer"
-                            >
-                                إلغاء
-                            </button>
-                            <button
-                                type="button"
-                                disabled={saving}
-                                onClick={handleSaveEdit}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:brightness-110 text-xs font-cairo font-bold text-white shadow-lg shadow-red-950/40 transition-all cursor-pointer"
-                            >
-                                {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
-                                <span>حفظ التعديلات</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <EditPlanetModal
+                planet={editingPlanet}
+                isOpen={!!editingPlanet}
+                onClose={() => setEditingPlanet(null)}
+                onSave={handleSaveEdit}
+                saving={saving}
+            />
 
             {/* Modal: Create Planet */}
-            {isCreateModalOpen && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-                    <div className="bg-[#131317] border border-white/10 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-5 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                                    <Plus size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-cairo font-black text-lg text-white">إضافة كوكب جديد للمنصة</h3>
-                                    <span className="font-tajawal text-xs text-[#94a3b8]">إنشاء تصنيف وعالم كوني مخصص</span>
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setIsCreateModalOpen(false)}
-                                className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[#94a3b8] hover:text-white transition-all cursor-pointer"
-                            >
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">اسم الكوكب (مثال: كوكب النينجا)</label>
-                                <input
-                                    type="text"
-                                    value={newPlanetForm.name}
-                                    onChange={(e) => setNewPlanetForm({ ...newPlanetForm, name: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                    placeholder="كوكب..."
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block font-cairo font-bold text-xs text-white mb-1.5">المعرف الإنجليزي (Slug)</label>
-                                    <input
-                                        type="text"
-                                        value={newPlanetForm.id}
-                                        onChange={(e) => setNewPlanetForm({ ...newPlanetForm, id: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
-                                        className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-red-500"
-                                        placeholder="ninja, super-heroes..."
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block font-cairo font-bold text-xs text-white mb-1.5">الرمز التعبيري (Badge)</label>
-                                    <input
-                                        type="text"
-                                        value={newPlanetForm.badge}
-                                        onChange={(e) => setNewPlanetForm({ ...newPlanetForm, badge: e.target.value })}
-                                        className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                        placeholder="🥷, ⚡, 🌟..."
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">التصنيف المطابق في الأنمي</label>
-                                <select
-                                    value={newPlanetForm.genreKey}
-                                    onChange={(e) => setNewPlanetForm({ ...newPlanetForm, genreKey: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-cairo font-bold focus:outline-none focus:border-red-500"
-                                >
-                                    <option value="Action">Action (أكشن)</option>
-                                    <option value="Sports">Sports (رياضة)</option>
-                                    <option value="Adventure">Adventure (مغامرات)</option>
-                                    <option value="Comedy">Comedy (كوميديا)</option>
-                                    <option value="Drama">Drama (دراما)</option>
-                                    <option value="Mystery">Mystery (غموض)</option>
-                                    <option value="Sci-Fi">Sci-Fi (خيال علمي)</option>
-                                    <option value="Historical">Historical (تاريخي)</option>
-                                    <option value="Fantasy">Fantasy (فانتازيا)</option>
-                                    <option value="Shounen">Shounen (شونين)</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">الشعار الترويجي (Slogan)</label>
-                                <input
-                                    type="text"
-                                    value={newPlanetForm.slogan}
-                                    onChange={(e) => setNewPlanetForm({ ...newPlanetForm, slogan: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                    placeholder="كوكب القوة والسرعة..."
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">الوصف الكوني</label>
-                                <textarea
-                                    rows={3}
-                                    value={newPlanetForm.description}
-                                    onChange={(e) => setNewPlanetForm({ ...newPlanetForm, description: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                    placeholder="اكتب وصفاً جذاباً لعالم هذا الكوكب..."
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.08]">
-                            <button
-                                type="button"
-                                onClick={() => setIsCreateModalOpen(false)}
-                                className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-xs font-cairo font-bold text-[#94a3b8] hover:text-white transition-all cursor-pointer"
-                            >
-                                إلغاء
-                            </button>
-                            <button
-                                type="button"
-                                disabled={saving}
-                                onClick={handleCreatePlanet}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:brightness-110 text-xs font-cairo font-bold text-white shadow-lg shadow-red-950/40 transition-all cursor-pointer"
-                            >
-                                {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
-                                <span>إضافة الكوكب</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CreatePlanetModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreate={handleCreatePlanet}
+                saving={saving}
+            />
 
             {/* Modal: View Associated Animes */}
-            {viewingAnimesPlanet && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-                    <div className="bg-[#131317] border border-white/10 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-5 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
-                            <div className="flex items-center gap-3">
-                                <span className="text-3xl">{viewingAnimesPlanet.badge}</span>
-                                <div>
-                                    <h3 className="font-cairo font-black text-lg text-white">
-                                        الأعمال المصنفة في {viewingAnimesPlanet.name}
-                                    </h3>
-                                    <span className="font-tajawal text-xs text-amber-400 font-bold">
-                                        {animesList.length} عملاً مطابقاً
-                                    </span>
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setViewingAnimesPlanet(null)}
-                                className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[#94a3b8] hover:text-white transition-all cursor-pointer"
-                            >
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        {loadingAnimes ? (
-                            <div className="py-16 text-center flex flex-col items-center justify-center gap-3">
-                                <Loader2 className="animate-spin text-red-500" size={28} />
-                                <span className="font-cairo text-xs text-[#94a3b8]">جاري جلب قائمة الأعمال...</span>
-                            </div>
-                        ) : animesList.length === 0 ? (
-                            <div className="p-8 text-center rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
-                                <Tv size={36} className="mx-auto text-[#94a3b8]/40" />
-                                <p className="font-cairo font-bold text-sm text-white">لا توجد أعمال مرتبطة بهذا الكوكب حالياً</p>
-                                <p className="font-tajawal text-xs text-[#94a3b8]">
-                                    يمكنك تعيين التصنيف &quot;{viewingAnimesPlanet.genreKey}&quot; لأي أنمي من مكتبة الأعمال ليظهر هنا تلقائياً.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
-                                {animesList.map((anime) => (
-                                    <div 
-                                        key={anime.id}
-                                        className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/15 flex items-center justify-between gap-3 transition-all"
-                                    >
-                                        <div className="flex items-center gap-3 min-w-0">
-                                            <div className="w-12 h-16 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-white/10">
-                                                <img 
-                                                    src={anime.coverImage} 
-                                                    alt={anime.title} 
-                                                    className="w-full h-full object-cover" 
-                                                />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <h4 className="font-cairo font-bold text-sm text-white truncate">{anime.title}</h4>
-                                                <div className="flex items-center gap-2 mt-1">
-                                                    <span className="text-[11px] text-[#ffb4ab] font-bold">★ {anime.rating || 9.5}</span>
-                                                    <span className="text-white/20">•</span>
-                                                    <span className="text-[11px] text-[#94a3b8]">{anime.totalEpisodes || "?"} حلقة</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-2 shrink-0">
-                                            <Link
-                                                href={`/admin/animes/${anime.id}`}
-                                                className="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-xs font-cairo font-bold text-white transition-all"
-                                            >
-                                                تعديل الأنمي
-                                            </Link>
-                                            <Link
-                                                href={`/animes/${anime.id}`}
-                                                target="_blank"
-                                                className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-[#94a3b8] hover:text-white transition-all"
-                                            >
-                                                <ExternalLink size={14} />
-                                            </Link>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between">
-                            <Link
-                                href="/admin/animes/new"
-                                className="text-xs font-cairo font-bold text-amber-400 hover:underline flex items-center gap-1"
-                            >
-                                <Plus size={14} />
-                                <span>إضافة أنمي جديد إلى الكوكب</span>
-                            </Link>
-
-                            <button
-                                type="button"
-                                onClick={() => setViewingAnimesPlanet(null)}
-                                className="px-5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-xs font-cairo font-bold text-white transition-all cursor-pointer"
-                            >
-                                إغلاق
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ViewPlanetAnimesModal
+                planet={viewingAnimesPlanet}
+                onClose={() => setViewingAnimesPlanet(null)}
+                animesList={animesList}
+                loading={loadingAnimes}
+            />
         </div>
     );
 }

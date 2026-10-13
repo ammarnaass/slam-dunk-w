@@ -4,11 +4,8 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TextInput,
   TouchableOpacity,
   Dimensions,
-  Modal,
-  ScrollView,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
@@ -17,6 +14,12 @@ import { AnimeCard } from '../components/AnimeCard';
 import { AnimeDetailView } from '../components/AnimeDetailView';
 import { Icon } from '../components/Icon';
 import { THEME } from '../constants/theme';
+import { AnimeSearchHeader, TRENDING_TAGS } from '../components/animes-catalog/AnimeSearchHeader';
+import { AnimeFiltersBar, GENRES } from '../components/animes-catalog/AnimeFiltersBar';
+import { AnimeFilterModal } from '../components/animes-catalog/AnimeFilterModal';
+
+export { TRENDING_TAGS } from '../components/animes-catalog/AnimeSearchHeader';
+export { GENRES } from '../components/animes-catalog/AnimeFiltersBar';
 
 interface AnimesScreenProps {
   animes: Anime[];
@@ -28,23 +31,6 @@ interface AnimesScreenProps {
   onBackToCatalog: () => void;
   onSelectEpisode: (episode: Episode) => void;
 }
-
-const TRENDING_TAGS = [
-  '#سلام_دانك',
-  '#المحقق_كونان',
-  '#سبيستون_كلاسيك',
-  '#أفلام_ون_بيس',
-  '#قتال_شونين',
-];
-
-const GENRES = [
-  { key: 'all', label: 'الكل' },
-  { key: 'sports', label: 'رياضي' },
-  { key: 'mystery', label: 'غموض وتحقيق' },
-  { key: 'adventure', label: 'مغامرات وشونين' },
-  { key: 'comedy', label: 'كوميديا' },
-  { key: 'scifi', label: 'خيال علمي' },
-];
 
 const DEFAULT_CATALOG: Anime[] = [
   {
@@ -212,146 +198,31 @@ export const AnimesScreen: React.FC<AnimesScreenProps> = ({
   return (
     <View style={styles.container}>
       {/* 1. Search & Filter Header Anchor */}
-      <View style={styles.searchHeader}>
-        {/* Instant Search Bar */}
-        <View style={styles.searchBarContainer}>
-          <Icon name="search" size={22} color={THEME.colors.primaryContainer} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="ابحث عن أنمي، شخصية، أو استوديو..."
-            placeholderTextColor="rgba(223, 226, 238, 0.5)"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            returnKeyType="search"
-          />
-
-          {searchQuery.length > 0 && (
-            <TouchableOpacity
-              style={styles.clearBtn}
-              onPress={() => setSearchQuery('')}
-              accessibilityLabel="مسح البحث"
-            >
-              <Icon name="close" size={16} color={THEME.colors.onSurfaceVariant} />
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity
-            style={styles.filterToggleBtn}
-            onPress={() => setFilterModalVisible(true)}
-            activeOpacity={0.8}
-            accessibilityLabel="خيارات التصفية المتقدمة"
-          >
-            <Icon name="tune" size={18} color={THEME.colors.secondary} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Trending Tags Row */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.trendingScroll}
-        >
-          <View style={styles.trendingHeader}>
-            <Icon name="local_fire_department" size={16} color={THEME.colors.primaryContainer} />
-            <Text style={styles.trendingHeaderText}>الرائج:</Text>
-          </View>
-          {TRENDING_TAGS.map((tag, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={styles.trendTag}
-              onPress={() => setSearchQuery(tag.replace('#', ''))}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.trendTagText}>{tag}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      <AnimeSearchHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onClearSearch={() => setSearchQuery('')}
+        onOpenFilterModal={() => setFilterModalVisible(true)}
+        onSelectTag={setSearchQuery}
+      />
 
       {/* 2. Horizontal Pill Filters Section */}
-      <View style={styles.filtersSection}>
-        {/* Category Filter Row */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.genresScroll}
-        >
-          {GENRES.map((genre) => {
-            const isSelected = selectedGenre === genre.key;
-            return (
-              <TouchableOpacity
-                key={genre.key}
-                style={[
-                  styles.genrePill,
-                  isSelected && styles.genrePillActive,
-                ]}
-                onPress={() => setSelectedGenre(genre.key)}
-                activeOpacity={0.8}
-              >
-                <Text
-                  style={[
-                    styles.genrePillText,
-                    isSelected && styles.genrePillTextActive,
-                  ]}
-                >
-                  {genre.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-
-        {/* Sub-Filters Strip */}
-        <View style={styles.subFiltersStrip}>
-          <View style={styles.subFiltersLeft}>
-            {/* Audio Toggle */}
-            <TouchableOpacity
-              style={styles.subFilterTag}
-              onPress={() =>
-                setActiveFilterAudio((prev) =>
-                  prev === 'all' ? 'dub' : prev === 'dub' ? 'sub' : 'all'
-                )
-              }
-              activeOpacity={0.8}
-            >
-              <Icon name="mic" size={13} color={THEME.colors.secondary} />
-              <Text style={styles.subFilterTagGold}>
-                {activeFilterAudio === 'all'
-                  ? 'مدبلج ومترجم'
-                  : activeFilterAudio === 'dub'
-                  ? 'مدبلج فقط'
-                  : 'مترجم فقط'}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Status Indicator */}
-            <TouchableOpacity
-              style={styles.subFilterTag}
-              onPress={() =>
-                setActiveFilterStatus((prev) =>
-                  prev === 'all' ? 'completed' : prev === 'completed' ? 'ongoing' : 'all'
-                )
-              }
-              activeOpacity={0.8}
-            >
-              <View style={styles.statusDot} />
-              <Text style={styles.subFilterTagText}>
-                {activeFilterStatus === 'all'
-                  ? 'مكتمل ومستمر'
-                  : activeFilterStatus === 'completed'
-                  ? 'مكتمل فقط'
-                  : 'مستمر فقط'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Sorter */}
-          <View style={styles.sortPill}>
-            <Icon name="sort" size={14} color={THEME.colors.primaryContainer} />
-            <Text style={styles.sortPillText}>الأعلى تقييماً (9.0+)</Text>
-          </View>
-        </View>
-      </View>
+      <AnimeFiltersBar
+        selectedGenre={selectedGenre}
+        onSelectGenre={setSelectedGenre}
+        activeFilterAudio={activeFilterAudio}
+        onToggleFilterAudio={() =>
+          setActiveFilterAudio((prev) =>
+            prev === 'all' ? 'dub' : prev === 'dub' ? 'sub' : 'all'
+          )
+        }
+        activeFilterStatus={activeFilterStatus}
+        onToggleFilterStatus={() =>
+          setActiveFilterStatus((prev) =>
+            prev === 'all' ? 'completed' : prev === 'completed' ? 'ongoing' : 'all'
+          )
+        }
+      />
 
       {/* 3. Results Counter & View Mode Toggle */}
       <View style={styles.resultsBar}>
@@ -432,96 +303,15 @@ export const AnimesScreen: React.FC<AnimesScreenProps> = ({
       )}
 
       {/* Advanced Filter Modal */}
-      <Modal
+      <AnimeFilterModal
         visible={filterModalVisible}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setFilterModalVisible(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalSheet}>
-            <View style={styles.modalHeader}>
-              <View style={styles.modalHeaderTitleRow}>
-                <Icon name="tune" size={20} color={THEME.colors.secondary} />
-                <Text style={styles.modalTitle}>خيارات التصفية المتقدمة</Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => setFilterModalVisible(false)}
-                style={styles.modalCloseBtn}
-              >
-                <Icon name="close" size={20} color={THEME.colors.onSurfaceVariant} />
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView contentContainerStyle={styles.modalContent}>
-              {/* Audio Filter */}
-              <Text style={styles.filterGroupTitle}>المسار الصوتي</Text>
-              <View style={styles.filterPillsRow}>
-                {[
-                  { key: 'all', label: 'الكل' },
-                  { key: 'dub', label: 'دبلجة عربية (سبيستون)' },
-                  { key: 'sub', label: 'ياباني مترجم' },
-                ].map((item) => (
-                  <TouchableOpacity
-                    key={item.key}
-                    style={[
-                      styles.modalPill,
-                      activeFilterAudio === item.key && styles.modalPillActive,
-                    ]}
-                    onPress={() => setActiveFilterAudio(item.key as any)}
-                  >
-                    <Text
-                      style={[
-                        styles.modalPillText,
-                        activeFilterAudio === item.key && styles.modalPillTextActive,
-                      ]}
-                    >
-                      {item.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              {/* Status Filter */}
-              <Text style={styles.filterGroupTitle}>حالة العرض</Text>
-              <View style={styles.filterPillsRow}>
-                {[
-                  { key: 'all', label: 'الكل' },
-                  { key: 'completed', label: 'مكتمل' },
-                  { key: 'ongoing', label: 'مستمر' },
-                ].map((item) => (
-                  <TouchableOpacity
-                    key={item.key}
-                    style={[
-                      styles.modalPill,
-                      activeFilterStatus === item.key && styles.modalPillActive,
-                    ]}
-                    onPress={() => setActiveFilterStatus(item.key as any)}
-                  >
-                    <Text
-                      style={[
-                        styles.modalPillText,
-                        activeFilterStatus === item.key && styles.modalPillTextActive,
-                      ]}
-                    >
-                      {item.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
-
-            <TouchableOpacity
-              style={styles.applyFilterBtn}
-              onPress={() => setFilterModalVisible(false)}
-            >
-              <Text style={styles.applyFilterText}>
-                تطبيق التصفية • {filteredAnimes.length} عمل متاح
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setFilterModalVisible(false)}
+        activeFilterAudio={activeFilterAudio}
+        onChangeFilterAudio={setActiveFilterAudio}
+        activeFilterStatus={activeFilterStatus}
+        onChangeFilterStatus={setActiveFilterStatus}
+        totalFilteredCount={filteredAnimes.length}
+      />
     </View>
   );
 };
@@ -531,156 +321,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: THEME.colors.surface,
   },
-  searchHeader: {
-    paddingHorizontal: THEME.spacing.margin,
-    paddingTop: THEME.spacing.spaceSm,
-    paddingBottom: THEME.spacing.spaceXs,
-    gap: THEME.spacing.spaceSm,
-  },
-  searchBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: THEME.colors.surfaceContainerHigh,
-    borderRadius: THEME.radius.full,
-    paddingHorizontal: 16,
-    height: 48,
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.55,
-    shadowRadius: 18,
-    elevation: 6,
-  },
-  searchInput: {
-    flex: 1,
-    color: THEME.colors.onSurface,
-    ...THEME.typography.bodyMd,
-    textAlign: 'right',
-  },
-  clearBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  filterToggleBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: THEME.colors.surfaceContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  trendingScroll: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 4,
-  },
-  trendingHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  trendingHeaderText: {
-    ...THEME.typography.labelSm,
-    color: THEME.colors.primary,
-  },
-  trendTag: {
-    backgroundColor: THEME.colors.surfaceContainerLow,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: THEME.radius.full,
-  },
-  trendTagText: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurfaceVariant,
-  },
-  filtersSection: {
-    backgroundColor: 'rgba(10, 14, 22, 0.6)',
-    paddingVertical: 8,
-    gap: 8,
-  },
-  genresScroll: {
-    paddingHorizontal: THEME.spacing.margin,
-    gap: 8,
-  },
-  genrePill: {
-    backgroundColor: THEME.colors.surfaceContainerHigh,
-    paddingHorizontal: 16,
-    paddingVertical: 7,
-    borderRadius: THEME.radius.full,
-  },
-  genrePillActive: {
-    backgroundColor: THEME.colors.primaryContainer,
-    shadowColor: THEME.colors.primaryContainer,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 14,
-    elevation: 4,
-  },
-  genrePillText: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurfaceVariant,
-  },
-  genrePillTextActive: {
-    color: THEME.colors.onPrimaryContainer,
-    fontWeight: '800',
-  },
-  subFiltersStrip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: THEME.spacing.margin,
-  },
-  subFiltersLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  subFilterTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: THEME.colors.surfaceContainerLow,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  subFilterTagGold: {
-    ...THEME.typography.labelSm,
-    color: THEME.colors.secondary,
-  },
-  subFilterTagText: {
-    ...THEME.typography.labelSm,
-    color: THEME.colors.onSurface,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: THEME.colors.emerald,
-  },
-  sortPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: THEME.colors.surfaceContainer,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  sortPillText: {
-    ...THEME.typography.labelSm,
-    color: THEME.colors.onSurface,
-  },
   resultsBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: THEME.spacing.margin,
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
   resultsCounterRow: {
     flexDirection: 'row',
@@ -692,10 +338,10 @@ const styles = StyleSheet.create({
     color: THEME.colors.onSurface,
   },
   counterPill: {
-    backgroundColor: 'rgba(220, 38, 38, 0.2)',
+    backgroundColor: THEME.colors.surfaceContainerHigh,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: THEME.radius.full,
+    borderRadius: THEME.radius.xs,
   },
   counterText: {
     ...THEME.typography.labelSm,
@@ -704,128 +350,49 @@ const styles = StyleSheet.create({
   },
   viewModeToggle: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: THEME.colors.surfaceContainerLow,
-    padding: 2,
+    backgroundColor: THEME.colors.surfaceContainer,
     borderRadius: 8,
+    padding: 2,
+    gap: 2,
   },
   viewModeBtn: {
-    width: 28,
-    height: 28,
+    width: 30,
+    height: 30,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 6,
   },
   viewModeBtnActive: {
-    backgroundColor: THEME.colors.surfaceContainerHigh,
+    backgroundColor: THEME.colors.surfaceContainerHighest,
   },
   flatListContent: {
     paddingHorizontal: THEME.spacing.margin,
-    paddingBottom: 40,
+    paddingBottom: 24,
+    gap: 12,
   },
   gridRow: {
-    justifyContent: 'space-between',
+    gap: 12,
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 60,
   },
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 60,
+    paddingVertical: 80,
     gap: 12,
   },
   emptyTitle: {
-    ...THEME.typography.headlineSm,
+    ...THEME.typography.titleMd,
     color: THEME.colors.onSurface,
   },
   emptySubtitle: {
     ...THEME.typography.bodySm,
     color: THEME.colors.onSurfaceVariant,
     textAlign: 'center',
-    paddingHorizontal: 30,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-    justifyContent: 'flex-end',
-  },
-  modalSheet: {
-    backgroundColor: THEME.colors.surfaceContainer,
-    borderTopLeftRadius: THEME.radius.xl,
-    borderTopRightRadius: THEME.radius.xl,
-    padding: 20,
-    maxHeight: '80%',
-    gap: 16,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  modalHeaderTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  modalTitle: {
-    ...THEME.typography.titleMd,
-    color: THEME.colors.onSurface,
-  },
-  modalCloseBtn: {
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalContent: {
-    gap: 14,
-    paddingVertical: 8,
-  },
-  filterGroupTitle: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurface,
-    fontWeight: '700',
-  },
-  filterPillsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  modalPill: {
-    backgroundColor: THEME.colors.surfaceContainerHigh,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: THEME.radius.DEFAULT,
-  },
-  modalPillActive: {
-    backgroundColor: THEME.colors.primaryContainer,
-  },
-  modalPillText: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurfaceVariant,
-  },
-  modalPillTextActive: {
-    color: THEME.colors.onPrimaryContainer,
-    fontWeight: '800',
-  },
-  applyFilterBtn: {
-    height: 48,
-    borderRadius: THEME.radius.md,
-    backgroundColor: THEME.colors.primaryContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: THEME.colors.primaryContainer,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.45,
-    shadowRadius: 14,
-    elevation: 5,
-  },
-  applyFilterText: {
-    ...THEME.typography.titleMd,
-    color: THEME.colors.onPrimaryContainer,
-    fontWeight: '700',
+    maxWidth: 240,
   },
 });
