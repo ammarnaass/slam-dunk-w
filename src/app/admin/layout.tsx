@@ -21,7 +21,8 @@ import {
     PanelRightOpen,
     Layers,
     Film,
-    Palette
+    Palette,
+    Compass
 } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
 import { useAuth } from "@/providers/AuthProvider";
@@ -46,6 +47,7 @@ const navGroups: NavGroup[] = [
             { href: "/admin", label: "لوحة المؤشرات", icon: LayoutDashboard },
             { href: "/admin/animes", label: "مكتبة الأنمي والمواسم", icon: Tv },
             { href: "/admin/characters", label: "إدارة الشخصيات", icon: Users },
+            { href: "/admin/planets", label: "إدارة كواكب الأنمي", icon: Compass },
         ]
     },
     {
