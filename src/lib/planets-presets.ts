@@ -1,5 +1,13 @@
-import fs from "fs";
-import path from "path";
+export interface Planet3DConfig {
+    hasRings: boolean;          // تفعيل حلقات الكوكب المدارية
+    ringColor: string;          // لون وتدرج الحلقة المدارية
+    ringTilt?: number;          // درجة ميلان الحلقة (بالدرجات)
+    textureStyle: string;       // نمط القوام: "sports" | "action" | "adventure" | "comedy" | "emerald" | "mystery" | "scifi" | "classics" | "movies" | "bonbon"
+    rotationSpeed: number;      // سرعة الدوران الذاتي
+    atmosphereGlow: string;     // لون هالة الغلاف الجوي
+    atmosphereSize?: number;    // حجم التوهج
+    scale?: number;             // الحجم النسبي للجرم
+}
 
 export interface AdminPlanetItem {
     id: string;             // Unique slug: "sports", "action", "adventure", "comedy", "emerald", "mystery", "scifi", "classics", "movies", "bonbon"
@@ -18,7 +26,22 @@ export interface AdminPlanetItem {
     isEnabled: boolean;     // Toggle display on site
     order: number;          // Sort order
     isCustom?: boolean;     // Flag if created by admin
+    threeDConfig?: Planet3DConfig; // 3D Spacetoon Celestial parameters
 }
+
+export interface PlanetsSettingsConfig {
+    displayMode: "2d_grid" | "3d_spacetoon" | "hybrid";
+    soundEffectsEnabled: boolean;
+    autoRotate3D: boolean;
+    homeStyle: "compact_grid" | "interactive_3d_orbit";
+}
+
+export const DEFAULT_PLANETS_SETTINGS: PlanetsSettingsConfig = {
+    displayMode: "hybrid",
+    soundEffectsEnabled: true,
+    autoRotate3D: true,
+    homeStyle: "compact_grid"
+};
 
 export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
     {
@@ -36,7 +59,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-red-500/15 border-red-500/30 text-red-400",
         glowColor: "rgba(220, 38, 38, 0.4)",
         isEnabled: true,
-        order: 1
+        order: 1,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(239, 68, 68, 0.8)",
+            ringTilt: 25,
+            textureStyle: "sports",
+            rotationSpeed: 1.2,
+            atmosphereGlow: "#ef4444",
+            scale: 1.05
+        }
     },
     {
         id: "action",
@@ -53,7 +85,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-orange-500/15 border-orange-500/30 text-orange-400",
         glowColor: "rgba(234, 88, 12, 0.4)",
         isEnabled: true,
-        order: 2
+        order: 2,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(234, 88, 12, 0.85)",
+            ringTilt: 35,
+            textureStyle: "action",
+            rotationSpeed: 1.4,
+            atmosphereGlow: "#ea580c",
+            scale: 1.15
+        }
     },
     {
         id: "adventure",
@@ -70,7 +111,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-amber-500/15 border-amber-500/30 text-amber-400",
         glowColor: "rgba(245, 158, 11, 0.4)",
         isEnabled: true,
-        order: 3
+        order: 3,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(245, 158, 11, 0.75)",
+            ringTilt: 20,
+            textureStyle: "adventure",
+            rotationSpeed: 1.0,
+            atmosphereGlow: "#f59e0b",
+            scale: 1.1
+        }
     },
     {
         id: "comedy",
@@ -87,7 +137,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-emerald-500/15 border-emerald-500/30 text-emerald-400",
         glowColor: "rgba(16, 185, 129, 0.4)",
         isEnabled: true,
-        order: 4
+        order: 4,
+        threeDConfig: {
+            hasRings: false,
+            ringColor: "rgba(16, 185, 129, 0.6)",
+            ringTilt: 15,
+            textureStyle: "comedy",
+            rotationSpeed: 1.3,
+            atmosphereGlow: "#10b981",
+            scale: 0.96
+        }
     },
     {
         id: "emerald",
@@ -104,7 +163,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-pink-500/15 border-pink-500/30 text-pink-400",
         glowColor: "rgba(236, 72, 153, 0.4)",
         isEnabled: true,
-        order: 5
+        order: 5,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(236, 72, 153, 0.8)",
+            ringTilt: -25,
+            textureStyle: "emerald",
+            rotationSpeed: 0.85,
+            atmosphereGlow: "#ec4899",
+            scale: 1.02
+        }
     },
     {
         id: "mystery",
@@ -121,7 +189,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-cyan-500/15 border-cyan-500/30 text-cyan-400",
         glowColor: "rgba(6, 182, 212, 0.4)",
         isEnabled: true,
-        order: 6
+        order: 6,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(6, 182, 212, 0.65)",
+            ringTilt: 45,
+            textureStyle: "mystery",
+            rotationSpeed: 0.7,
+            atmosphereGlow: "#06b6d4",
+            scale: 1.0
+        }
     },
     {
         id: "scifi",
@@ -138,7 +215,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-teal-500/15 border-teal-500/30 text-teal-400",
         glowColor: "rgba(20, 184, 166, 0.4)",
         isEnabled: true,
-        order: 7
+        order: 7,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(20, 184, 166, 0.75)",
+            ringTilt: -15,
+            textureStyle: "scifi",
+            rotationSpeed: 1.35,
+            atmosphereGlow: "#14b8a6",
+            scale: 1.08
+        }
     },
     {
         id: "classics",
@@ -155,7 +241,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-amber-600/15 border-amber-600/30 text-amber-500",
         glowColor: "rgba(217, 119, 6, 0.4)",
         isEnabled: true,
-        order: 8
+        order: 8,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(217, 119, 6, 0.7)",
+            ringTilt: 30,
+            textureStyle: "classics",
+            rotationSpeed: 0.6,
+            atmosphereGlow: "#d97706",
+            scale: 1.12
+        }
     },
     {
         id: "movies",
@@ -172,7 +267,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-purple-500/15 border-purple-500/30 text-purple-400",
         glowColor: "rgba(139, 92, 246, 0.4)",
         isEnabled: true,
-        order: 9
+        order: 9,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(139, 92, 246, 0.8)",
+            ringTilt: 18,
+            textureStyle: "movies",
+            rotationSpeed: 0.9,
+            atmosphereGlow: "#8b5cf6",
+            scale: 1.05
+        }
     },
     {
         id: "bonbon",
@@ -189,36 +293,16 @@ export const DEFAULT_ADMIN_PLANETS: AdminPlanetItem[] = [
         bgClass: "bg-rose-500/15 border-rose-500/30 text-rose-400",
         glowColor: "rgba(244, 63, 94, 0.4)",
         isEnabled: true,
-        order: 10
+        order: 10,
+        threeDConfig: {
+            hasRings: true,
+            ringColor: "rgba(244, 63, 94, 0.75)",
+            ringTilt: -20,
+            textureStyle: "bonbon",
+            rotationSpeed: 1.1,
+            atmosphereGlow: "#f43f5e",
+            scale: 0.94
+        }
     }
 ];
 
-const DATA_DIR = path.join(process.cwd(), "src/data");
-const PLANETS_FILE = path.join(DATA_DIR, "planets.json");
-
-export function getStoredPlanets(): AdminPlanetItem[] {
-    try {
-        if (fs.existsSync(PLANETS_FILE)) {
-            const raw = fs.readFileSync(PLANETS_FILE, "utf-8");
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
-            }
-        }
-    } catch (e) {
-        console.error("Failed to read planets.json:", e);
-    }
-    return DEFAULT_ADMIN_PLANETS;
-}
-
-export function saveStoredPlanets(planets: AdminPlanetItem[]): void {
-    try {
-        if (!fs.existsSync(DATA_DIR)) {
-            fs.mkdirSync(DATA_DIR, { recursive: true });
-        }
-        fs.writeFileSync(PLANETS_FILE, JSON.stringify(planets, null, 2), "utf-8");
-    } catch (e) {
-        console.error("Failed to write planets.json:", e);
-        throw e;
-    }
-}

@@ -3,11 +3,17 @@ import { verifyAuth } from "@/lib/auth";
 import { apiSuccess, apiError, handleRouteError } from "@/server/response";
 import { ErrorCode } from "@/server/types/errors";
 import { 
+    DEFAULT_ADMIN_PLANETS, 
+    DEFAULT_PLANETS_SETTINGS,
+    AdminPlanetItem,
+    PlanetsSettingsConfig
+} from "@/lib/planets-presets";
+import { 
     getStoredPlanets, 
     saveStoredPlanets, 
-    DEFAULT_ADMIN_PLANETS, 
-    AdminPlanetItem 
-} from "@/lib/planets-presets";
+    getStoredPlanetsSettings,
+    saveStoredPlanetsSettings
+} from "@/server/services/planets.service";
 import { prisma } from "@/lib/prismadb";
 import fs from "fs";
 import path from "path";
@@ -68,6 +74,7 @@ export async function GET(request: NextRequest) {
         }
 
         const planets = getStoredPlanets();
+        const settings = getStoredPlanetsSettings();
         const counts = await getAnimesCountMap(planets);
 
         const enriched = planets.map(p => ({
@@ -75,7 +82,7 @@ export async function GET(request: NextRequest) {
             worksCount: counts[p.id] || 0
         }));
 
-        return apiSuccess(enriched);
+        return apiSuccess({ planets: enriched, settings });
     } catch (error) {
         return handleRouteError(error);
     }
@@ -91,12 +98,19 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { action } = body;
 
+        // Action 0: Save Display Settings
+        if (action === "save-settings" && body.settings) {
+            saveStoredPlanetsSettings(body.settings as PlanetsSettingsConfig);
+            return apiSuccess({ settings: body.settings });
+        }
+
         // Action 1: Reset to Spacetoon Defaults
         if (action === "reset") {
             saveStoredPlanets(DEFAULT_ADMIN_PLANETS);
+            saveStoredPlanetsSettings(DEFAULT_PLANETS_SETTINGS);
             const counts = await getAnimesCountMap(DEFAULT_ADMIN_PLANETS);
             const enriched = DEFAULT_ADMIN_PLANETS.map(p => ({ ...p, worksCount: counts[p.id] || 0 }));
-            return apiSuccess(enriched);
+            return apiSuccess({ planets: enriched, settings: DEFAULT_PLANETS_SETTINGS });
         }
 
         // Action 2: Toggle Visibility
@@ -107,7 +121,8 @@ export async function POST(request: NextRequest) {
             );
             saveStoredPlanets(updated);
             const counts = await getAnimesCountMap(updated);
-            return apiSuccess(updated.map(p => ({ ...p, worksCount: counts[p.id] || 0 })));
+            const enriched = updated.map(p => ({ ...p, worksCount: counts[p.id] || 0 }));
+            return apiSuccess({ planets: enriched });
         }
 
         // Action 3: Save Full Array or Reorder
@@ -115,7 +130,8 @@ export async function POST(request: NextRequest) {
             const list: AdminPlanetItem[] = Array.isArray(body.planets) ? body.planets : body;
             saveStoredPlanets(list);
             const counts = await getAnimesCountMap(list);
-            return apiSuccess(list.map(p => ({ ...p, worksCount: counts[p.id] || 0 })));
+            const enriched = list.map(p => ({ ...p, worksCount: counts[p.id] || 0 }));
+            return apiSuccess({ planets: enriched });
         }
 
         // Action 4: Create new custom planet
@@ -131,7 +147,8 @@ export async function POST(request: NextRequest) {
             const updated = [...current, newPlanet];
             saveStoredPlanets(updated);
             const counts = await getAnimesCountMap(updated);
-            return apiSuccess(updated.map(p => ({ ...p, worksCount: counts[p.id] || 0 })));
+            const enriched = updated.map(p => ({ ...p, worksCount: counts[p.id] || 0 }));
+            return apiSuccess({ planets: enriched });
         }
 
         // Action 5: Update specific planet
@@ -142,7 +159,8 @@ export async function POST(request: NextRequest) {
             );
             saveStoredPlanets(updated);
             const counts = await getAnimesCountMap(updated);
-            return apiSuccess(updated.map(p => ({ ...p, worksCount: counts[p.id] || 0 })));
+            const enriched = updated.map(p => ({ ...p, worksCount: counts[p.id] || 0 }));
+            return apiSuccess({ planets: enriched });
         }
 
         // Action 6: Delete planet
@@ -151,7 +169,8 @@ export async function POST(request: NextRequest) {
             const updated = current.filter(p => p.id !== body.planetId);
             saveStoredPlanets(updated);
             const counts = await getAnimesCountMap(updated);
-            return apiSuccess(updated.map(p => ({ ...p, worksCount: counts[p.id] || 0 })));
+            const enriched = updated.map(p => ({ ...p, worksCount: counts[p.id] || 0 }));
+            return apiSuccess({ planets: enriched });
         }
 
         return apiError(ErrorCode.BAD_REQUEST, "إجراء غير معروف", 400);

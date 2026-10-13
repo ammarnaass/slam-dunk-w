@@ -12,17 +12,21 @@ import {
     Search, 
     Layers, 
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    Orbit
 } from "lucide-react";
-import { AdminPlanetItem } from "@/lib/planets-presets";
+import { AdminPlanetItem, PlanetsSettingsConfig, DEFAULT_PLANETS_SETTINGS } from "@/lib/planets-presets";
 import { Anime } from "@/types";
 import { EditPlanetModal } from "./components/EditPlanetModal";
 import { CreatePlanetModal } from "./components/CreatePlanetModal";
 import { ViewPlanetAnimesModal } from "./components/ViewPlanetAnimesModal";
 import { PlanetCardItem } from "./components/PlanetCardItem";
+import { PlanetsDisplayModeCard } from "./components/PlanetsDisplayModeCard";
+import { Planet3DPreviewModal } from "./components/Planet3DPreviewModal";
 
 export default function AdminPlanetsPage() {
     const [planets, setPlanets] = useState<Array<AdminPlanetItem & { worksCount?: number }>>([]);
+    const [settings, setSettings] = useState<PlanetsSettingsConfig>(DEFAULT_PLANETS_SETTINGS);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -31,6 +35,7 @@ export default function AdminPlanetsPage() {
 
     // Modals state
     const [editingPlanet, setEditingPlanet] = useState<AdminPlanetItem | null>(null);
+    const [preview3DPlanet, setPreview3DPlanet] = useState<AdminPlanetItem | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [viewingAnimesPlanet, setViewingAnimesPlanet] = useState<AdminPlanetItem | null>(null);
     const [animesList, setAnimesList] = useState<Anime[]>([]);
@@ -54,7 +59,13 @@ export default function AdminPlanetsPage() {
             const res = await fetch("/api/admin/planets");
             if (res.ok) {
                 const json = await res.json();
-                setPlanets(json.data || json);
+                const payload = json.data || json;
+                if (payload?.planets) {
+                    setPlanets(payload.planets);
+                    if (payload.settings) setSettings(payload.settings);
+                } else if (Array.isArray(payload)) {
+                    setPlanets(payload);
+                }
             } else {
                 setToast({ type: "error", message: "تعذر جلب بيانات الكواكب من الخادم." });
             }
@@ -63,6 +74,26 @@ export default function AdminPlanetsPage() {
             setToast({ type: "error", message: "حدث خطأ أثناء الاتصال بالنظام." });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSaveSettings = async (newSettings: PlanetsSettingsConfig) => {
+        try {
+            setSaving(true);
+            const res = await fetch("/api/admin/planets", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "save-settings", settings: newSettings })
+            });
+            if (res.ok) {
+                setSettings(newSettings);
+                setToast({ type: "success", message: "تم حفظ وتطبيق إعدادات نمط عرض الكواكب بنجاح!" });
+            }
+        } catch (error) {
+            console.error("Save settings error:", error);
+            setToast({ type: "error", message: "تعذر حفظ إعدادات نمط العرض." });
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -370,6 +401,13 @@ export default function AdminPlanetsPage() {
                 </div>
             </div>
 
+            {/* Planets Display Mode Configuration Card (2D vs 3D) */}
+            <PlanetsDisplayModeCard
+                settings={settings}
+                onSaveSettings={handleSaveSettings}
+                saving={saving}
+            />
+
             {/* Filter and Search Bar */}
             <div className="p-4 rounded-2xl bg-[#131317] border border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="relative flex-1 max-w-md">
@@ -440,6 +478,7 @@ export default function AdminPlanetsPage() {
                             onEdit={setEditingPlanet}
                             onOpenAnimes={handleOpenAnimesModal}
                             onDelete={handleDeletePlanet}
+                            onPreview3D={setPreview3DPlanet}
                         />
                     ))}
                 </div>
@@ -452,6 +491,7 @@ export default function AdminPlanetsPage() {
                 onClose={() => setEditingPlanet(null)}
                 onSave={handleSaveEdit}
                 saving={saving}
+                onPreview3D={setPreview3DPlanet}
             />
 
             {/* Modal: Create Planet */}
@@ -468,6 +508,13 @@ export default function AdminPlanetsPage() {
                 onClose={() => setViewingAnimesPlanet(null)}
                 animesList={animesList}
                 loading={loadingAnimes}
+            />
+
+            {/* Modal: Live 3D Planet Preview */}
+            <Planet3DPreviewModal
+                planet={preview3DPlanet}
+                isOpen={!!preview3DPlanet}
+                onClose={() => setPreview3DPlanet(null)}
             />
         </div>
     );

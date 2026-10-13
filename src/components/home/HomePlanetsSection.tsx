@@ -24,13 +24,23 @@ export function HomePlanetsSection({ section, planetsList }: HomePlanetsSectionP
                             </p>
                         </div>
                     </div>
-                    <Link 
-                        href={(!section.viewAllLink || section.viewAllLink === "/animes") ? "/planets" : section.viewAllLink} 
-                        className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1"
-                    >
-                        <span>كل الكواكب (+12)</span>
-                        <span className="material-symbols-outlined text-sm">arrow_back</span>
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/planets?mode=3d"
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-cairo font-bold transition-all"
+                        >
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                            <span>مدار سبيستون 3D 🪐</span>
+                        </Link>
+
+                        <Link 
+                            href={(!section.viewAllLink || section.viewAllLink === "/animes") ? "/planets" : section.viewAllLink} 
+                            className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1 font-cairo font-bold"
+                        >
+                            <span>كل الكواكب (+10)</span>
+                            <span className="material-symbols-outlined text-sm">arrow_back</span>
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-space-md">

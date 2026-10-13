@@ -8,7 +8,8 @@ import {
     ArrowDown, 
     Edit3, 
     ExternalLink, 
-    Trash2 
+    Trash2,
+    Orbit
 } from "lucide-react";
 import { AdminPlanetItem } from "@/lib/planets-presets";
 
@@ -21,6 +22,7 @@ interface PlanetCardItemProps {
     onEdit: (planet: AdminPlanetItem) => void;
     onOpenAnimes: (planet: AdminPlanetItem) => void;
     onDelete: (planet: AdminPlanetItem) => void;
+    onPreview3D?: (planet: AdminPlanetItem) => void;
 }
 
 export function PlanetCardItem({
@@ -32,6 +34,7 @@ export function PlanetCardItem({
     onEdit,
     onOpenAnimes,
     onDelete,
+    onPreview3D,
 }: PlanetCardItemProps) {
     return (
         <div
@@ -104,6 +107,17 @@ export function PlanetCardItem({
                     </p>
                 )}
 
+                {/* 3D Features Strip */}
+                <div className="flex items-center gap-2 flex-wrap text-[11px] font-tajawal pt-0.5">
+                    <span className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.06] text-amber-300 font-mono flex items-center gap-1">
+                        <Orbit size={11} />
+                        <span>3D: {planet.threeDConfig?.hasRings ? "حلقات + دوران" : "كروي مداري"}</span>
+                    </span>
+                    <span className="text-[#94a3b8] text-[10px] font-mono">
+                        سرعة: {planet.threeDConfig?.rotationSpeed || 1.0}x
+                    </span>
+                </div>
+
                 {/* Description */}
                 <p className="font-tajawal text-xs text-[#94a3b8] line-clamp-2 leading-relaxed">
                     {planet.description}
@@ -144,6 +158,18 @@ export function PlanetCardItem({
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-1.5">
+                    {/* Live 3D Preview Button */}
+                    {onPreview3D && (
+                        <button
+                            type="button"
+                            onClick={() => onPreview3D(planet)}
+                            className="p-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/20 transition-all cursor-pointer"
+                            title="معاينة الكوكب 3D"
+                        >
+                            <Orbit size={14} />
+                        </button>
+                    )}
+
                     {/* Order Up */}
                     <button
                         type="button"

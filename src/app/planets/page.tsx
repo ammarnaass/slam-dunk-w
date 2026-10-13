@@ -9,7 +9,23 @@ import { PlanetsMatrixGrid } from "./components/PlanetsMatrixGrid";
 import { PlanetsControlsBar } from "./components/PlanetsControlsBar";
 import { PlanetAnimeGrid, PlanetAnimeWork } from "./components/PlanetAnimeGrid";
 import { PlanetsTropesCloud } from "./components/PlanetsTropesCloud";
+import { PlanetsViewModeToggle } from "./components/PlanetsViewModeToggle";
 import { STITCH_PLANETS } from "./components/planets-stitch-data";
+import { DEFAULT_ADMIN_PLANETS, AdminPlanetItem } from "@/lib/planets-presets";
+import dynamic from "next/dynamic";
+
+const Spacetoon3DPlanetarium = dynamic(
+  () => import("./components/Spacetoon3DPlanetarium").then((mod) => mod.Spacetoon3DPlanetarium),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[520px] rounded-3xl bg-[#0d0d15] border border-amber-500/20 flex flex-col items-center justify-center gap-3 text-amber-300 font-cairo">
+        <div className="w-8 h-8 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
+        <span className="text-sm">جاري محاكاة مدار كواكب سبيستون ثلاثي الأبعاد 3D...</span>
+      </div>
+    ),
+  }
+);
 
 // Mapping between Stitch English IDs and Spacetoon Arabic presets
 const PLANET_ID_MAP: Record<string, string> = {
@@ -97,7 +113,11 @@ function PlanetsContent() {
     return cleanLower;
   }, [rawPlanet]);
 
+  const rawMode = searchParams.get("mode");
+
   const [selectedPlanetId, setSelectedPlanetId] = useState<string>(resolvedPlanet);
+  const [adminPlanets, setAdminPlanets] = useState<AdminPlanetItem[]>(DEFAULT_ADMIN_PLANETS);
+  const [viewMode, setViewMode] = useState<"3d" | "2d">(rawMode === "2d" ? "2d" : "3d");
   const [dbAnimes, setDbAnimes] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,7 +132,13 @@ function PlanetsContent() {
     }
   }, [resolvedPlanet]);
 
-  // Fetch site animes from API
+  useEffect(() => {
+    if (rawMode === "3d" || rawMode === "2d") {
+      setViewMode(rawMode);
+    }
+  }, [rawMode]);
+
+  // Fetch site animes from API and planets settings
   useEffect(() => {
     fetch("/api/animes")
       .then((res) => res.json())
@@ -123,7 +149,40 @@ function PlanetsContent() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+
+    // Fetch stored planets and site display mode settings
+    fetch("/api/planets")
+      .then((res) => res.json())
+      .then((json) => {
+        const payload = json.data || json;
+        if (payload?.planets && Array.isArray(payload.planets)) {
+          setAdminPlanets(payload.planets);
+          if (payload.settings?.displayMode === "2d_grid") {
+            setViewMode("2d");
+          } else if (payload.settings?.displayMode === "3d_spacetoon") {
+            setViewMode("3d");
+          }
+        } else if (Array.isArray(payload)) {
+          setAdminPlanets(payload);
+        }
+      })
+      .catch(() => {});
+
+    // Restore local user view preference if available
+    try {
+      const saved = localStorage.getItem("planets_view_mode");
+      if (saved === "2d" || saved === "3d") {
+        setViewMode(saved);
+      }
+    } catch (_) {}
   }, []);
+
+  const handleToggleViewMode = (mode: "3d" | "2d") => {
+    setViewMode(mode);
+    try {
+      localStorage.setItem("planets_view_mode", mode);
+    } catch (_) {}
+  };
 
   // Change planet and update URL
   const handleSelectPlanet = (planetId: string) => {
@@ -253,12 +312,29 @@ function PlanetsContent() {
         {/* Section 1: Cosmic Breadcrumb & Hero Header */}
         <PlanetsCosmicHero totalWorks={dbAnimes.length} />
 
-        {/* Section 2: Interactive Planet Matrix Grid */}
-        <PlanetsMatrixGrid
-          selectedPlanetId={selectedPlanetId}
-          onSelectPlanet={handleSelectPlanet}
-          animes={dbAnimes}
+        {/* View Mode Toggle: 3D Spacetoon vs 2D Normal Grid */}
+        <PlanetsViewModeToggle
+          viewMode={viewMode}
+          onChangeViewMode={handleToggleViewMode}
         />
+
+        {/* Section 2: Celestial 3D Orbit OR Interactive Planet Matrix Grid */}
+        {viewMode === "3d" ? (
+          <Spacetoon3DPlanetarium
+            planets={adminPlanets}
+            selectedPlanetId={selectedPlanetId}
+            onSelectPlanet={handleSelectPlanet}
+          />
+        ) : (
+          <PlanetsMatrixGrid
+            selectedPlanetId={selectedPlanetId}
+            onSelectPlanet={handleSelectPlanet}
+            animes={dbAnimes}
+          />
+        )}
+
+        {/* Anchor for smooth scrolling from 3D HUD */}
+        <div id="planet-animes-section" className="scroll-mt-20" />
 
         {/* Section 3: Active Planet Controls Bar (Search, Chips, Sort) */}
         <PlanetsControlsBar

@@ -8,7 +8,7 @@ import {
     DEFAULT_HOME_SECTIONS, 
     HomeSectionItem 
 } from "@/lib/home-presets";
-import { getStoredPlanets } from "@/lib/planets-presets";
+import { getStoredPlanets } from "@/server/services/planets.service";
 
 // Modularized Home Sections
 import { ContinueWatchingSection } from "@/components/home/ContinueWatchingSection";
