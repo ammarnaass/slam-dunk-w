@@ -18,12 +18,10 @@ import {
     X, 
     ExternalLink,
     PanelRightClose,
-    PanelRightOpen,
-    Search
+    PanelRightOpen
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/providers/AuthProvider";
-import SearchModal from "@/components/SearchModal";
 
 export default function AdminLayout({
     children,
@@ -35,19 +33,6 @@ export default function AdminLayout({
     const { user, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
-
-    // Keyboard shortcut for quick search: Cmd+K / Ctrl+K
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-                e.preventDefault();
-                setIsSearchOpen(true);
-            }
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, []);
 
     // Initialize collapsed state from localStorage on client mount
     useEffect(() => {
@@ -128,15 +113,6 @@ export default function AdminLayout({
                 </Link>
 
                 <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={() => setIsSearchOpen(true)}
-                        className="p-2 rounded-xl bg-[#1b1b1f] border border-white/5 text-[#94a3b8] hover:text-white transition-colors"
-                        title="ابحث عن أنمي أو حلقة... (اضغط ESC للإغلاق)"
-                        aria-label="البحث الفوري"
-                    >
-                        <Search size={18} />
-                    </button>
                     <Link
                         href="/"
                         className="p-2 rounded-xl bg-[#1b1b1f] border border-white/5 text-[#94a3b8] hover:text-white"
@@ -233,48 +209,8 @@ export default function AdminLayout({
                         </div>
                     )}
 
-                    {/* Quick Search Trigger in Sidebar */}
-                    {isCollapsed ? (
-                        <div className="flex justify-center pb-1">
-                            <button
-                                type="button"
-                                onClick={() => setIsSearchOpen(true)}
-                                className="w-12 h-12 rounded-xl bg-[#141419] hover:bg-[#1f1f28] border border-white/[0.08] hover:border-[#dc2626]/50 text-[#94a3b8] hover:text-white flex items-center justify-center transition-all cursor-pointer group relative shadow-inner"
-                                title="ابحث عن أنمي أو حلقة... (اضغط ESC للإغلاق)"
-                                aria-label="البحث الفوري"
-                            >
-                                <Search size={18} className="text-[#dc2626] group-hover:scale-110 transition-transform" />
-                                
-                                {/* Floating Tooltip */}
-                                <div className="absolute right-[calc(100%+12px)] top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#16161d]/95 backdrop-blur-xl border border-white/10 text-white text-xs font-bold font-cairo shadow-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-150 whitespace-nowrap z-50 flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#dc2626]" />
-                                    <span>ابحث عن أنمي أو حلقة...</span>
-                                </div>
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="px-1 pb-1">
-                            <button
-                                type="button"
-                                onClick={() => setIsSearchOpen(true)}
-                                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#141419] hover:bg-[#1f1f28] border border-white/[0.08] hover:border-[#dc2626]/50 text-[#94a3b8] hover:text-white transition-all text-right group cursor-pointer shadow-inner"
-                                title="ابحث عن أنمي أو حلقة... (اضغط ESC للإغلاق)"
-                            >
-                                <span className="flex items-center gap-2.5 min-w-0">
-                                    <Search size={16} className="text-[#dc2626] shrink-0 group-hover:scale-110 transition-transform" />
-                                    <span className="font-tajawal text-xs truncate text-[#cbd5e1] group-hover:text-white">
-                                        ابحث عن أنمي أو حلقة...
-                                    </span>
-                                </span>
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-white/[0.06] text-[10px] font-mono text-[#94a3b8] border border-white/5">
-                                    ESC
-                                </span>
-                            </button>
-                        </div>
-                    )}
-
                     {/* Navigation Groups */}
-                    <nav className="flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-270px)] no-scrollbar">
+                    <nav className="flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-210px)] no-scrollbar">
                         {navGroups.map((group, gIdx) => (
                             <div key={gIdx} className="flex flex-col gap-1">
                                 {isCollapsed ? (
@@ -410,21 +346,7 @@ export default function AdminLayout({
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        {/* Desktop Header Quick Search Trigger */}
-                        <button
-                            type="button"
-                            onClick={() => setIsSearchOpen(true)}
-                            className="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-[#141419] hover:bg-[#1e1e27] border border-white/[0.08] hover:border-[#dc2626]/50 text-[#94a3b8] hover:text-white text-xs font-tajawal transition-all cursor-pointer shadow-inner"
-                            title="ابحث عن أنمي أو حلقة... (اضغط ESC للإغلاق)"
-                        >
-                            <Search size={14} className="text-[#dc2626]" />
-                            <span>ابحث عن أنمي أو حلقة...</span>
-                            <kbd className="text-[10px] font-mono text-[#94a3b8] bg-black/40 px-1.5 py-0.5 rounded border border-white/5">
-                                ⌘K
-                            </kbd>
-                        </button>
-
+                    <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2 text-right">
                             <div className="flex flex-col">
                                 <span className="font-cairo font-bold text-xs text-white">
@@ -444,12 +366,6 @@ export default function AdminLayout({
                     {children}
                 </main>
             </div>
-
-            {/* Instant Search Modal */}
-            <SearchModal 
-                isOpen={isSearchOpen} 
-                onClose={() => setIsSearchOpen(false)} 
-            />
         </div>
     );
 }
