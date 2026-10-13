@@ -71,6 +71,9 @@ export interface Character {
   team?: string;
   position?: string;
   number?: string;
+  animeId?: string;
+  voiceActorJa?: string;
+  voiceActorAr?: string;
 }
 
 export interface AppSettings {

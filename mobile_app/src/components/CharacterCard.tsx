@@ -16,8 +16,8 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
 }) => {
   const name = character.name_ar || character.name;
   const jerseyNum = character.number || '';
-  const position = character.position || character.role || 'لاعب';
-  const nickname = character.description || 'بطل الصقور';
+  const position = character.role || character.position || 'شخصية رئيسية';
+  const badgeText = character.team || (character.animeId ? (character.animeId === 'conan' ? 'المحقق كونان' : 'سلام دانك') : 'شخصية مميزة');
 
   return (
     <TouchableOpacity
@@ -64,7 +64,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
       {/* Nickname / Badge */}
       <View style={styles.badgePill}>
         <Text style={styles.badgeText} numberOfLines={1}>
-          {nickname}
+          {badgeText}
         </Text>
       </View>
     </TouchableOpacity>

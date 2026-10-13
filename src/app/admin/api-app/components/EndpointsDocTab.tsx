@@ -188,7 +188,7 @@ export function EndpointsDocTab({
                             <tr className="hover:bg-slate-800/40 transition-colors">
                                 <td className="py-3 pr-2 text-white">/api/mobile/v1/characters</td>
                                 <td className="py-3 text-emerald-400 font-bold">GET</td>
-                                <td className="py-3 text-slate-400 font-sans">قائمة لاعبي وشخصيات سلام دانك</td>
+                                <td className="py-3 text-slate-400 font-sans">موسوعة شخصيات وأبطال الأنمي</td>
                                 <td className="py-3 pl-2 text-left">
                                     <a href="/api/mobile/v1/characters" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline inline-flex items-center gap-1">
                                         <span>فتح</span>

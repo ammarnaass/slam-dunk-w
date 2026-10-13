@@ -16,14 +16,65 @@ import { fetchCharacters } from '../services/api';
 
 const DEFAULT_CHARACTERS: Character[] = [
   {
+    id: 'conan-edogawa',
+    animeId: 'conan',
+    name: 'Conan Edogawa',
+    name_ar: 'كونان إيدوغاوا',
+    name_en: 'Conan Edogawa',
+    role: 'بطل رئيسي (المحقق العبقري)',
+    team: 'فريق التحريات الصغير',
+    position: 'محقق ومستنتج',
+    voiceActorJa: 'مينامي تاكاياما',
+    voiceActorAr: 'آمال سعد الدين',
+    description:
+      'سينشي كودو بعد أن تقلص جسده بفعل عقار المنظمة السوداء، يعيش متنكراً كطفل لحل القضايا المعقدة والبحث عن الترياق.',
+    image:
+      'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&q=80',
+  },
+  {
+    id: 'shinichi-kudo',
+    animeId: 'conan',
+    name: 'Shinichi Kudo',
+    name_ar: 'سينشي كودو',
+    name_en: 'Shinichi Kudo',
+    role: 'شارلوك هولمز العصر الحديث',
+    team: 'ثانوية تيتان',
+    position: 'متحري الثانوية',
+    voiceActorJa: 'كابيه ياماغوتشي',
+    voiceActorAr: 'زياد الرفاعي',
+    description:
+      'متحري الثانوية العبقري صاحب الاستنتاجات الخارقة التي لا تخطئ، باحث الحقيقة التي لا تتجزأ.',
+    image:
+      'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&q=80',
+  },
+  {
+    id: 'ran-mouri',
+    animeId: 'conan',
+    name: 'Ran Mouri',
+    name_ar: 'ران موري',
+    name_en: 'Ran Mouri',
+    role: 'بطلة القصة وكابتن الكاراتيه',
+    team: 'ثانوية تيتان',
+    position: 'كابتن الكاراتيه',
+    voiceActorJa: 'واكانا يامازاكي',
+    voiceActorAr: 'سمر كوكش',
+    description:
+      'صديقة طفولة سينشي كودو، بطلة الكاراتيه في طوكيو ذات القلب الدافئ والشجاعة العالية.',
+    image:
+      'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800&q=80',
+  },
+  {
     id: 'sakuragi',
+    animeId: 'slam-dunk',
     name: 'هاناميتشي ساكوراجي',
-    name_ar: 'هاناميتشي ساكوراجي',
+    name_ar: 'حسان (هاناميتشي ساكوراجي)',
     name_en: 'Hanamichi Sakuragi',
     number: '10',
     position: 'مهاجم قوي (Power Forward)',
     team: 'شوهوكو (Shohoku)',
     role: 'البطل المبتدئ العبقري وملك المرتدات',
+    voiceActorJa: 'تاكيشي كوساو',
+    voiceActorAr: 'عادل أبو حسون',
     description:
       'طالب في السنة الأولى انضم لفريق السلة لإثارة إعجاب هاروكو، ليتحول إلى مقاتل شرس وسيد الكرات المرتدة تحت السلة، صاحب العزيمة التي لا تلين.',
     image:
@@ -31,13 +82,16 @@ const DEFAULT_CHARACTERS: Character[] = [
   },
   {
     id: 'rukawa',
+    animeId: 'slam-dunk',
     name: 'كايدي روكاوا',
-    name_ar: 'كايدي روكاوا',
+    name_ar: 'فادي (كايدي روكاوا)',
     name_en: 'Kaede Rukawa',
     number: '11',
     position: 'مهاجم صغير (Small Forward)',
     team: 'شوهوكو (Shohoku)',
     role: 'نجم الفريق والهداف الاستثنائي',
+    voiceActorJa: 'هيكارو ميدوريكاوا',
+    voiceActorAr: 'رأفت بازو',
     description:
       'اللاعب الأكثر مهارة وهدوءاً وتركيزاً في كاناغاوا، يسعى لأن يصبح اللاعب رقم 1 في اليابان من خلال التدريب الشاق والروح التنافسية العالية.',
     image:
@@ -45,45 +99,20 @@ const DEFAULT_CHARACTERS: Character[] = [
   },
   {
     id: 'akagi',
+    animeId: 'slam-dunk',
     name: 'تاكينوري أكاجي',
-    name_ar: 'تاكينوري أكاجي (الغوريلا)',
+    name_ar: 'سعد (تاكينوري أكاجي)',
     name_en: 'Takenori Akagi',
     number: '4',
     position: 'لاعب وسط (Center)',
     team: 'شوهوكو (Shohoku)',
     role: 'قائد الفريق وحامي عرين السلة',
+    voiceActorJa: 'كيوكي يانادا',
+    voiceActorAr: 'مروان فرحات',
     description:
       'قائد فريق شوهوكو وصخرة الدفاع، حلمه الأبدي منذ طفولته قيادة الفريق نحو الفوز بالبطولة الوطنية للمدارس الثانوية.',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuCmq2nceLUBxfoOJqYBIc68pDPpefSLxVY7M152CuX1IFOvAxGj2Rpzxp5F0gSr9Y-BCCe6usdJzndy7g6LaB-KJ-OxcCkIZlzk3STd-PC5P66C7xc8q6jnEjHoVG329FisGcXuAgmQrr3_GIOV33yYYRqCVtaAfyqBqZo5cPhodjoVnHmyLZe0S9_WXU_A9aFSXfY6j_doWh4QTJJsde1fCHFuQxJN7NBNo5kvNQnkZOAusJIra160',
-  },
-  {
-    id: 'mitsui',
-    name: 'هيساشي ميتسوي',
-    name_ar: 'هيساشي ميتسوي',
-    name_en: 'Hisashi Mitsui',
-    number: '14',
-    position: 'مدافع مسدد (Shooting Guard)',
-    team: 'شوهوكو (Shohoku)',
-    role: 'سيد الثلاثيات القاتلة والقلب الشجاع',
-    description:
-      'أفضل مسدد ثلاثيات، كان أفضل لاعب في المرحلة المتوسطة وعاد لشغفه بعد فترة انقطاع ليكون السلاح القاتل لشوهوكو في أصعب اللحظات.',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCcbCgbaCJ9Sjdse8Sovo5oYwivK5IwbP3-fNT2SFPG2lkLO0zm8Lg-BPLh15TVyG6OvfXxWmusccsHAVs2ZooJfdBy3n7dX7zQO70Baxlc3k2MM_37ytExM4q9jMncv-DA_lvpb9sOa8hcvBxE7_yuFx_nwPRI2-iADoyaJbkHI5MppnFDy_HF6OG6C5_NCZqpCI9J2zznZAp9g8llwP2Mxd046yXnBEK24Orhl65gcQ9Shn2EQ3Rk',
-  },
-  {
-    id: 'miyagi',
-    name: 'ريوتا مياجي',
-    name_ar: 'ريوتا مياجي',
-    name_en: 'Ryota Miyagi',
-    number: '7',
-    position: 'صانع ألعاب (Point Guard)',
-    team: 'شوهوكو (Shohoku)',
-    role: 'برق شوهوكو وقائد الهجمات المرتدة',
-    description:
-      'صانع ألعاب فائق السرعة والمراوغة، يمتلك رؤية خارقة للملعب وتمريرات حاسمة تربك أقوى دفاعات الخصوم.',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCWgp8np84cU1pXiGfgFONwPbOudYl8mTLiLB82xpMXlPaKPJE-OGVma0ZRcVdaBQPZvdKb_6Uo2gyoTSfUHPOxkO6gdZMGsXK-EIu7ynMnfDwHUw0-CFJgdyTvg3-nMZf1dGTZh20_O9O7fw-nPNJpQbD3NwHGgwyl67y3yKr2OhcKeQtL5lruF0W1xxWpgohfZJn9Y5p5l-xGTpA47CxeaPX4_OaPUHtC4d43WCUOgEVLS3eCu1QT',
   },
 ];
 
@@ -93,7 +122,7 @@ interface CharactersScreenProps {
 
 export const CharactersScreen: React.FC<CharactersScreenProps> = ({ onBack }) => {
   const [characters, setCharacters] = useState<Character[]>(DEFAULT_CHARACTERS);
-  const [selectedTeam, setSelectedTeam] = useState<string>('all');
+  const [selectedTab, setSelectedTab] = useState<string>('all');
   const [activeModalChar, setActiveModalChar] = useState<Character | null>(null);
 
   useEffect(() => {
@@ -104,23 +133,29 @@ export const CharactersScreen: React.FC<CharactersScreenProps> = ({ onBack }) =>
     });
   }, []);
 
-  const teams = [
-    { key: 'all', label: 'الكل' },
-    { key: 'shohoku', label: 'صقور شوهوكو' },
-    { key: 'ryonan', label: 'ريونان' },
-    { key: 'kainan', label: 'كاينان' },
+  const filterTabs = [
+    { key: 'all', label: 'كل الشخصيات' },
+    { key: 'conan', label: 'المحقق كونان' },
+    { key: 'slam-dunk', label: 'سلام دانك' },
+    { key: 'heroes', label: 'الأبطال الرئيسيون' },
   ];
 
   const filteredCharacters = useMemo(() => {
-    if (selectedTeam === 'all') return characters;
+    if (selectedTab === 'all') return characters;
     return characters.filter((c) => {
-      const teamStr = (c.team || '').toLowerCase();
-      if (selectedTeam === 'shohoku') return teamStr.includes('شوهوكو') || teamStr.includes('shohoku');
-      if (selectedTeam === 'ryonan') return teamStr.includes('ريونان') || teamStr.includes('ryonan');
-      if (selectedTeam === 'kainan') return teamStr.includes('كاينان') || teamStr.includes('kainan');
+      if (selectedTab === 'conan') {
+        return c.animeId === 'conan' || (c.name_ar || '').includes('كونان') || (c.name_ar || '').includes('سينشي') || (c.name_ar || '').includes('ران') || (c.name_ar || '').includes('موري');
+      }
+      if (selectedTab === 'slam-dunk') {
+        return c.animeId === 'slam-dunk' || (c.team || '').includes('شوهوكو') || (c.team || '').includes('الصقور') || (c.name_ar || '').includes('ساكوراجي') || (c.name_ar || '').includes('روكاوا') || (c.name_ar || '').includes('أكاجي');
+      }
+      if (selectedTab === 'heroes') {
+        const r = (c.role || '').toLowerCase();
+        return r.includes('بطل') || r.includes('رئيسي');
+      }
       return true;
     });
-  }, [characters, selectedTeam]);
+  }, [characters, selectedTab]);
 
   return (
     <View style={styles.rootContainer}>
@@ -138,37 +173,37 @@ export const CharactersScreen: React.FC<CharactersScreenProps> = ({ onBack }) =>
             </TouchableOpacity>
           )}
           <View style={styles.headerTitleWrap}>
-            <Text style={styles.headerTitle}>أبطال وشخصيات سلام دانك</Text>
-            <Text style={styles.headerSub}>نجوم كاناغاوا والبطولة الوطنية</Text>
+            <Text style={styles.headerTitle}>أبطال وشخصيات ANIME DAZE</Text>
+            <Text style={styles.headerSub}>موسوعة الأنمي ومؤدي الأصوات</Text>
           </View>
         </View>
 
         {/* Hero Showcase Card */}
         <View style={styles.heroBanner}>
           <View style={styles.badgeRow}>
-            <Icon name="sports_basketball" size={14} color={THEME.colors.primaryContainer} />
-            <Text style={styles.badgeText}>صقور كاناغاوا الذهبية</Text>
+            <Icon name="auto_awesome" size={14} color={THEME.colors.primaryContainer} />
+            <Text style={styles.badgeText}>موسوعة الأنمي الكونية</Text>
           </View>
-          <Text style={styles.heroMainTitle}>أساطير كرة السلة</Text>
+          <Text style={styles.heroMainTitle}>أساطير وأبطال الأنمي</Text>
           <Text style={styles.heroDesc}>
-            تعرف على تفاصيل لاعبي شوهوكو ومنافسيهم، الأرقام المميزة والمراكز وأسرار عزيمتهم التي أدهشت الجميع.
+            تعرف على أبطال الأنمي المفضلين، انتماءاتهم، مؤدي أصواتهم بالدبلجة والأداء الياباني، وأسرار قوتهم.
           </Text>
         </View>
 
-        {/* Team Filter Tabs */}
+        {/* Team / Anime Filter Tabs */}
         <View style={styles.filterPillsRow}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.filterPillsList}
           >
-            {teams.map((t) => {
-              const isSelected = selectedTeam === t.key;
+            {filterTabs.map((t) => {
+              const isSelected = selectedTab === t.key;
               return (
                 <TouchableOpacity
                   key={t.key}
                   style={[styles.teamPill, isSelected && styles.teamPillActive]}
-                  onPress={() => setSelectedTeam(t.key)}
+                  onPress={() => setSelectedTab(t.key)}
                   activeOpacity={0.7}
                 >
                   <Text
@@ -210,7 +245,7 @@ export const CharactersScreen: React.FC<CharactersScreenProps> = ({ onBack }) =>
 
         {/* Detailed Characters List */}
         <View style={styles.detailedSection}>
-          <Text style={styles.detailedSectionTitle}>بطاقات اللاعبين الكاملة</Text>
+          <Text style={styles.detailedSectionTitle}>بطاقات الشخصيات الكاملة</Text>
 
           <View style={styles.cardsGrid}>
             {filteredCharacters.map((char) => (
@@ -226,7 +261,7 @@ export const CharactersScreen: React.FC<CharactersScreenProps> = ({ onBack }) =>
                       source={{
                         uri:
                           char.image ||
-                          'https://lh3.googleusercontent.com/aida-public/AB6AXuARaixDwClMBk8VjPmR1Q2rUIzdPzwaLu2UN88LAaneAT68-Dt1lyWDu-0gkKtii62D2siPahcfHX4SFVz3C3ign3Ab0TRwZXQSb7CIPBeuWZDXQrKYufhHb07FXgObV8byTeeQEjhmD0JGOHPuJ6crdhM7akhITM1MepDnWa_wDBnvnNco4IYOGt659sF1WSCFyKDMcDNWPrC9fEF1R_xhCvvamv9DhG2ws40iHFKDLtDpbhs8NwJP',
+                          'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&q=80',
                       }}
                       style={styles.charAvatar}
                       resizeMode="cover"
@@ -244,7 +279,7 @@ export const CharactersScreen: React.FC<CharactersScreenProps> = ({ onBack }) =>
                       <Text style={styles.charEnNameText}>{char.name_en}</Text>
                     ) : null}
                     <View style={styles.roleTag}>
-                      <Text style={styles.roleTagText}>{char.role || char.position || 'لاعب'}</Text>
+                      <Text style={styles.roleTagText}>{char.role || char.position || 'شخصية رئيسية'}</Text>
                     </View>
                   </View>
                 </View>
@@ -257,7 +292,7 @@ export const CharactersScreen: React.FC<CharactersScreenProps> = ({ onBack }) =>
 
                 <View style={styles.charFooter}>
                   <View style={styles.teamBadge}>
-                    <Text style={styles.teamBadgeText}>{char.team || 'فريق شوهوكو'}</Text>
+                    <Text style={styles.teamBadgeText}>{char.team || (char.animeId === 'conan' ? 'المحقق كونان' : 'سلام دانك')}</Text>
                   </View>
 
                   {char.position ? (
@@ -321,23 +356,38 @@ export const CharactersScreen: React.FC<CharactersScreenProps> = ({ onBack }) =>
               <View style={styles.modalBadgesRow}>
                 <View style={styles.modalTeamPill}>
                   <Text style={styles.modalTeamPillText}>
-                    {activeModalChar.team || 'فريق شوهوكو'}
+                    {activeModalChar.team || (activeModalChar.animeId === 'conan' ? 'المحقق كونان' : 'سلام دانك')}
                   </Text>
                 </View>
                 <View style={styles.modalPosPill}>
                   <Text style={styles.modalPosPillText}>
-                    {activeModalChar.position || 'لاعب'}
+                    {activeModalChar.position || activeModalChar.role || 'شخصية رئيسية'}
                   </Text>
                 </View>
               </View>
 
               <Text style={styles.modalRole}>
-                {activeModalChar.role || 'نجم الفريق'}
+                {activeModalChar.role || 'شخصية رئيسية'}
               </Text>
+
+              {(activeModalChar.voiceActorJa || activeModalChar.voiceActorAr) && (
+                <View style={{ flexDirection: 'row', gap: 12, marginVertical: 6, justifyContent: 'center' }}>
+                  {activeModalChar.voiceActorJa && (
+                    <Text style={{ fontSize: 11, color: THEME.colors.primaryContainer, fontWeight: 'bold' }}>
+                      🇯🇵 {activeModalChar.voiceActorJa}
+                    </Text>
+                  )}
+                  {activeModalChar.voiceActorAr && (
+                    <Text style={{ fontSize: 11, color: '#f59e0b', fontWeight: 'bold' }}>
+                      🎙️ {activeModalChar.voiceActorAr}
+                    </Text>
+                  )}
+                </View>
+              )}
 
               <Text style={styles.modalDesc}>
                 {activeModalChar.description ||
-                  'أحد أبرز نجوم كرة السلة في كاناغاوا، يتميز بالمهارة العالية والعزيمة الاستثنائية.'}
+                  'إحدى أبرز الشخصيات في عالم الأنمي، تتميز بالروح والشجاعة والمهارة الاستثنائية.'}
               </Text>
 
               <TouchableOpacity

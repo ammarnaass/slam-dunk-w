@@ -4,10 +4,7 @@ import Link from "next/link";
 import { Character } from "@/types";
 
 interface CharacterCardProps {
-    character: Character & {
-        voiceActorJa?: string;
-        voiceActorAr?: string;
-    };
+    character: Character;
     variant?: "circle" | "card";
 }
 

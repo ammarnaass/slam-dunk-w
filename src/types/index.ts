@@ -26,6 +26,11 @@ export interface Anime {
     rating?: number;
     isFeatured?: boolean;
     isTrending?: boolean;
+    planet?: string | null;
+    studio?: string | null;
+    ageRating?: string | null;
+    audioLanguage?: string | null;
+    quality?: string | null;
 }
 
 export interface Character {
@@ -42,6 +47,9 @@ export interface Character {
     description?: string | null;
     image?: string | null;
     animeId?: string | null;
+    position?: string | null;
+    voiceActorJa?: string | null;
+    voiceActorAr?: string | null;
 }
 
 export interface User {
