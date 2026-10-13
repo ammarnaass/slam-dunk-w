@@ -62,21 +62,39 @@ function persistLocalSettings(data: any) {
     }
 }
 
+let cachedSettings: FullSiteSettings | null = null;
+let lastFetchTimestamp = 0;
+const SETTINGS_CACHE_TTL_MS = 30 * 1000; // 30 seconds
+
 export class SettingsService {
+    static clearCache() {
+        cachedSettings = null;
+        lastFetchTimestamp = 0;
+    }
+
     /**
      * Get consolidated settings with DB priority and JSON fallback.
      */
     static async getSettings(): Promise<FullSiteSettings> {
+        const now = Date.now();
+        if (cachedSettings && (now - lastFetchTimestamp < SETTINGS_CACHE_TTL_MS)) {
+            return cachedSettings;
+        }
+
         let dbSettings: any = null;
         try {
-            dbSettings = await prisma.settings.findUnique({
+            const dbPromise = prisma.settings.findUnique({
                 where: { id: "global" }
             });
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Settings DB Timeout")), 2500)
+            );
+            dbSettings = await Promise.race([dbPromise, timeoutPromise]);
         } catch (_) {}
 
         const local = loadLocalSettings();
 
-        return {
+        const result: FullSiteSettings = {
             siteName: dbSettings?.siteName || local.siteName || DEFAULT_SITE_IDENTITY.siteName,
             siteNameEn: local.siteNameEn || DEFAULT_SITE_IDENTITY.siteNameEn,
             siteDescription: local.siteDescription || DEFAULT_SITE_IDENTITY.siteDescription,
@@ -115,6 +133,10 @@ export class SettingsService {
                 helpLinks: local.footer.helpLinks || DEFAULT_FOOTER_CONFIG.helpLinks,
             } : DEFAULT_FOOTER_CONFIG
         };
+
+        cachedSettings = result;
+        lastFetchTimestamp = now;
+        return result;
     }
 
     /**
@@ -174,7 +196,8 @@ export class SettingsService {
             console.warn("Neon DB sync failed for identity, persisted locally:", dbError);
         }
 
-        // 3. Revalidate cache
+        // 3. Clear in-memory cache & revalidate Next.js cache
+        SettingsService.clearCache();
         try {
             revalidatePath("/", "layout");
             revalidatePath("/admin", "layout");
@@ -258,7 +281,8 @@ export class SettingsService {
             console.warn("Neon DB sync failed for full settings, persisted locally:", dbError);
         }
 
-        // 3. Revalidate cache
+        // 3. Clear in-memory cache & revalidate Next.js cache
+        SettingsService.clearCache();
         try {
             revalidatePath("/", "layout");
             revalidatePath("/admin", "layout");

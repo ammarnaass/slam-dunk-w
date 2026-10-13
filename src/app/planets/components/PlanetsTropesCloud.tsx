@@ -7,12 +7,32 @@ import { TROPES_PRESETS } from "./planets-stitch-data";
 interface PlanetsTropesCloudProps {
   activeTropeQuery: string;
   onSelectTrope: (query: string) => void;
+  animes?: import("@/types").Anime[];
 }
 
 export function PlanetsTropesCloud({
   activeTropeQuery,
   onSelectTrope,
+  animes = [],
 }: PlanetsTropesCloudProps) {
+  // Compute real match count from actual site animes
+  const tropeCounts = React.useMemo(() => {
+    const map: Record<string, number> = {};
+    if (!animes || animes.length === 0) return map;
+
+    for (const trope of TROPES_PRESETS) {
+      const q = trope.query.toLowerCase();
+      const count = animes.filter((a) => {
+        const inTitle = a.title?.toLowerCase().includes(q);
+        const inDesc = a.description?.toLowerCase().includes(q);
+        const inGenres = a.genres && a.genres.some((g) => g.toLowerCase().includes(q));
+        return inTitle || inDesc || inGenres;
+      }).length;
+      map[trope.id] = count;
+    }
+    return map;
+  }, [animes]);
+
   return (
     <div className="w-full pb-16">
       <div className="rounded-3xl bg-[#1b1b1f] border border-white/[0.08] p-6 sm:p-10 shadow-2xl relative overflow-hidden">
@@ -34,7 +54,7 @@ export function PlanetsTropesCloud({
           </div>
 
           <span className="font-cairo text-xs font-bold text-[#e4e1e7] bg-[#2a292e] px-4 py-1.5 rounded-full shrink-0 border border-white/5">
-            أكثر من 64 وسماً دقيقاً
+            {TROPES_PRESETS.length} تصنيف ميكرو وحبكة
           </span>
         </div>
 
@@ -42,6 +62,7 @@ export function PlanetsTropesCloud({
         <div className="flex flex-wrap items-center gap-2.5">
           {TROPES_PRESETS.map((trope) => {
             const isSelected = activeTropeQuery === trope.query;
+            const realCount = tropeCounts[trope.id] ?? 0;
 
             return (
               <button
@@ -55,13 +76,15 @@ export function PlanetsTropesCloud({
                 }`}
               >
                 <span>{trope.label}</span>
-                <span
-                  className={`text-[10px] ${
-                    isSelected ? "text-white/80" : "text-[#ac8884]"
-                  }`}
-                >
-                  ({trope.count})
-                </span>
+                {realCount > 0 && (
+                  <span
+                    className={`text-[10px] ${
+                      isSelected ? "text-white/80" : "text-[#ac8884]"
+                    }`}
+                  >
+                    ({realCount})
+                  </span>
+                )}
               </button>
             );
           })}

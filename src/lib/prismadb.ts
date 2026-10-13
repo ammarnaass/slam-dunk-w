@@ -21,9 +21,9 @@ const isLocal = connectionString.includes('localhost') || connectionString.inclu
 const pool = new pg.Pool({
     connectionString,
     ssl: isLocal ? false : { rejectUnauthorized: false },
-    max: 20,
+    max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 15000
+    connectionTimeoutMillis: 4000
 });
 const adapter = new PrismaPg(pool);
 
@@ -31,7 +31,7 @@ export const prisma =
     globalForPrisma.prisma ||
     new PrismaClient({
         adapter,
-        log: ['query'],
+        log: ['error', 'warn'],
     });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

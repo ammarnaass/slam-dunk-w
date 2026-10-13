@@ -8,7 +8,7 @@ import EpisodeCard from "@/components/EpisodeCard";
 import CharacterCard from "@/components/CharacterCard";
 import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const SPACETOON_PLANETS = [
     { 
@@ -63,7 +63,7 @@ export default async function Home() {
 
     // Attempt to fetch from database with fallback to local seed data
     try {
-        [allAnimes, settings, latestEpisodesData, featuredCharacters] = await Promise.all([
+        const queryPromise = Promise.all([
             prisma.anime.findMany({ orderBy: { updatedAt: 'desc' } }),
             prisma.settings.findUnique({ where: { id: "global" } }),
             prisma.episode.findMany({
@@ -73,6 +73,10 @@ export default async function Home() {
             }),
             prisma.character.findMany({ take: 6 })
         ]);
+        const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("Home Prisma Timeout")), 2500)
+        );
+        [allAnimes, settings, latestEpisodesData, featuredCharacters] = await Promise.race([queryPromise, timeoutPromise]);
     } catch (err) {
         console.warn("Prisma query failed on Home, using local json fallback:", err);
     }

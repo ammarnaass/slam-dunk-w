@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plan } from "@/types";
 import { useRouter } from "next/navigation";
 import { Loader2, Save, FileText, CheckCircle, Plus, Trash2 } from "lucide-react";
@@ -26,14 +26,14 @@ export default function PlanForm({ initialData, isEdit = false }: PlanFormProps)
 
     const [currency, setCurrency] = useState("ج.م");
 
-    useState(() => {
+    useEffect(() => {
         fetch("/api/settings")
             .then(res => res.json())
             .then(data => {
                 if (data.currency) setCurrency(data.currency);
             })
             .catch(err => console.error(err));
-    });
+    }, []);
 
     const handleFeatureChange = (index: number, value: string) => {
         const newFeatures = [...(formData.features || [])];

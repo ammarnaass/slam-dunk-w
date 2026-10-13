@@ -8,13 +8,25 @@
     "type": "TV Series",
     "status": "Completed",
     "totalEpisodes": 101,
-    "releaseYear": "1993",
+    "releaseYear": 1993,
     "genres": [
       "Sports",
       "Comedy",
       "School",
       "Shounen"
-    ]
+    ],
+    "title_en": "",
+    "title_jp": "",
+    "trailerUrl": "",
+    "rating": 9,
+    "isFeatured": false,
+    "isTrending": false,
+    "planet": "رياضة",
+    "studio": "Toei Animation",
+    "ageRating": "+16",
+    "audioLanguage": "dubbed",
+    "quality": "4K",
+    "updatedAt": "2026-10-12T19:25:47.465Z"
   },
   {
     "id": "conan",

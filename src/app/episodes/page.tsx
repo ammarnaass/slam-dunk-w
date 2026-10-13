@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-export const dynamic = "force-dynamic";
 import EpisodeCard from "@/components/EpisodeCard";
 
 export default function EpisodesPage() {
@@ -35,15 +34,6 @@ export default function EpisodesPage() {
     const uniqueAnimes = Array.from(new Set(episodes.map(e => JSON.stringify({ id: e.animeId, title: e.animeTitle }))))
         .map(s => JSON.parse(s))
         .filter(a => a.id && a.title);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-surface-container-lowest flex flex-col items-center justify-center gap-space-sm pt-20">
-                <div className="w-12 h-12 rounded-full border-3 border-primary-container border-t-transparent animate-spin" />
-                <span className="font-tajawal text-sm text-on-surface-variant font-bold">جاري تحميل دليل الحلقات...</span>
-            </div>
-        );
-    }
 
     return (
         <main className="min-h-screen bg-surface-container-lowest text-on-surface font-body-md pt-24 pb-24">
@@ -99,7 +89,13 @@ export default function EpisodesPage() {
                 </div>
 
                 {/* Episode Cards Grid */}
-                {filteredEpisodes.length > 0 ? (
+                {loading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="aspect-video rounded-2xl bg-surface-container animate-pulse border border-white/5" />
+                        ))}
+                    </div>
+                ) : filteredEpisodes.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter">
                         {filteredEpisodes.map((episode) => (
                             <EpisodeCard key={episode.id} episode={episode} />

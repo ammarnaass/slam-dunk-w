@@ -252,8 +252,10 @@ export default function AnimesListPage() {
 
                 {/* Anime Cards Grid */}
                 {loading ? (
-                    <div className="flex justify-center items-center py-24">
-                        <div className="w-10 h-10 rounded-full border-4 border-primary-container border-t-transparent animate-spin" />
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                            <div key={i} className="aspect-[2/3] rounded-xl bg-surface-container animate-pulse border border-white/5" />
+                        ))}
                     </div>
                 ) : filteredAnimes.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">

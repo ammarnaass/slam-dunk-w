@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { SPACETOON_PLANETS, PLANET_SHOWCASE_WORKS } from "@/lib/anime-presets";
+import { SPACETOON_PLANETS } from "@/lib/anime-presets";
 import { Anime } from "@/types";
 import { PlanetsCosmicHero } from "./components/PlanetsCosmicHero";
 import { PlanetsMatrixGrid } from "./components/PlanetsMatrixGrid";
@@ -109,24 +109,27 @@ function PlanetsContent() {
     const arabicId = PLANET_ID_MAP[selectedPlanetId] || selectedPlanetId;
     const sPlanet = STITCH_PLANETS.find((p) => p.id === selectedPlanetId);
 
-    // 1. Gather matching works from DB
+    // 1. Gather matching works ONLY from real site database
     const fromDb: PlanetAnimeWork[] = dbAnimes
       .filter((a) => {
-        const matchesPlanet =
-          selectedPlanetId === "all" ||
-          (a as any).planet === selectedPlanetId ||
-          (a as any).planet === arabicId ||
-          (a.genres &&
-            a.genres.some((g) => {
-              const gLower = g.toLowerCase();
-              return (
-                gLower.includes(selectedPlanetId) ||
-                gLower.includes(arabicId) ||
-                (sPlanet && sPlanet.subtitle.includes(g))
-              );
-            }));
+        if (selectedPlanetId === "all") return true;
 
-        return matchesPlanet;
+        const matchesPlanet =
+          (a as any).planet === selectedPlanetId ||
+          (a as any).planet === arabicId;
+
+        const matchesGenre =
+          a.genres &&
+          a.genres.some((g) => {
+            const gLower = g.toLowerCase();
+            return (
+              gLower.includes(selectedPlanetId.toLowerCase()) ||
+              gLower.includes(arabicId.toLowerCase()) ||
+              (sPlanet && sPlanet.subtitle.toLowerCase().includes(gLower))
+            );
+          });
+
+        return matchesPlanet || matchesGenre;
       })
       .map((a) => ({
         id: a.id,
@@ -135,46 +138,15 @@ function PlanetsContent() {
         coverImage: a.coverImage || "/hero-bg.jpg",
         rating: a.rating ? a.rating.toFixed(1) : "9.5",
         episodes: a.totalEpisodes ? `${a.totalEpisodes} حلقة` : "كامل",
-        year: a.releaseYear?.toString() || "1993",
-        badge: "4K HDR",
+        year: a.releaseYear?.toString() || "",
+        badge: (a as any).quality || "4K HDR",
         badgeColor: "bg-[#dc2626] text-white",
-        link: a.id === "slam-dunk" ? "/watch/slam-dunk-101" : `/animes/${a.id}`,
+        link: `/animes/${a.id}`,
         desc: a.description || "",
       }));
 
-    // 2. Gather curated showcase works from presets
-    let showcaseList: any[] = [];
-    if (selectedPlanetId === "all") {
-      Object.values(PLANET_SHOWCASE_WORKS).forEach((list) => {
-        showcaseList = [...showcaseList, ...list];
-      });
-    } else {
-      if (PLANET_SHOWCASE_WORKS[arabicId]) {
-        showcaseList = PLANET_SHOWCASE_WORKS[arabicId];
-      } else if (PLANET_SHOWCASE_WORKS[selectedPlanetId]) {
-        showcaseList = PLANET_SHOWCASE_WORKS[selectedPlanetId];
-      }
-    }
-
-    // Merge without duplicating IDs
-    const existingIds = new Set(fromDb.map((d) => d.id));
-    const combined: PlanetAnimeWork[] = [...fromDb];
-    showcaseList.forEach((sc) => {
-      if (!existingIds.has(sc.id)) {
-        combined.push({
-          id: sc.id,
-          title: sc.title,
-          subtitle: sc.subtitle,
-          coverImage: sc.coverImage,
-          rating: sc.rating,
-          episodes: sc.episodes,
-          year: sc.year,
-          badge: sc.badge || "VIP",
-          desc: sc.desc,
-          link: sc.link,
-        });
-      }
-    });
+    // 2. Real works filtered
+    const combined: PlanetAnimeWork[] = fromDb;
 
     // 3. Search query filter
     const q = searchQuery.trim().toLowerCase();
@@ -234,12 +206,13 @@ function PlanetsContent() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section 1: Cosmic Breadcrumb & Hero Header */}
-        <PlanetsCosmicHero />
+        <PlanetsCosmicHero totalWorks={dbAnimes.length} />
 
         {/* Section 2: Interactive Planet Matrix Grid */}
         <PlanetsMatrixGrid
           selectedPlanetId={selectedPlanetId}
           onSelectPlanet={handleSelectPlanet}
+          animes={dbAnimes}
         />
 
         {/* Section 3: Active Planet Controls Bar (Search, Chips, Sort) */}
@@ -261,6 +234,7 @@ function PlanetsContent() {
         <PlanetsTropesCloud
           activeTropeQuery={activeTropeQuery}
           onSelectTrope={setActiveTropeQuery}
+          animes={dbAnimes}
         />
       </div>
     </div>

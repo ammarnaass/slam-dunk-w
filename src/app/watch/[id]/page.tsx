@@ -85,35 +85,9 @@ function getLocalEpisodeData(id: string) {
     return null;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { id } = await params;
-    let episode: any = null;
+import { cache } from "react";
 
-    try {
-        episode = await prisma.episode.findUnique({
-            where: { id },
-            include: { anime: { select: { title: true } } }
-        });
-    } catch {
-        // Fallback to local
-    }
-
-    if (!episode) {
-        const local = getLocalEpisodeData(id);
-        if (local) episode = local.episode;
-    }
-
-    if (!episode) return { title: "الحلقة غير موجودة" };
-
-    return {
-        title: `${episode.title} - ${episode.anime?.title || "مشاهدة"} | ANIME DAZE`,
-        description: `شاهد ${episode.title} من أنمي ${episode.anime?.title} بدقة فائقة وترجمة ودبلجة حصرية على ANIME DAZE.`,
-    };
-}
-
-export default async function WatchPage({ params }: PageProps) {
-    const { id } = await params;
-
+const getEpisodeData = cache(async (id: string) => {
     let episode: any = null;
     let animeEpisodes: any[] = [];
     let anime: any = null;
@@ -132,20 +106,37 @@ export default async function WatchPage({ params }: PageProps) {
                 where: { animeId: episode.animeId },
                 orderBy: { episodeNumber: 'asc' }
             });
+            return { episode, anime, animeEpisodes };
         }
     } catch (dbErr) {
         console.warn("Neon DB error in WatchPage, falling back to local dataset:", dbErr);
     }
 
-    // Local JSON Fallback if DB doesn't have it or connection fails
-    if (!episode) {
-        const local = getLocalEpisodeData(id);
-        if (local) {
-            episode = local.episode;
-            anime = local.anime;
-            animeEpisodes = local.animeEpisodes;
-        }
+    return getLocalEpisodeData(id);
+});
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { id } = await params;
+    const data = await getEpisodeData(id);
+    const episode = data?.episode;
+
+    if (!episode) return { title: "الحلقة غير موجودة" };
+
+    return {
+        title: `${episode.title} - ${episode.anime?.title || "مشاهدة"} | ANIME DAZE`,
+        description: `شاهد ${episode.title} من أنمي ${episode.anime?.title} بدقة فائقة وترجمة ودبلجة حصرية على ANIME DAZE.`,
+    };
+}
+
+export default async function WatchPage({ params }: PageProps) {
+    const { id } = await params;
+    const data = await getEpisodeData(id);
+
+    if (!data || !data.episode) {
+        notFound();
     }
+
+    const { episode, anime, animeEpisodes } = data;
 
     if (!episode) {
         notFound();

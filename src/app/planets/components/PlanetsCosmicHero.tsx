@@ -4,7 +4,11 @@ import React from "react";
 import Link from "next/link";
 import { Home, Globe, Sparkles, Compass, Video, Award } from "lucide-react";
 
-export function PlanetsCosmicHero() {
+interface PlanetsCosmicHeroProps {
+  totalWorks?: number;
+}
+
+export function PlanetsCosmicHero({ totalWorks = 0 }: PlanetsCosmicHeroProps) {
   return (
     <div className="w-full pt-4 pb-8">
       {/* Breadcrumb Navigation */}
@@ -110,10 +114,10 @@ export function PlanetsCosmicHero() {
                 <Video size={22} className="text-[#ffb95f]" />
                 <div>
                   <div className="font-cairo text-sm font-black text-[#e4e1e7] leading-none">
-                    +2,850
+                    {totalWorks > 0 ? `${totalWorks} عمل` : "مكتبة الأنمي"}
                   </div>
                   <div className="font-tajawal text-[11px] text-[#ac8884] mt-0.5">
-                    مسلسل وفيلم مرخّص
+                    مسلسلات وأعمال متوفرة
                   </div>
                 </div>
               </div>
@@ -125,7 +129,7 @@ export function PlanetsCosmicHero() {
                     4K HDR
                   </div>
                   <div className="font-tajawal text-[11px] text-[#ac8884] mt-0.5">
-                    أرشيف مرمم بالذكاء الاصطناعي
+                    أرشيف مرخّص وبدقة فائقة
                   </div>
                 </div>
               </div>

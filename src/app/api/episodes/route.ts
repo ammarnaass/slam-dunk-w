@@ -3,12 +3,25 @@ import { prisma } from "@/lib/prismadb";
 import fs from "fs";
 import path from "path";
 
+let cachedEpisodes: any = null;
+let lastEpisodesFetch = 0;
+const EPISODES_CACHE_TTL = 60 * 1000; // 60 seconds
+
 export async function GET() {
     try {
+        const now = Date.now();
+        if (cachedEpisodes && (now - lastEpisodesFetch < EPISODES_CACHE_TTL)) {
+            return NextResponse.json(cachedEpisodes, {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+                }
+            });
+        }
+
         let episodes: any[] = [];
 
         try {
-            episodes = await prisma.episode.findMany({
+            const epPromise = prisma.episode.findMany({
                 include: {
                     anime: {
                         select: {
@@ -19,6 +32,10 @@ export async function GET() {
                 orderBy: { episodeNumber: 'asc' },
                 take: 150
             });
+            const timeoutPromise = new Promise<never>((_, reject) =>
+                setTimeout(() => reject(new Error("Neon DB Timeout")), 2500)
+            );
+            episodes = await Promise.race([epPromise, timeoutPromise]);
         } catch (dbErr) {
             console.warn("Neon DB query failed for episodes feed, using local fallback:", dbErr);
         }
@@ -55,7 +72,13 @@ export async function GET() {
                     video_url: ep.video_url || ""
                 })).sort((a: any, b: any) => (a.episodeNumber || 0) - (b.episodeNumber || 0));
 
-                return NextResponse.json(enriched);
+                cachedEpisodes = enriched;
+                lastEpisodesFetch = now;
+                return NextResponse.json(enriched, {
+                    headers: {
+                        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+                    }
+                });
             }
         }
 
@@ -71,7 +94,13 @@ export async function GET() {
             animeTitle: ep.anime?.title || "Slam Dunk"
         })).sort((a: any, b: any) => (a.episodeNumber || 0) - (b.episodeNumber || 0));
 
-        return NextResponse.json(enrichedEpisodes);
+        cachedEpisodes = enrichedEpisodes;
+        lastEpisodesFetch = now;
+        return NextResponse.json(enrichedEpisodes, {
+            headers: {
+                "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+            }
+        });
     } catch (error) {
         console.error("Root Episodes GET Error:", error);
         return NextResponse.json({ error: "Failed to fetch episodes" }, { status: 500 });

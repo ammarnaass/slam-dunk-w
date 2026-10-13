@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Star, Play, Bookmark, BookmarkCheck } from "lucide-react";
 
@@ -27,13 +27,39 @@ interface PlanetAnimeGridProps {
 export function PlanetAnimeGrid({ works, loading }: PlanetAnimeGridProps) {
   const [bookmarkedIds, setBookmarkedIds] = useState<Record<string, boolean>>({});
 
-  const toggleBookmark = (id: string, e: React.MouseEvent) => {
+  useEffect(() => {
+    fetch("/api/watchlist")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.watchlist)) {
+          const map: Record<string, boolean> = {};
+          data.watchlist.forEach((id: string) => {
+            map[id] = true;
+          });
+          setBookmarkedIds(map);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const toggleBookmark = async (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const nextState = !bookmarkedIds[id];
     setBookmarkedIds((prev) => ({
       ...prev,
-      [id]: !prev[id],
+      [id]: nextState,
     }));
+
+    try {
+      await fetch("/api/watchlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ animeId: id }),
+      });
+    } catch (err) {
+      console.error("Watchlist toggle failed", err);
+    }
   };
 
   if (loading) {
@@ -82,7 +108,7 @@ export function PlanetAnimeGrid({ works, loading }: PlanetAnimeGridProps) {
               className="group flex flex-col bg-[#1f1f23] rounded-2xl overflow-hidden shadow-xl border border-white/[0.06] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_32px_-8px_rgba(220,38,38,0.35)] hover:border-[#dc2626]/40"
             >
               {/* Poster Thumbnail (2:3 aspect) */}
-              <div className="relative w-full aspect-[2/3] overflow-hidden bg-[#2a292e]">
+              <Link href={watchHref} className="relative w-full aspect-[2/3] overflow-hidden bg-[#2a292e] block">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={work.coverImage || "/hero-bg.jpg"}
@@ -110,7 +136,7 @@ export function PlanetAnimeGrid({ works, loading }: PlanetAnimeGridProps) {
                 <div className="absolute bottom-2.5 right-2.5 bg-[#0e0e12]/85 backdrop-blur-sm px-2 py-0.5 rounded text-[#ac8884] font-tajawal text-[10px] border border-white/10">
                   {work.episodes || "كامل"}
                 </div>
-              </div>
+              </Link>
 
               {/* Card Body */}
               <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between gap-2.5">
@@ -127,9 +153,11 @@ export function PlanetAnimeGrid({ works, loading }: PlanetAnimeGridProps) {
                   </div>
 
                   {/* Title */}
-                  <h4 className="font-cairo text-sm sm:text-base text-[#e4e1e7] font-bold group-hover:text-[#ffb4ab] transition-colors line-clamp-1">
-                    {work.title}
-                  </h4>
+                  <Link href={watchHref} className="block">
+                    <h4 className="font-cairo text-sm sm:text-base text-[#e4e1e7] font-bold group-hover:text-[#ffb4ab] transition-colors line-clamp-1">
+                      {work.title}
+                    </h4>
+                  </Link>
 
                   {/* Synopsis */}
                   {work.desc && (

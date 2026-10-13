@@ -5,7 +5,11 @@ import { SettingsService } from "@/server/services/settings.service";
 export async function GET() {
     try {
         const settings = await SettingsService.getSettings();
-        return NextResponse.json(settings);
+        return NextResponse.json(settings, {
+            headers: {
+                "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120"
+            }
+        });
     } catch (error) {
         console.error("Public Settings API Error:", error);
         return NextResponse.json({ error: "Failed to fetch settings" }, { status: 500 });

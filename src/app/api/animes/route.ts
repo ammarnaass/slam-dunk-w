@@ -3,12 +3,35 @@ import { prisma } from "@/lib/prismadb";
 import fs from "fs";
 import path from "path";
 
+let cachedAnimes: any = null;
+let lastAnimesFetch = 0;
+const ANIMES_CACHE_TTL = 60 * 1000; // 60 seconds
+
 export async function GET() {
     try {
-        const animes = await prisma.anime.findMany({
+        const now = Date.now();
+        if (cachedAnimes && (now - lastAnimesFetch < ANIMES_CACHE_TTL)) {
+            return NextResponse.json(cachedAnimes, {
+                headers: {
+                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+                }
+            });
+        }
+
+        const animesPromise = prisma.anime.findMany({
             orderBy: { updatedAt: 'desc' }
         });
-        return NextResponse.json(animes);
+        const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("Neon DB Timeout")), 2500)
+        );
+        const animes = await Promise.race([animesPromise, timeoutPromise]);
+        cachedAnimes = animes;
+        lastAnimesFetch = now;
+        return NextResponse.json(animes, {
+            headers: {
+                "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+            }
+        });
     } catch (error) {
         console.warn("Neon DB query failed, falling back to local data:", error);
         try {

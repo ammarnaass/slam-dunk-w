@@ -14,11 +14,24 @@ import {
   Sparkles,
 } from "lucide-react";
 import { STITCH_PLANETS, StitchPlanetItem } from "./planets-stitch-data";
+import { Anime } from "@/types";
 
 interface PlanetsMatrixGridProps {
   selectedPlanetId: string;
   onSelectPlanet: (id: string) => void;
+  animes?: Anime[];
 }
+
+const PLANET_KEYWORD_MAP: Record<string, { arabic: string; genres: string[] }> = {
+  action: { arabic: "أكشن", genres: ["action", "أكشن", "shounen", "شونين", "قتال"] },
+  adventure: { arabic: "مغامرات", genres: ["adventure", "مغامرات", "خيال"] },
+  comedy: { arabic: "كوميديا", genres: ["comedy", "كوميديا", "مرح"] },
+  emerald: { arabic: "زمردة", genres: ["drama", "دراما", "romance", "رومانسي", "شوجو"] },
+  sports: { arabic: "رياضة", genres: ["sports", "رياضة", "كرة", "سلة"] },
+  mystery: { arabic: "غموض", genres: ["mystery", "غموض", "تحقيق", "بوليسي"] },
+  scifi: { arabic: "علوم", genres: ["sci-fi", "خيال علمي", "ميكا", "mecha"] },
+  classics: { arabic: "تاريخ", genres: ["classics", "تاريخي", "historical", "سبيستون"] },
+};
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Swords,
@@ -34,6 +47,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
 export function PlanetsMatrixGrid({
   selectedPlanetId,
   onSelectPlanet,
+  animes = [],
 }: PlanetsMatrixGridProps) {
   return (
     <div className="w-full pb-8">
@@ -83,6 +97,26 @@ export function PlanetsMatrixGrid({
             (selectedPlanetId === "غموض" && planet.id === "mystery") ||
             (selectedPlanetId === "علوم" && planet.id === "scifi") ||
             (selectedPlanetId === "تاريخ" && planet.id === "classics");
+
+          const planetMeta = PLANET_KEYWORD_MAP[planet.id];
+          const matchingAnimes = animes.filter((a) => {
+            const p = (a as any).planet;
+            if (p === planet.id || p === planetMeta?.arabic) return true;
+            return a.genres && a.genres.some((g) => {
+              const gl = g.toLowerCase();
+              return planetMeta?.genres.some((target) => gl.includes(target) || target.includes(gl));
+            });
+          });
+
+          const worksCountDisplay =
+            matchingAnimes.length > 0
+              ? `${matchingAnimes.length} ${matchingAnimes.length === 1 ? "عمل متوفر" : "أعمال متوفرة"}`
+              : "قريباً";
+
+          const previewCovers = matchingAnimes
+            .map((a) => a.coverImage)
+            .filter(Boolean)
+            .slice(0, 3);
 
           const IconComponent = ICON_MAP[planet.iconName] || Sparkles;
 
@@ -150,24 +184,30 @@ export function PlanetsMatrixGrid({
               {/* Bottom: Works Counter & Mini Poster Stack */}
               <div className="flex items-center justify-between pt-2 border-t border-white/[0.05]">
                 <span className="font-tajawal text-[11px] font-bold text-[#e4e1e7] bg-[#2a292e] px-2.5 py-1 rounded-lg">
-                  {planet.worksCount}
+                  {worksCountDisplay}
                 </span>
 
                 {/* Mini Avatars */}
                 <div className="flex items-center -space-x-2 -space-x-reverse">
-                  {planet.previewAvatars.map((url, idx) => (
-                    <div
-                      key={idx}
-                      className="w-7 h-7 rounded-full bg-[#353439] ring-2 ring-[#1b1b1f] overflow-hidden shadow-sm relative"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={url}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                      />
+                  {previewCovers.length > 0 ? (
+                    previewCovers.map((url, idx) => (
+                      <div
+                        key={idx}
+                        className="w-7 h-7 rounded-full bg-[#353439] ring-2 ring-[#1b1b1f] overflow-hidden shadow-sm relative"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt="Poster"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-[#2a292e] ring-2 ring-[#1b1b1f] flex items-center justify-center text-xs">
+                      {planet.badge}
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </button>

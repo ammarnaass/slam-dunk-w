@@ -22,50 +22,53 @@ export default function PublicAnimePage({ params }: { params: Promise<{ id: stri
     const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
     useEffect(() => {
+        let isMounted = true;
         const fetchAll = async () => {
             try {
-                // Fetch anime details
-                const animeRes = await fetch(`/api/animes/${id}`);
+                // Fetch all data in parallel instead of sequential waterfall
+                const [animeRes, epsRes, charRes, allAnimesRes, watchlistRes] = await Promise.all([
+                    fetch(`/api/animes/${id}`),
+                    fetch(`/api/animes/${id}/episodes`),
+                    fetch("/api/characters"),
+                    fetch("/api/animes"),
+                    fetch("/api/watchlist"),
+                ]);
+
+                if (!isMounted) return;
+
                 if (animeRes.ok) {
                     const data = await animeRes.json();
                     setAnime(data);
                 }
-
-                // Fetch episodes
-                const epsRes = await fetch(`/api/animes/${id}/episodes`);
                 if (epsRes.ok) {
                     const data = await epsRes.json();
                     setEpisodes(data);
                 }
-
-                // Fetch characters
-                const charRes = await fetch("/api/characters");
                 if (charRes.ok) {
                     const data = await charRes.json();
                     setCharacters(Array.isArray(data) ? data.slice(0, 6) : []);
                 }
-
-                // Fetch other animes for recommendations
-                const allAnimesRes = await fetch("/api/animes");
                 if (allAnimesRes.ok) {
                     const data = await allAnimesRes.json();
                     const list = Array.isArray(data) ? data : (data.animes || []);
                     setRelatedAnimes(list.filter((a: Anime) => a.id !== id).slice(0, 5));
                 }
-
-                // Check watchlist status
-                const watchlistRes = await fetch("/api/watchlist");
                 if (watchlistRes.ok) {
                     const { watchlist } = await watchlistRes.json();
-                    setIsInWatchlist(watchlist.includes(id));
+                    if (Array.isArray(watchlist)) {
+                        setIsInWatchlist(watchlist.includes(id));
+                    }
                 }
             } catch (error) {
                 console.error("Error loading anime page:", error);
             } finally {
-                setLoading(false);
+                if (isMounted) setLoading(false);
             }
         };
         fetchAll();
+        return () => {
+            isMounted = false;
+        };
     }, [id]);
 
     const handleWatchlistToggle = async () => {
