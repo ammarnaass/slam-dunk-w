@@ -118,6 +118,8 @@ export interface ApiAppConfig {
     interstitialInterval: number;
 }
 
+import { HomeScreenConfig } from "@/lib/home-presets";
+
 export interface FullSiteSettings extends SiteIdentity, SiteMaintenance {
     currency?: string;
     socialLinks?: SiteSocialLinks;
@@ -126,6 +128,7 @@ export interface FullSiteSettings extends SiteIdentity, SiteMaintenance {
     sliderAnimeIds?: string[];
     promoBanner?: PromoBannerConfig;
     footer?: FooterConfig;
+    homeConfig?: HomeScreenConfig;
 }
 
 export interface UpdateSiteIdentityDto {
@@ -148,4 +151,5 @@ export interface UpdateSiteSettingsDto extends Partial<UpdateSiteIdentityDto> {
     sliderAnimeIds?: string[];
     promoBanner?: Partial<PromoBannerConfig>;
     footer?: Partial<FooterConfig>;
+    homeConfig?: Partial<HomeScreenConfig>;
 }

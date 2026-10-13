@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Anime } from "@/types";
+import { HeroSliderSettings, DEFAULT_HERO_SLIDER_SETTINGS } from "@/lib/home-presets";
 
 interface HomeSliderProps {
     animes: Anime[];
+    config?: HeroSliderSettings;
 }
 
 const GENRE_TRANSLATIONS: Record<string, string> = {
@@ -20,19 +22,25 @@ const GENRE_TRANSLATIONS: Record<string, string> = {
     Fantasy: "خيال مظلم",
 };
 
-export default function HomeSlider({ animes }: HomeSliderProps) {
+export default function HomeSlider({ animes, config }: HomeSliderProps) {
+    const sliderSettings = config || DEFAULT_HERO_SLIDER_SETTINGS;
     const [current, setCurrent] = useState(0);
 
-    // Filter or slice to top featured slides (up to 5)
-    const featuredSlides = animes && animes.length > 0 ? animes.slice(0, 5) : [];
+    // If slider is disabled by admin, don't render anything
+    if (sliderSettings.isEnabled === false) return null;
+
+    // Filter or slice to configured max slides (default up to 5)
+    const maxSlides = sliderSettings.maxSlides || 5;
+    const featuredSlides = animes && animes.length > 0 ? animes.slice(0, maxSlides) : [];
 
     useEffect(() => {
-        if (featuredSlides.length <= 1) return;
+        if (featuredSlides.length <= 1 || sliderSettings.autoplay === false) return;
+        const intervalMs = (sliderSettings.intervalSeconds || 7.5) * 1000;
         const timer = setInterval(() => {
             setCurrent((prev) => (prev + 1) % featuredSlides.length);
-        }, 7500);
+        }, intervalMs);
         return () => clearInterval(timer);
-    }, [featuredSlides.length]);
+    }, [featuredSlides.length, sliderSettings.autoplay, sliderSettings.intervalSeconds]);
 
     if (featuredSlides.length === 0) return null;
 
@@ -41,6 +49,8 @@ export default function HomeSlider({ animes }: HomeSliderProps) {
     const displayRating = activeAnime?.rating && activeAnime.rating > 0 
         ? activeAnime.rating.toFixed(1) 
         : (activeAnime?.id === "slam-dunk" ? "4.9" : "9.2");
+
+    const darknessOpacity = Math.min(Math.max((sliderSettings.overlayDarkness || 70) / 100, 0.2), 0.95);
 
     return (
         <section className="relative w-full overflow-hidden bg-surface-container-lowest -mt-20">
@@ -62,10 +72,19 @@ export default function HomeSlider({ animes }: HomeSliderProps) {
                                     backgroundImage: `url('${anime.bannerImage || anime.coverImage || "/hero-bg.jpg"}')`,
                                 }}
                             />
-                            {/* Multi-layer Vignette Gradients for Legibility */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-surface-container-lowest/30" />
-                            <div className="absolute inset-0 bg-gradient-to-l from-surface-container-lowest/90 via-surface-container-lowest/40 to-transparent" />
-                            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-surface-container-lowest/20 to-surface-container-lowest/80" />
+                            {/* Dynamic Multi-layer Vignette Gradients with Configured Darkness */}
+                            <div 
+                                className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/70 to-surface-container-lowest/30"
+                                style={{ opacity: darknessOpacity }}
+                            />
+                            <div 
+                                className="absolute inset-0 bg-gradient-to-l from-surface-container-lowest/90 via-surface-container-lowest/40 to-transparent"
+                                style={{ opacity: darknessOpacity }}
+                            />
+                            <div 
+                                className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-surface-container-lowest/20 to-surface-container-lowest/80"
+                                style={{ opacity: darknessOpacity }}
+                            />
                         </div>
                     );
                 })}
@@ -78,22 +97,32 @@ export default function HomeSlider({ animes }: HomeSliderProps) {
                         <div className="lg:col-span-8 flex flex-col gap-3 sm:gap-space-md text-right">
                             {/* Badges Row */}
                             <div className="flex flex-wrap items-center gap-1.5 sm:gap-space-xs">
-                                <span className="inline-flex items-center gap-1 px-2.5 sm:px-space-md py-0.5 sm:py-1 rounded-full bg-secondary-container/20 text-secondary font-label-md text-xs sm:text-label-md">
-                                    <span className="material-symbols-outlined text-xs sm:text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                                    {displayRating}
-                                </span>
-                                <span className="px-2.5 sm:px-space-md py-0.5 sm:py-1 rounded-full bg-surface-container-high text-on-surface font-label-md text-xs sm:text-label-md">
-                                    4K UHD
-                                </span>
-                                <span className="px-2.5 sm:px-space-md py-0.5 sm:py-1 rounded-full bg-primary-container text-on-primary-container font-label-md text-xs sm:text-label-md shadow-[0_0_12px_rgba(220,38,38,0.5)]">
-                                    حصري VIP
-                                </span>
-                                <span className="px-2.5 sm:px-space-md py-0.5 sm:py-1 rounded-full bg-surface-container-high/80 text-on-surface-variant font-label-md text-xs sm:text-label-md">
-                                    {activeAnime.totalEpisodes ? `${activeAnime.totalEpisodes} حلقة` : "كامل"}
-                                </span>
-                                <span className="hidden sm:inline-flex px-space-md py-1 rounded-full bg-surface-container-high/60 text-on-surface-variant font-label-md text-label-md">
-                                    {genresList.slice(0, 3).join(" • ") || "أكشن • خيال • مغامرات"}
-                                </span>
+                                {(sliderSettings.showRatingBadge !== false) && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 sm:px-space-md py-0.5 sm:py-1 rounded-full bg-secondary-container/20 text-secondary font-label-md text-xs sm:text-label-md">
+                                        <span className="material-symbols-outlined text-xs sm:text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                        {displayRating}
+                                    </span>
+                                )}
+                                {(sliderSettings.showQualityBadge !== false) && (
+                                    <span className="px-2.5 sm:px-space-md py-0.5 sm:py-1 rounded-full bg-surface-container-high text-on-surface font-label-md text-xs sm:text-label-md">
+                                        4K UHD
+                                    </span>
+                                )}
+                                {(sliderSettings.showVipBadge !== false) && (
+                                    <span className="px-2.5 sm:px-space-md py-0.5 sm:py-1 rounded-full bg-primary-container text-on-primary-container font-label-md text-xs sm:text-label-md shadow-[0_0_12px_rgba(220,38,38,0.5)]">
+                                        حصري VIP
+                                    </span>
+                                )}
+                                {(sliderSettings.showEpisodeCount !== false) && (
+                                    <span className="px-2.5 sm:px-space-md py-0.5 sm:py-1 rounded-full bg-surface-container-high/80 text-on-surface-variant font-label-md text-xs sm:text-label-md">
+                                        {activeAnime.totalEpisodes ? `${activeAnime.totalEpisodes} حلقة` : "كامل"}
+                                    </span>
+                                )}
+                                {(sliderSettings.showGenres !== false) && (
+                                    <span className="hidden sm:inline-flex px-space-md py-1 rounded-full bg-surface-container-high/60 text-on-surface-variant font-label-md text-label-md">
+                                        {genresList.slice(0, 3).join(" • ") || "أكشن • خيال • مغامرات"}
+                                    </span>
+                                )}
                             </div>
 
                             {/* Title & Trending Tag */}

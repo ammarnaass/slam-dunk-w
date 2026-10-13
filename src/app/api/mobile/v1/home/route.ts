@@ -69,8 +69,12 @@ export async function GET() {
             }
         }
 
+        const isSliderActive = settings?.homeConfig?.slider?.isEnabled !== false;
+        const sliderLimit = Number(settings?.homeConfig?.slider?.maxSlides) || 5;
+        const sliderList = isSliderActive ? featuredAnimes.slice(0, sliderLimit) : [];
+
         const data = {
-            slider: featuredAnimes.map((a: any) => ({
+            slider: sliderList.map((a: any) => ({
                 id: a.id,
                 title: a.title,
                 description: a.description,

@@ -72,11 +72,21 @@ export default function SliderManagementPage() {
                     </h1>
                     <p className="text-slate-400 mt-2">تحكم في الأعمال التي تظهر في الواجهة الرئيسية للموقع</p>
                 </div>
-                <div className="bg-slate-900 px-6 py-3 rounded-2xl border border-slate-800 flex items-center gap-3">
-                    <span className="text-slate-400 text-sm font-medium">الأعمال المختارة:</span>
-                    <span className="text-white font-bold text-lg bg-red-600/20 text-red-500 px-3 py-0.5 rounded-lg border border-red-500/20">
-                        {featuredAnimes.length}
-                    </span>
+                <div className="flex items-center gap-3 flex-wrap">
+                    <Link
+                        href="/admin/settings"
+                        className="px-4 py-2.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.08] text-sm font-cairo font-bold text-white border border-white/10 flex items-center gap-2 transition-all"
+                    >
+                        <Film size={16} className="text-[#ffb95f]" />
+                        <span>تخصيص سرعة وحركات السلايدر</span>
+                    </Link>
+
+                    <div className="bg-slate-900 px-6 py-2.5 rounded-2xl border border-slate-800 flex items-center gap-3">
+                        <span className="text-slate-400 text-sm font-medium">الأعمال المختارة:</span>
+                        <span className="text-white font-bold text-lg bg-red-600/20 text-red-500 px-3 py-0.5 rounded-lg border border-red-500/20">
+                            {featuredAnimes.length}
+                        </span>
+                    </div>
                 </div>
             </div>
 

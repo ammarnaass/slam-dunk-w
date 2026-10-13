@@ -29,7 +29,8 @@ export const DEFAULT_SITE_IDENTITY: SiteIdentity = {
 import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
 import { DEFAULT_FOOTER_CONFIG } from "@/lib/footer-presets";
 import { DEFAULT_API_APP_CONFIG } from "@/lib/app-presets";
-export { DEFAULT_PROMO_BANNER, DEFAULT_FOOTER_CONFIG, DEFAULT_API_APP_CONFIG };
+import { DEFAULT_HOME_SCREEN_CONFIG } from "@/lib/home-presets";
+export { DEFAULT_PROMO_BANNER, DEFAULT_FOOTER_CONFIG, DEFAULT_API_APP_CONFIG, DEFAULT_HOME_SCREEN_CONFIG };
 
 function loadLocalSettings(): any {
     try {
@@ -49,7 +50,8 @@ function loadLocalSettings(): any {
         sliderAnimeIds: ["slam-dunk"],
         promoBanner: DEFAULT_PROMO_BANNER,
         footer: DEFAULT_FOOTER_CONFIG,
-        apiApp: DEFAULT_API_APP_CONFIG
+        apiApp: DEFAULT_API_APP_CONFIG,
+        homeConfig: DEFAULT_HOME_SCREEN_CONFIG
     };
 }
 
@@ -131,7 +133,16 @@ export class SettingsService {
                 socialLinks: local.footer.socialLinks || DEFAULT_FOOTER_CONFIG.socialLinks,
                 exploreLinks: local.footer.exploreLinks || DEFAULT_FOOTER_CONFIG.exploreLinks,
                 helpLinks: local.footer.helpLinks || DEFAULT_FOOTER_CONFIG.helpLinks,
-            } : DEFAULT_FOOTER_CONFIG
+            } : DEFAULT_FOOTER_CONFIG,
+            homeConfig: local.homeConfig ? {
+                sections: Array.isArray(local.homeConfig.sections) && local.homeConfig.sections.length > 0
+                    ? local.homeConfig.sections
+                    : DEFAULT_HOME_SCREEN_CONFIG.sections,
+                slider: {
+                    ...DEFAULT_HOME_SCREEN_CONFIG.slider,
+                    ...(local.homeConfig.slider || {})
+                }
+            } : DEFAULT_HOME_SCREEN_CONFIG
         };
 
         cachedSettings = result;
@@ -243,7 +254,15 @@ export class SettingsService {
             footer: validated.footer ? {
                 ...(currentLocal.footer || DEFAULT_FOOTER_CONFIG),
                 ...validated.footer
-            } : (currentLocal.footer || DEFAULT_FOOTER_CONFIG)
+            } : (currentLocal.footer || DEFAULT_FOOTER_CONFIG),
+            homeConfig: validated.homeConfig ? {
+                sections: validated.homeConfig.sections || currentLocal.homeConfig?.sections || DEFAULT_HOME_SCREEN_CONFIG.sections,
+                slider: {
+                    ...DEFAULT_HOME_SCREEN_CONFIG.slider,
+                    ...(currentLocal.homeConfig?.slider || {}),
+                    ...(validated.homeConfig.slider || {})
+                }
+            } : (currentLocal.homeConfig || DEFAULT_HOME_SCREEN_CONFIG)
         };
 
         // 1. Persist locally

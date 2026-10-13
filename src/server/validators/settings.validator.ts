@@ -124,5 +124,41 @@ export const updateSiteSettingsSchema = z.object({
         appStoreUrl: z.string().optional(),
         directApkUrl: z.string().optional(),
         externalUrl: z.string().optional()
+    }).optional(),
+    homeConfig: z.object({
+        sections: z.array(z.object({
+            id: z.enum([
+                "heroSlider",
+                "continueWatching",
+                "planets",
+                "latestEpisodes",
+                "topTrending",
+                "classics",
+                "characters",
+                "promoBanner"
+            ]),
+            nameAr: z.string(),
+            isEnabled: z.boolean(),
+            order: z.number(),
+            title: z.string(),
+            subtitle: z.string(),
+            badgeText: z.string().optional(),
+            itemLimit: z.number().min(1).max(24),
+            viewAllLink: z.string().optional()
+        })).optional(),
+        slider: z.object({
+            isEnabled: z.boolean().optional().default(true),
+            autoplay: z.boolean().optional().default(true),
+            intervalSeconds: z.number().min(2).max(30).optional().default(7.5),
+            transitionEffect: z.enum(["fade", "slide"]).optional().default("fade"),
+            overlayDarkness: z.number().min(0).max(100).optional().default(70),
+            maxSlides: z.number().min(1).max(15).optional().default(5),
+            showRatingBadge: z.boolean().optional().default(true),
+            showQualityBadge: z.boolean().optional().default(true),
+            showVipBadge: z.boolean().optional().default(true),
+            showEpisodeCount: z.boolean().optional().default(true),
+            showGenres: z.boolean().optional().default(true),
+            slideAnimeIds: z.array(z.string()).optional()
+        }).optional()
     }).optional()
 });

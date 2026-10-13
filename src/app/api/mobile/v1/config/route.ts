@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { DEFAULT_API_APP_CONFIG } from "@/lib/app-presets";
 import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
+import { DEFAULT_HOME_SCREEN_CONFIG } from "@/lib/home-presets";
 
 export const dynamic = "force-dynamic";
 
@@ -113,6 +114,31 @@ export async function GET(request: Request) {
                 image_caption: settings.promoBanner?.imageCaption || DEFAULT_PROMO_BANNER.imageCaption,
                 app_icon_url: settings.promoBanner?.appIconUrl || DEFAULT_PROMO_BANNER.appIconUrl,
                 features: settings.promoBanner?.features || DEFAULT_PROMO_BANNER.features
+            },
+            home_screen: {
+                sections: (settings.homeConfig?.sections || DEFAULT_HOME_SCREEN_CONFIG.sections).map((s: any) => ({
+                    id: s.id,
+                    name_ar: s.nameAr,
+                    is_enabled: s.isEnabled !== false,
+                    order: s.order,
+                    title: s.title,
+                    subtitle: s.subtitle,
+                    badge_text: s.badgeText || null,
+                    item_limit: s.itemLimit || 6,
+                    view_all_link: s.viewAllLink || null
+                })),
+                slider: {
+                    is_enabled: settings.homeConfig?.slider?.isEnabled ?? DEFAULT_HOME_SCREEN_CONFIG.slider.isEnabled,
+                    autoplay: settings.homeConfig?.slider?.autoplay ?? DEFAULT_HOME_SCREEN_CONFIG.slider.autoplay,
+                    interval_seconds: settings.homeConfig?.slider?.intervalSeconds ?? DEFAULT_HOME_SCREEN_CONFIG.slider.intervalSeconds,
+                    overlay_darkness: settings.homeConfig?.slider?.overlayDarkness ?? DEFAULT_HOME_SCREEN_CONFIG.slider.overlayDarkness,
+                    max_slides: settings.homeConfig?.slider?.maxSlides ?? DEFAULT_HOME_SCREEN_CONFIG.slider.maxSlides,
+                    show_rating_badge: settings.homeConfig?.slider?.showRatingBadge ?? DEFAULT_HOME_SCREEN_CONFIG.slider.showRatingBadge,
+                    show_quality_badge: settings.homeConfig?.slider?.showQualityBadge ?? DEFAULT_HOME_SCREEN_CONFIG.slider.showQualityBadge,
+                    show_vip_badge: settings.homeConfig?.slider?.showVipBadge ?? DEFAULT_HOME_SCREEN_CONFIG.slider.showVipBadge,
+                    show_episode_count: settings.homeConfig?.slider?.showEpisodeCount ?? DEFAULT_HOME_SCREEN_CONFIG.slider.showEpisodeCount,
+                    show_genres: settings.homeConfig?.slider?.showGenres ?? DEFAULT_HOME_SCREEN_CONFIG.slider.showGenres
+                }
             },
             api_info: {
                 base_url: apiApp.apiUrl || "https://slam-dunk-w.vercel.app/api/mobile/v1",

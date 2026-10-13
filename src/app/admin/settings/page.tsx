@@ -24,10 +24,13 @@ import SystemStatusCard from "./components/SystemStatusCard";
 import PromoBannerCard from "./components/PromoBannerCard";
 import FooterManagerCard from "./components/FooterManagerCard";
 import ApiAppCard from "./components/ApiAppCard";
+import HomeScreenManagerCard from "./components/HomeScreenManagerCard";
+import SliderManagerCard from "./components/SliderManagerCard";
 import { FullSiteSettings } from "@/server/types/settings.types";
 import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
 import { DEFAULT_FOOTER_CONFIG } from "@/lib/footer-presets";
 import { DEFAULT_API_APP_CONFIG } from "@/lib/app-presets";
+import { DEFAULT_HOME_SCREEN_CONFIG } from "@/lib/home-presets";
 
 const INITIAL_SETTINGS: FullSiteSettings = {
     siteName: "أنمي دايز",
@@ -57,7 +60,8 @@ const INITIAL_SETTINGS: FullSiteSettings = {
     },
     promoBanner: DEFAULT_PROMO_BANNER,
     footer: DEFAULT_FOOTER_CONFIG,
-    apiApp: DEFAULT_API_APP_CONFIG
+    apiApp: DEFAULT_API_APP_CONFIG,
+    homeConfig: DEFAULT_HOME_SCREEN_CONFIG
 };
 
 export default function SettingsPage() {
@@ -65,7 +69,7 @@ export default function SettingsPage() {
     const [originalSettings, setOriginalSettings] = useState<FullSiteSettings>(INITIAL_SETTINGS);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<"logo" | "identity" | "system" | "promo" | "footer" | "app">("logo");
+    const [activeTab, setActiveTab] = useState<"logo" | "identity" | "system" | "home" | "slider" | "promo" | "footer" | "app">("home");
     const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
     // Check if there are unsaved changes
@@ -130,7 +134,16 @@ export default function SettingsPage() {
                         releaseNotes: Array.isArray(data.apiApp.releaseNotes)
                             ? data.apiApp.releaseNotes
                             : (INITIAL_SETTINGS.apiApp?.releaseNotes || [])
-                    } : INITIAL_SETTINGS.apiApp
+                    } : INITIAL_SETTINGS.apiApp,
+                    homeConfig: data.homeConfig ? {
+                        sections: Array.isArray(data.homeConfig.sections) && data.homeConfig.sections.length > 0
+                            ? data.homeConfig.sections
+                            : (INITIAL_SETTINGS.homeConfig?.sections || []),
+                        slider: {
+                            ...(INITIAL_SETTINGS.homeConfig?.slider || DEFAULT_HOME_SCREEN_CONFIG.slider),
+                            ...(data.homeConfig.slider || {})
+                        }
+                    } : INITIAL_SETTINGS.homeConfig
                 };
                 setSettings(merged);
                 setOriginalSettings(merged);
@@ -271,6 +284,32 @@ export default function SettingsPage() {
             <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#131317] border border-white/[0.08] max-w-fit">
                 <button
                     type="button"
+                    onClick={() => setActiveTab("home")}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
+                        activeTab === "home"
+                            ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
+                            : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                >
+                    <Layers size={16} />
+                    <span>أقسام الصفحة الرئيسية</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("slider")}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
+                        activeTab === "slider"
+                            ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
+                            : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                >
+                    <Film size={16} />
+                    <span>السلايدر السينمائي</span>
+                </button>
+
+                <button
+                    type="button"
                     onClick={() => setActiveTab("logo")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "logo"
@@ -278,8 +317,8 @@ export default function SettingsPage() {
                             : "text-[#94a3b8] hover:text-white hover:bg-white/[0.04]"
                     }`}
                 >
-                    <Layers size={16} />
-                    <span>الشعار والمحاكاة المرئية</span>
+                    <Sparkles size={16} />
+                    <span>الشعار والمحاكاة</span>
                 </button>
 
                 <button
@@ -347,6 +386,36 @@ export default function SettingsPage() {
                     <span>تطبيق الأندرويد و API</span>
                 </button>
             </div>
+
+            {/* Tab: Home Screen Sections Customization */}
+            {activeTab === "home" && (
+                <HomeScreenManagerCard
+                    config={settings.homeConfig || DEFAULT_HOME_SCREEN_CONFIG}
+                    onChange={(updatedHome) => setSettings(prev => ({ ...prev, homeConfig: updatedHome }))}
+                    onResetToDefault={() => setSettings(prev => ({ ...prev, homeConfig: DEFAULT_HOME_SCREEN_CONFIG }))}
+                />
+            )}
+
+            {/* Tab: Hero Slider Settings */}
+            {activeTab === "slider" && (
+                <SliderManagerCard
+                    slider={settings.homeConfig?.slider || DEFAULT_HOME_SCREEN_CONFIG.slider}
+                    onChange={(updatedSlider) => setSettings(prev => ({
+                        ...prev,
+                        homeConfig: {
+                            ...(prev.homeConfig || DEFAULT_HOME_SCREEN_CONFIG),
+                            slider: updatedSlider
+                        }
+                    }))}
+                    onResetToDefault={() => setSettings(prev => ({
+                        ...prev,
+                        homeConfig: {
+                            ...(prev.homeConfig || DEFAULT_HOME_SCREEN_CONFIG),
+                            slider: DEFAULT_HOME_SCREEN_CONFIG.slider
+                        }
+                    }))}
+                />
+            )}
 
             {/* Tab 1: Logo & Visual Simulation */}
             {activeTab === "logo" && (
