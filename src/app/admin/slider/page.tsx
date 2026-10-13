@@ -74,7 +74,7 @@ export default function SliderManagementPage() {
                 </div>
                 <div className="flex items-center gap-3 flex-wrap">
                     <Link
-                        href="/admin/settings"
+                        href="/admin/settings?tab=slider"
                         className="px-4 py-2.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.08] text-sm font-cairo font-bold text-white border border-white/10 flex items-center gap-2 transition-all"
                     >
                         <Film size={16} className="text-[#ffb95f]" />

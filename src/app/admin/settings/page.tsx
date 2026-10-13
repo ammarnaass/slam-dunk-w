@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { 
     Settings, 
     Sparkles, 
@@ -64,13 +65,35 @@ const INITIAL_SETTINGS: FullSiteSettings = {
     homeConfig: DEFAULT_HOME_SCREEN_CONFIG
 };
 
-export default function SettingsPage() {
+type ValidTab = "logo" | "identity" | "system" | "home" | "slider" | "promo" | "footer" | "app";
+
+function SettingsContent() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const tabParam = searchParams.get("tab") as ValidTab | null;
+
     const [settings, setSettings] = useState<FullSiteSettings>(INITIAL_SETTINGS);
     const [originalSettings, setOriginalSettings] = useState<FullSiteSettings>(INITIAL_SETTINGS);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<"logo" | "identity" | "system" | "home" | "slider" | "promo" | "footer" | "app">("home");
+    const [activeTab, setActiveTab] = useState<ValidTab>(
+        tabParam && ["logo", "identity", "system", "home", "slider", "promo", "footer", "app"].includes(tabParam)
+            ? tabParam
+            : "home"
+    );
     const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+    // Sync activeTab when query param changes
+    useEffect(() => {
+        if (tabParam && ["logo", "identity", "system", "home", "slider", "promo", "footer", "app"].includes(tabParam)) {
+            setActiveTab(tabParam);
+        }
+    }, [tabParam]);
+
+    const handleTabChange = (tab: ValidTab) => {
+        setActiveTab(tab);
+        router.replace(`/admin/settings?tab=${tab}`, { scroll: false });
+    };
 
     // Check if there are unsaved changes
     const isDirty = JSON.stringify(settings) !== JSON.stringify(originalSettings);
@@ -281,10 +304,10 @@ export default function SettingsPage() {
             </div>
 
             {/* Modular Tab Navigation */}
-            <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#131317] border border-white/[0.08] max-w-fit">
+            <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#131317] border border-white/[0.08] max-w-fit flex-wrap">
                 <button
                     type="button"
-                    onClick={() => setActiveTab("home")}
+                    onClick={() => handleTabChange("home")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "home"
                             ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
@@ -297,7 +320,7 @@ export default function SettingsPage() {
 
                 <button
                     type="button"
-                    onClick={() => setActiveTab("slider")}
+                    onClick={() => handleTabChange("slider")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "slider"
                             ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
@@ -310,7 +333,7 @@ export default function SettingsPage() {
 
                 <button
                     type="button"
-                    onClick={() => setActiveTab("logo")}
+                    onClick={() => handleTabChange("logo")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "logo"
                             ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
@@ -323,7 +346,7 @@ export default function SettingsPage() {
 
                 <button
                     type="button"
-                    onClick={() => setActiveTab("identity")}
+                    onClick={() => handleTabChange("identity")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "identity"
                             ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
@@ -336,7 +359,7 @@ export default function SettingsPage() {
 
                 <button
                     type="button"
-                    onClick={() => setActiveTab("system")}
+                    onClick={() => handleTabChange("system")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "system"
                             ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
@@ -349,7 +372,7 @@ export default function SettingsPage() {
 
                 <button
                     type="button"
-                    onClick={() => setActiveTab("promo")}
+                    onClick={() => handleTabChange("promo")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "promo"
                             ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
@@ -362,7 +385,7 @@ export default function SettingsPage() {
 
                 <button
                     type="button"
-                    onClick={() => setActiveTab("footer")}
+                    onClick={() => handleTabChange("footer")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "footer"
                             ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
@@ -375,7 +398,7 @@ export default function SettingsPage() {
 
                 <button
                     type="button"
-                    onClick={() => setActiveTab("app")}
+                    onClick={() => handleTabChange("app")}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
                         activeTab === "app"
                             ? "bg-[#dc2626] text-white shadow-lg shadow-red-950/40"
@@ -540,5 +563,23 @@ export default function SettingsPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SettingsPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center">
+                <div className="w-12 h-12 rounded-2xl bg-[#dc2626]/20 border border-[#dc2626]/40 flex items-center justify-center text-[#ffb4ab] animate-pulse">
+                    <Loader2 className="animate-spin" size={24} />
+                </div>
+                <div>
+                    <h3 className="font-cairo font-bold text-white text-base">جاري تحميل إعدادات المنصة</h3>
+                    <p className="font-tajawal text-xs text-[#94a3b8] mt-1">يتم جلب بيانات الهوية والشعار وربط النظام...</p>
+                </div>
+            </div>
+        }>
+            <SettingsContent />
+        </Suspense>
     );
 }
