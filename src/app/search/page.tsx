@@ -24,10 +24,16 @@ export default function SearchPage() {
                 const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
                 if (res.ok) {
                     const data = await res.json();
-                    setResults(data);
+                    setResults({
+                        animes: Array.isArray(data?.animes) ? data.animes : [],
+                        episodes: Array.isArray(data?.episodes) ? data.episodes : []
+                    });
+                } else {
+                    setResults({ animes: [], episodes: [] });
                 }
             } catch (error) {
                 console.error("Search failed:", error);
+                setResults({ animes: [], episodes: [] });
             } finally {
                 setLoading(false);
             }
