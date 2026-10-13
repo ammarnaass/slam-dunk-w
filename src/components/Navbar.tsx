@@ -70,7 +70,6 @@ export const Navbar = ({ settings }: NavbarProps) => {
         { label: "الرئيسية", href: "/" },
         { label: "دليل الأنمي", href: "/animes" },
         { label: "كواكب الأنمي", href: "/planets" },
-        { label: "جدول الحلقات", href: "/episodes" },
     ];
 
     const planetLinks = [

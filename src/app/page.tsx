@@ -358,7 +358,7 @@ export default async function Home() {
                                             href={section.viewAllLink || "/animes"} 
                                             className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1 self-start sm:self-auto"
                                         >
-                                            <span>جدول الحلقات الأسبوعي</span>
+                                            <span>عرض كافة الأعمال</span>
                                             <span className="material-symbols-outlined text-sm">arrow_back</span>
                                         </Link>
                                     </div>

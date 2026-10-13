@@ -14,7 +14,7 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
         { id: "exp-1", label: "أحدث الحلقات المضافة", href: "/animes" },
         { id: "exp-2", label: "كواكب الأكشن والمغامرة", href: "/planets?planet=action" },
         { id: "exp-3", label: "كواكب الأنمي وسبيستون", href: "/planets" },
-        { id: "exp-4", label: "جدول العرض الأسبوعي", href: "/episodes" },
+        { id: "exp-4", label: "مكتبة ومواسم الأنمي", href: "/animes" },
         { id: "exp-5", label: "اشتراكات الدايزر VIP", href: "/pricing", isVip: true },
     ],
     helpTitle: "المساعدة والدعم",
