@@ -386,6 +386,32 @@ export default function ApiAppCard({ apiApp, onChange }: ApiAppCardProps) {
                                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#131317] border border-white/[0.1] text-xs font-mono text-white focus:outline-none focus:border-[#dc2626]"
                                 />
                             </div>
+
+                            <div>
+                                <label className="block text-[11px] font-tajawal text-[#94a3b8] mb-1">
+                                    رابط متجر Apple App Store (iOS URL)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.appStoreUrl || ""}
+                                    onChange={(e) => updateField("appStoreUrl", e.target.value)}
+                                    placeholder="https://apps.apple.com/app/animedaze/id123456789"
+                                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#131317] border border-white/[0.1] text-xs font-mono text-white focus:outline-none focus:border-[#dc2626]"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-[11px] font-tajawal text-[#94a3b8] mb-1">
+                                    رابط خارجي إضافي / مستودع الإصدارات (External / Releases URL)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.externalUrl || ""}
+                                    onChange={(e) => updateField("externalUrl", e.target.value)}
+                                    placeholder="https://github.com/ammarnaass/slam-dunk-w/releases"
+                                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#131317] border border-white/[0.1] text-xs font-mono text-white focus:outline-none focus:border-[#dc2626]"
+                                />
+                            </div>
                         </div>
                     </div>
 

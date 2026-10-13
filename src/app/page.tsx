@@ -7,6 +7,7 @@ import AnimeCard from "@/components/AnimeCard";
 import EpisodeCard from "@/components/EpisodeCard";
 import CharacterCard from "@/components/CharacterCard";
 import { DEFAULT_PROMO_BANNER } from "@/lib/promo-presets";
+import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 
 export const revalidate = 60;
 
@@ -486,17 +487,35 @@ export default async function Home() {
                                         ))}
                                     </div>
 
-                                    <div className="pt-space-sm flex flex-wrap items-center gap-space-md">
+                                    {/* App Store & Direct Download Suite */}
+                                    <div className="pt-space-sm space-y-3">
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2 h-2 rounded-full bg-[#3DDC84] animate-ping" />
+                                            <span className="text-xs font-bold font-cairo text-[#ffb4ab]">
+                                                تحميل التطبيق الرسمي لأجهزة أندرويد و iOS والشاشات الذكية:
+                                            </span>
+                                        </div>
+                                        <AppDownloadButtons
+                                            googlePlayUrl={(promoBanner as any).googlePlayUrl || settings?.apiApp?.updateUrl}
+                                            appStoreUrl={(promoBanner as any).appStoreUrl || (settings?.apiApp as any)?.appStoreUrl}
+                                            directApkUrl={(promoBanner as any).directApkUrl || settings?.apiApp?.directApkUrl}
+                                            externalUrl={(promoBanner as any).externalUrl || (settings?.apiApp as any)?.externalUrl}
+                                            showPwa={true}
+                                            layout="row"
+                                        />
+                                    </div>
+
+                                    <div className="pt-2 flex flex-wrap items-center gap-space-md">
                                         <Link
                                             href={promoBanner.primaryButtonLink || "/pricing"}
-                                            className="flex items-center gap-space-sm px-space-xl py-space-md rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm shadow-[0_0_24px_rgba(220,38,38,0.4)] hover:brightness-110 active:scale-95 transition-all"
+                                            className="flex items-center gap-space-sm px-space-lg py-2.5 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-label-md text-label-md border border-white/10"
                                         >
-                                            <span className="material-symbols-outlined text-xl">{promoBanner.primaryButtonIcon || "diamond"}</span>
+                                            <span className="material-symbols-outlined text-lg text-secondary">{promoBanner.primaryButtonIcon || "diamond"}</span>
                                             <span>{promoBanner.primaryButtonText}</span>
                                         </Link>
                                         <Link
                                             href={promoBanner.secondaryButtonLink || "/animes"}
-                                            className="flex items-center gap-space-sm px-space-lg py-space-md rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-label-md text-label-md"
+                                            className="flex items-center gap-space-sm px-space-lg py-2.5 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-label-md text-label-md border border-white/10"
                                         >
                                             <span>{promoBanner.secondaryButtonText}</span>
                                         </Link>

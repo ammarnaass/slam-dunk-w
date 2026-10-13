@@ -53,6 +53,8 @@ export const updateSiteSettingsSchema = z.object({
         forceUpdate: z.boolean().optional().default(false),
         updateUrl: z.string().optional().default(""),
         directApkUrl: z.string().optional().default(""),
+        appStoreUrl: z.string().optional().default("https://apps.apple.com/app/animedaze/id123456789"),
+        externalUrl: z.string().optional().default("https://github.com/ammarnaass/slam-dunk-w/releases"),
         releaseNotes: z.array(z.string()).optional().default([]),
         apiUrl: z.string().optional().default("https://slam-dunk-w.vercel.app/api/mobile/v1"),
         apiKey: z.string().optional().default("slam_live_app_key_2026"),
@@ -80,7 +82,11 @@ export const updateSiteSettingsSchema = z.object({
         secondaryButtonLink: z.string().optional().default("/animes"),
         imageUrl: z.string().optional().default("/hero-bg.jpg"),
         imageCaption: z.string().optional().default("تجربة سبيستون الكلاسيكية الحديثة"),
-        appIconUrl: z.string().optional()
+        appIconUrl: z.string().optional(),
+        googlePlayUrl: z.string().optional(),
+        appStoreUrl: z.string().optional(),
+        directApkUrl: z.string().optional(),
+        externalUrl: z.string().optional()
     }).optional(),
     footer: z.object({
         subtitle: z.string().optional().default("سبيس تون & أنمي كلاسيك"),
@@ -113,6 +119,10 @@ export const updateSiteSettingsSchema = z.object({
         isAppCardEnabled: z.boolean().optional().default(true),
         copyrightText: z.string().optional().default("جميع الحقوق محفوظة لروائع الرسوم المتحركة وعشاق الأنمي في العالم العربي."),
         serverStatusText: z.string().optional().default("خوادم البث المباشر نشطة ومستقرة"),
-        isStatusIndicatorActive: z.boolean().optional().default(true)
+        isStatusIndicatorActive: z.boolean().optional().default(true),
+        googlePlayUrl: z.string().optional(),
+        appStoreUrl: z.string().optional(),
+        directApkUrl: z.string().optional(),
+        externalUrl: z.string().optional()
     }).optional()
 });

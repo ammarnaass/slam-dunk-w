@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FooterConfig } from "@/server/types/settings.types";
 import { DEFAULT_FOOTER_CONFIG } from "@/lib/footer-presets";
+import { AppDownloadButtons } from "./AppDownloadButtons";
 
 interface FooterProps {
     settings?: {
@@ -189,7 +190,7 @@ export default function Footer({ settings }: FooterProps) {
                         </ul>
                     </div>
 
-                    {/* Column 4: PWA App Card */}
+                    {/* Column 4: App Download & PWA Card */}
                     {isAppCardVisible && (
                         <div className="flex flex-col gap-space-md">
                             <h4 className="font-headline-sm text-headline-sm text-secondary font-bold">
@@ -198,13 +199,15 @@ export default function Footer({ settings }: FooterProps) {
                             <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
                                 {footerConfig.appCardDescription}
                             </p>
-                            <button 
-                                onClick={handleInstallClick}
-                                className="flex items-center justify-center gap-space-sm px-space-md py-space-sm rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm shadow-[0_4px_16px_rgba(220,38,38,0.4)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
-                            >
-                                <span className="material-symbols-outlined text-[20px]">{footerConfig.appCardButtonIcon || "download"}</span>
-                                <span>{footerConfig.appCardButtonText}</span>
-                            </button>
+                            <AppDownloadButtons
+                                googlePlayUrl={settings?.apiApp?.updateUrl || (settings?.footer as any)?.googlePlayUrl}
+                                appStoreUrl={(settings?.apiApp as any)?.appStoreUrl || (settings?.footer as any)?.appStoreUrl}
+                                directApkUrl={settings?.apiApp?.directApkUrl || (settings?.footer as any)?.directApkUrl}
+                                externalUrl={(settings?.apiApp as any)?.externalUrl || (settings?.footer as any)?.externalUrl}
+                                onPwaInstall={handleInstallClick}
+                                showPwa={true}
+                                layout="compact"
+                            />
                         </div>
                     )}
                 </div>

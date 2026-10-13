@@ -51,6 +51,10 @@ export interface PromoBannerConfig {
     imageUrl: string;
     imageCaption: string;
     appIconUrl?: string;
+    googlePlayUrl?: string;
+    appStoreUrl?: string;
+    directApkUrl?: string;
+    externalUrl?: string;
 }
 
 export interface FooterLinkItem {
@@ -84,6 +88,10 @@ export interface FooterConfig {
     copyrightText: string;
     serverStatusText: string;
     isStatusIndicatorActive: boolean;
+    googlePlayUrl?: string;
+    appStoreUrl?: string;
+    directApkUrl?: string;
+    externalUrl?: string;
 }
 
 export interface ApiAppConfig {
@@ -98,7 +106,9 @@ export interface ApiAppConfig {
     minSupportedBuild: number;
     forceUpdate: boolean;
     updateUrl: string;
+    appStoreUrl?: string;
     directApkUrl: string;
+    externalUrl?: string;
     releaseNotes: string[];
     apiUrl: string;
     apiKey: string;
