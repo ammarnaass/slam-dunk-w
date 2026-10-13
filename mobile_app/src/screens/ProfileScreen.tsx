@@ -10,8 +10,9 @@ import {
   loginUser,
   setAuthToken,
   fetchUserProfile,
+  fetchPlans,
 } from '../services/api';
-import { UserProfile } from '../types';
+import { UserProfile, Plan } from '../types';
 import { styles } from '../components/profile/profile.styles';
 import { ProfileHeroHeader } from '../components/profile/ProfileHeroHeader';
 import { ProfileVipSection } from '../components/profile/ProfileVipSection';
@@ -20,6 +21,7 @@ import { ProfilePersonalInfoForm } from '../components/profile/ProfilePersonalIn
 import { ProfileSettingsForm } from '../components/profile/ProfileSettingsForm';
 import { ProfileAccountActions } from '../components/profile/ProfileAccountActions';
 import { ProfileLoginModal } from '../components/profile/ProfileLoginModal';
+import { CreatePlanModal } from '../components/profile/CreatePlanModal';
 
 interface ProfileScreenProps {
   onServerUrlChange?: () => void;
@@ -29,7 +31,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onServerUrlChange,
 }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<'yearly' | 'monthly'>('yearly');
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [selectedPlan, setSelectedPlan] = useState<string>('yearly');
+  const [showCreatePlanModal, setShowCreatePlanModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'fav' | 'history'>('fav');
 
   // Form states
@@ -51,14 +55,31 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   const loadProfile = useCallback(async () => {
     try {
-      const data = await fetchUserProfile();
+      const [data, fetchedPlans] = await Promise.all([
+        fetchUserProfile().catch(() => null),
+        fetchPlans().catch(() => []),
+      ]);
       if (data) {
         setProfile(data);
         setIsLoggedIn(true);
         if (data.name) setDisplayName(data.name);
       }
+      if (fetchedPlans && fetchedPlans.length > 0) {
+        setPlans(fetchedPlans);
+        const popular = fetchedPlans.find((p) => p.isPopular);
+        if (popular) {
+          setSelectedPlan(popular.id);
+        } else if (fetchedPlans[0]) {
+          setSelectedPlan(fetchedPlans[0].id);
+        }
+      }
     } catch (_) {}
   }, []);
+
+  const handlePlanCreated = (newPlan: Plan) => {
+    setPlans((prev) => [newPlan, ...prev]);
+    setSelectedPlan(newPlan.id);
+  };
 
   useEffect(() => {
     loadProfile();
@@ -122,8 +143,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* 2. VIP Subscription & Perks Showcase */}
       <ProfileVipSection
+        plans={plans}
         selectedPlan={selectedPlan}
         onSelectPlan={setSelectedPlan}
+        onCreatePlanPress={() => setShowCreatePlanModal(true)}
       />
 
       {/* 3. Favorites & Watch History Tabs */}
@@ -171,6 +194,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         onPasswordChange={setPassword}
         onSubmit={handleLogin}
         onClose={() => setShowLoginModal(false)}
+      />
+
+      {/* Create Plan Modal */}
+      <CreatePlanModal
+        visible={showCreatePlanModal}
+        onClose={() => setShowCreatePlanModal(false)}
+        onPlanCreated={handlePlanCreated}
       />
     </ScrollView>
   );

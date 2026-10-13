@@ -3,17 +3,22 @@ import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { THEME } from '../../constants/theme';
 import { Icon } from '../Icon';
 import { styles } from './profile.styles';
+import { Plan } from '../../types';
 
 interface ProfileVipSectionProps {
-  selectedPlan: 'yearly' | 'monthly';
-  onSelectPlan: (plan: 'yearly' | 'monthly') => void;
+  plans?: Plan[];
+  selectedPlan: string;
+  onSelectPlan: (planId: string) => void;
   onManagePlan?: () => void;
+  onCreatePlanPress?: () => void;
 }
 
 export const ProfileVipSection: React.FC<ProfileVipSectionProps> = ({
+  plans = [],
   selectedPlan,
   onSelectPlan,
   onManagePlan,
+  onCreatePlanPress,
 }) => {
   const handleManage = () => {
     if (onManagePlan) {
@@ -22,6 +27,27 @@ export const ProfileVipSection: React.FC<ProfileVipSectionProps> = ({
       Alert.alert('إدارة اشتراك VIP', 'خطة الاشتراك الحالية مفعلة حتى 15 أبريل 2025.');
     }
   };
+
+  const displayPlans = plans.length > 0 ? plans : [
+    {
+      id: 'yearly',
+      name: 'الاشتراك السنوي',
+      price: 29.99,
+      duration: '365',
+      description: 'وفر 37% مقارنة بالشهري',
+      features: [],
+      isPopular: true,
+    },
+    {
+      id: 'monthly',
+      name: 'الاشتراك الشهري',
+      price: 3.99,
+      duration: '30',
+      description: 'إلغاء التجديد في أي وقت',
+      features: [],
+      isPopular: false,
+    },
+  ];
 
   return (
     <View style={styles.section}>
@@ -64,40 +90,35 @@ export const ProfileVipSection: React.FC<ProfileVipSectionProps> = ({
 
         {/* Plans Comparison */}
         <View style={styles.plansRow}>
-          {/* Yearly Plan */}
-          <TouchableOpacity
-            style={[
-              styles.planCard,
-              selectedPlan === 'yearly' && styles.planCardActive,
-            ]}
-            onPress={() => onSelectPlan('yearly')}
-            activeOpacity={0.85}
-          >
-            <View style={styles.saveTag}>
-              <Text style={styles.saveTagText}>الأكثر توفيراً</Text>
-            </View>
-            <Text style={styles.planName}>الاشتراك السنوي</Text>
-            <Text style={styles.planPriceGold}>
-              29.99$ <Text style={styles.planPricePeriod}>/ سنة</Text>
-            </Text>
-            <Text style={styles.planSaveText}>وفر 37% مقارنة بالشهري</Text>
-          </TouchableOpacity>
+          {displayPlans.slice(0, 2).map((plan) => {
+            const isSelected = selectedPlan === plan.id || (selectedPlan === 'yearly' && plan.duration === '365');
+            const isYearlyOrPopular = plan.isPopular || plan.duration === '365';
 
-          {/* Monthly Plan */}
-          <TouchableOpacity
-            style={[
-              styles.planCard,
-              selectedPlan === 'monthly' && styles.planCardActive,
-            ]}
-            onPress={() => onSelectPlan('monthly')}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.planName}>الاشتراك الشهري</Text>
-            <Text style={styles.planPriceWhite}>
-              3.99$ <Text style={styles.planPricePeriod}>/ شهر</Text>
-            </Text>
-            <Text style={styles.planSaveText}>إلغاء التجديد في أي وقت</Text>
-          </TouchableOpacity>
+            return (
+              <TouchableOpacity
+                key={plan.id}
+                style={[
+                  styles.planCard,
+                  isSelected && styles.planCardActive,
+                ]}
+                onPress={() => onSelectPlan(plan.id)}
+                activeOpacity={0.85}
+              >
+                {isYearlyOrPopular && (
+                  <View style={styles.saveTag}>
+                    <Text style={styles.saveTagText}>الأكثر طلباً</Text>
+                  </View>
+                )}
+                <Text style={styles.planName} numberOfLines={1}>{plan.name}</Text>
+                <Text style={isYearlyOrPopular ? styles.planPriceGold : styles.planPriceWhite}>
+                  {plan.price}$ <Text style={styles.planPricePeriod}>/ {plan.duration === '365' ? 'سنة' : `${plan.duration} يوم`}</Text>
+                </Text>
+                <Text style={styles.planSaveText} numberOfLines={1}>
+                  {plan.description || (isYearlyOrPopular ? 'وفر 37% مقارنة بالشهري' : 'إلغاء التجديد في أي وقت')}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         {/* Manage Plan Button */}
@@ -111,7 +132,22 @@ export const ProfileVipSection: React.FC<ProfileVipSectionProps> = ({
             إدارة اشتراك VIP الحالي وتعديل الخطة
           </Text>
         </TouchableOpacity>
+
+        {/* Create Plan Button */}
+        {onCreatePlanPress && (
+          <TouchableOpacity
+            style={styles.createPlanBtn}
+            onPress={onCreatePlanPress}
+            activeOpacity={0.85}
+          >
+            <Icon name="sparkles" size={18} color={THEME.colors.secondary} />
+            <Text style={styles.createPlanBtnText}>
+              إنشاء خطة اشتراك جديدة (API) +
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
 };
+

@@ -653,4 +653,32 @@ export const styles = StyleSheet.create({
     color: THEME.colors.onPrimaryContainer,
     fontWeight: '700',
   },
+  createPlanBtn: {
+    height: 42,
+    borderRadius: THEME.radius.md,
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+    borderWidth: 1,
+    borderColor: THEME.colors.outlineVariant,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 8,
+  },
+  createPlanBtnText: {
+    ...THEME.typography.labelMd,
+    color: THEME.colors.secondary,
+    fontWeight: '700',
+  },
+  textAreaInput: {
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+    borderRadius: THEME.radius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    minHeight: 70,
+    color: THEME.colors.onSurface,
+    textAlign: 'right',
+    textAlignVertical: 'top',
+  },
 });
+

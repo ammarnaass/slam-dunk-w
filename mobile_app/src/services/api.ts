@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { HomeApiResponse, Episode, Anime, Character, UserProfile, WatchHistoryItem } from '../types';
+import { HomeApiResponse, Episode, Anime, Character, UserProfile, WatchHistoryItem, Plan } from '../types';
 
 // Default host based on platform
 const DEFAULT_HOST = Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
@@ -250,5 +250,73 @@ export async function fetchAnimes(type?: string, status?: string): Promise<Anime
       }
     } catch (_) {}
     return [];
+  }
+}
+
+// 12. Subscription Plans Catalog (باقات وخطط الاشتراك)
+export async function fetchPlans(): Promise<Plan[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/plans`, { headers: getHeaders() });
+    const json = await res.json();
+    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      return json.data;
+    }
+  } catch (error) {
+    console.warn('Fetch plans local error, trying fallback:', error);
+    try {
+      const fallbackRes = await fetch('https://slam-dunk-w.vercel.app/api/mobile/v1/plans');
+      const fallbackJson = await fallbackRes.json();
+      if (fallbackJson.success && Array.isArray(fallbackJson.data)) {
+        return fallbackJson.data;
+      }
+    } catch (_) {}
+  }
+  return [
+    {
+      id: 'plan-monthly-vip',
+      name: 'الاشتراك الشهري',
+      price: 3.99,
+      duration: '30',
+      description: 'إلغاء التجديد في أي وقت',
+      features: ['مشاهدة بدقة 1080p FHD بدون إعلانات', 'سيرفرات فائقة السرعة'],
+      isActive: true,
+      isPopular: false,
+    },
+    {
+      id: 'plan-yearly-vip',
+      name: 'الاشتراك السنوي',
+      price: 29.99,
+      duration: '365',
+      description: 'وفر 37% مقارنة بالشهري',
+      features: ['أعلى توفير سنوي', '4K HDR لكافة الحلقات', 'شارة VIP متوهجة'],
+      isActive: true,
+      isPopular: true,
+    },
+  ];
+}
+
+// 13. Create Subscription Plan (إنشاء الخطة عبر API)
+export async function createPlan(planData: {
+  name: string;
+  price: number;
+  duration?: string;
+  description?: string;
+  features?: string[];
+  isActive?: boolean;
+}): Promise<{ plan: Plan | null; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/plans`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(planData),
+    });
+    const json = await res.json();
+    if (json.success && json.data) {
+      return { plan: json.data };
+    }
+    return { plan: null, error: json.error || 'فشل إنشاء الخطة' };
+  } catch (error: any) {
+    console.error('Create plan API error:', error);
+    return { plan: null, error: error.message || 'خطأ في الاتصال بالخادم أثناء إنشاء الخطة' };
   }
 }

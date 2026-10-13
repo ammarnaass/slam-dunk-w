@@ -113,3 +113,15 @@ export interface WatchHistoryItem {
   progress: number;
   watchedAt: string;
 }
+
+export interface Plan {
+  id: string;
+  name: string;
+  price: number;
+  duration: string;
+  description?: string | null;
+  features: string[];
+  isActive?: boolean;
+  isPopular?: boolean;
+}
+
