@@ -23,6 +23,7 @@ const SPACETOON_PLANETS = [
         icon: "sports_basketball", 
         badge: "سلام دانك • ماجد", 
         genre: "Sports",
+        planetId: "sports",
         color: "from-amber-600/30 to-orange-700/40 border-amber-500/30 text-amber-400"
     },
     { 
@@ -30,6 +31,7 @@ const SPACETOON_PLANETS = [
         icon: "swords", 
         badge: "القناص • دراغون بول", 
         genre: "Action",
+        planetId: "action",
         color: "from-red-600/30 to-rose-700/40 border-red-500/30 text-red-400"
     },
     { 
@@ -37,6 +39,7 @@ const SPACETOON_PLANETS = [
         icon: "explore", 
         badge: "ون بيس • كونان", 
         genre: "Adventure",
+        planetId: "adventure",
         color: "from-emerald-600/30 to-teal-700/40 border-emerald-500/30 text-emerald-400"
     },
     { 
@@ -44,6 +47,7 @@ const SPACETOON_PLANETS = [
         icon: "sentiment_very_satisfied", 
         badge: "ضحك • ترفيه", 
         genre: "Comedy",
+        planetId: "comedy",
         color: "from-yellow-500/30 to-amber-600/40 border-yellow-500/30 text-yellow-400"
     },
     { 
@@ -51,6 +55,7 @@ const SPACETOON_PLANETS = [
         icon: "auto_awesome", 
         badge: "للفتيات فقط", 
         genre: "Drama",
+        planetId: "emerald",
         color: "from-pink-600/30 to-purple-700/40 border-pink-500/30 text-pink-400"
     },
     { 
@@ -58,6 +63,7 @@ const SPACETOON_PLANETS = [
         icon: "rocket_launch", 
         badge: "غرندايزر • ميكا", 
         genre: "Sci-Fi",
+        planetId: "scifi",
         color: "from-cyan-600/30 to-blue-700/40 border-cyan-500/30 text-cyan-400"
     },
 ];
@@ -290,7 +296,7 @@ export default async function Home() {
                                             </div>
                                         </div>
                                         <Link 
-                                            href={section.viewAllLink || "/animes"} 
+                                            href={(!section.viewAllLink || section.viewAllLink === "/animes") ? "/planets" : section.viewAllLink} 
                                             className="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1"
                                         >
                                             <span>كل الكواكب (+12)</span>
@@ -302,7 +308,7 @@ export default async function Home() {
                                         {SPACETOON_PLANETS.slice(0, planetsLimit).map((planet) => (
                                             <Link
                                                 key={planet.name}
-                                                href={`/animes?genre=${planet.genre}`}
+                                                href={`/planets?planet=${planet.planetId}`}
                                                 className={`group flex flex-col items-center justify-center p-space-md rounded-2xl bg-surface-container-low hover:bg-surface-container border ${planet.color} transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center`}
                                             >
                                                 <div className="w-14 h-14 rounded-2xl bg-surface-container-highest/80 flex items-center justify-center mb-space-sm group-hover:scale-110 transition-transform duration-300 shadow-md">

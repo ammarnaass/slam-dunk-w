@@ -72,7 +72,7 @@ export const DEFAULT_HOME_SECTIONS: HomeSectionItem[] = [
         subtitle: "سافر بين عوالم التصنيفات المستوحاة من كواكب الطفولة والخيال",
         badgeText: "كواكب سبيستون",
         itemLimit: 6,
-        viewAllLink: "/animes"
+        viewAllLink: "/planets"
     },
     {
         id: "latestEpisodes",

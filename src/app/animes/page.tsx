@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Anime } from "@/types";
 import AnimeCard from "@/components/AnimeCard";
 
@@ -8,10 +9,12 @@ const SPACETOON_PLANETS = [
     { name: "الكل", genre: "all", icon: "apps" },
     { name: "كوكب الأكشن والمغامرة", genre: "Action", icon: "swords" },
     { name: "كوكب الرياضة والحماس", genre: "Sports", icon: "sports_basketball" },
+    { name: "كوكب المغامرات", genre: "Adventure", icon: "explore" },
     { name: "كوكب الغموض والخيال", genre: "Mystery", icon: "psychology" },
     { name: "شونين", genre: "Shounen", icon: "local_fire_department" },
     { name: "دراما ورومانسية", genre: "Drama", icon: "favorite" },
     { name: "كوكب الكوميديا", genre: "Comedy", icon: "sentiment_very_satisfied" },
+    { name: "الخيال العلمي", genre: "Sci-Fi", icon: "rocket_launch" },
     { name: "خارق للطبيعة", genre: "Fantasy", icon: "auto_awesome" },
 ];
 
@@ -36,13 +39,37 @@ const GENRE_MAPPING: Record<string, string> = {
     "Sci-Fi": "خيال علمي"
 };
 
-export default function AnimesListPage() {
+function AnimesListContent() {
+    const searchParams = useSearchParams();
+    const urlGenre = searchParams.get("genre") || searchParams.get("planet") || "";
+    const urlSearch = searchParams.get("q") || searchParams.get("search") || "";
+
     const [animes, setAnimes] = useState<Anime[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState(urlSearch);
     const [selectedPlanet, setSelectedPlanet] = useState<string>("all");
     const [selectedStatus, setSelectedStatus] = useState<string>("all");
     const [sortBy, setSortBy] = useState<"latest" | "rating" | "episodes" | "year">("latest");
+
+    // Sync URL query params with state
+    useEffect(() => {
+        if (urlGenre) {
+            const lower = urlGenre.trim().toLowerCase();
+            const matched = SPACETOON_PLANETS.find(p => 
+                p.genre.toLowerCase() === lower ||
+                p.name.toLowerCase().includes(lower) ||
+                (GENRE_MAPPING[p.genre] && GENRE_MAPPING[p.genre].toLowerCase() === lower)
+            );
+            if (matched) {
+                setSelectedPlanet(matched.genre);
+            } else {
+                setSelectedPlanet(urlGenre);
+            }
+        }
+        if (urlSearch) {
+            setSearchQuery(urlSearch);
+        }
+    }, [urlGenre, urlSearch]);
 
     useEffect(() => {
         fetch("/api/animes")
@@ -284,5 +311,17 @@ export default function AnimesListPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function AnimesListPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-surface-container-lowest text-on-surface flex items-center justify-center font-cairo">
+                جاري تحميل مكتبة الأنمي...
+            </div>
+        }>
+            <AnimesListContent />
+        </Suspense>
     );
 }

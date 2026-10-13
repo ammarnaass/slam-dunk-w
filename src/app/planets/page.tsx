@@ -34,6 +34,39 @@ const REVERSE_PLANET_ID_MAP: Record<string, string> = {
   "تاريخ": "classics",
 };
 
+const PLANET_ALIASES: Record<string, string> = {
+  sports: "sports",
+  sport: "sports",
+  action: "action",
+  adventure: "adventure",
+  comedy: "comedy",
+  emerald: "emerald",
+  zomoroda: "emerald",
+  drama: "emerald",
+  romance: "emerald",
+  scifi: "scifi",
+  "sci-fi": "scifi",
+  science: "scifi",
+  mystery: "mystery",
+  classics: "classics",
+  history: "classics",
+  historical: "classics",
+  shounen: "action",
+  movies: "action",
+  "رياضة": "sports",
+  "أكشن": "action",
+  "مغامرات": "adventure",
+  "كوميديا": "comedy",
+  "زمردة": "emerald",
+  "دراما": "emerald",
+  "علوم": "scifi",
+  "خيال علمي": "scifi",
+  "غموض": "mystery",
+  "تاريخ": "classics",
+  "أفلام": "action",
+  "سبيستون": "classics",
+};
+
 const PLANET_NAME_DISPLAY: Record<string, string> = {
   all: "جميع الكواكب والمجرّات الكونية",
   action: "كوكب الأكشن والقتال الشونين",
@@ -52,13 +85,16 @@ function PlanetsContent() {
 
   const rawPlanet = searchParams.get("planet") || searchParams.get("genre") || "";
 
-  // Resolve incoming URL parameter
+  // Resolve incoming URL parameter with robust aliasing
   const resolvedPlanet = useMemo(() => {
     if (!rawPlanet || rawPlanet === "all") return "all";
-    const clean = rawPlanet.trim().replace(/^كوكب\s*/, "");
-    if (PLANET_ID_MAP[clean]) return clean;
-    if (REVERSE_PLANET_ID_MAP[clean]) return REVERSE_PLANET_ID_MAP[clean];
-    return clean;
+    const cleanLower = rawPlanet.trim().toLowerCase().replace(/^كوكب\s*/, "");
+    if (PLANET_ALIASES[cleanLower]) return PLANET_ALIASES[cleanLower];
+    const rawClean = rawPlanet.trim().replace(/^كوكب\s*/, "");
+    if (PLANET_ALIASES[rawClean]) return PLANET_ALIASES[rawClean];
+    if (PLANET_ID_MAP[cleanLower]) return cleanLower;
+    if (REVERSE_PLANET_ID_MAP[rawClean]) return REVERSE_PLANET_ID_MAP[rawClean];
+    return cleanLower;
   }, [rawPlanet]);
 
   const [selectedPlanetId, setSelectedPlanetId] = useState<string>(resolvedPlanet);
@@ -118,15 +154,24 @@ function PlanetsContent() {
           (a as any).planet === selectedPlanetId ||
           (a as any).planet === arabicId;
 
+        const pLower = selectedPlanetId.toLowerCase();
+        const pClean = pLower.replace(/[-\s]/g, "");
         const matchesGenre =
           a.genres &&
           a.genres.some((g) => {
-            const gLower = g.toLowerCase();
-            return (
-              gLower.includes(selectedPlanetId.toLowerCase()) ||
-              gLower.includes(arabicId.toLowerCase()) ||
-              (sPlanet && sPlanet.subtitle.toLowerCase().includes(gLower))
-            );
+            const gLower = g.toLowerCase().replace(/[-\s]/g, "");
+            const isMatch =
+              gLower.includes(pClean) ||
+              g.includes(arabicId) ||
+              (pClean === "sports" && (gLower.includes("sport") || g.includes("رياضة"))) ||
+              (pClean === "action" && (gLower.includes("action") || gLower.includes("shounen") || g.includes("أكشن"))) ||
+              (pClean === "adventure" && (gLower.includes("adventure") || g.includes("مغامر"))) ||
+              (pClean === "comedy" && (gLower.includes("comedy") || g.includes("كوميدي"))) ||
+              (pClean === "emerald" && (gLower.includes("drama") || gLower.includes("romance") || g.includes("دراما") || g.includes("زمردة"))) ||
+              (pClean === "scifi" && (gLower.includes("scifi") || gLower.includes("mecha") || g.includes("علوم") || g.includes("خيال علمي") || g.includes("ميكا"))) ||
+              (pClean === "mystery" && (gLower.includes("mystery") || g.includes("غموض") || g.includes("تحقيق"))) ||
+              (pClean === "classics" && (gLower.includes("classic") || gLower.includes("history") || g.includes("تاريخ") || g.includes("كلاسيك")));
+            return isMatch || (sPlanet && sPlanet.subtitle.toLowerCase().includes(g.toLowerCase()));
           });
 
         return matchesPlanet || matchesGenre;
