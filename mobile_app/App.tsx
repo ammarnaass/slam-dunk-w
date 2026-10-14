@@ -14,9 +14,10 @@ import {
 } from 'react-native';
 
 if (__DEV__) {
-  // Only suppress specific benign warnings in development mode
-  LogBox.ignoreLogs([]);
+  // Suppress dev warning overlays to keep screen clean on emulator
+  LogBox.ignoreAllLogs(true);
 }
+
 
 import { THEME } from './src/constants/theme';
 import { Header } from './src/components/Header';

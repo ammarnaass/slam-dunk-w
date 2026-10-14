@@ -8,15 +8,20 @@ const STORAGE_KEYS = {
   APP_SETTINGS: '@slam_settings',
 } as const;
 
+const memoryFallback = new Map<string, string>();
+
 export const StorageService = {
   /**
    * Save authentication token to persistent storage
    */
   async setToken(token: string): Promise<void> {
     try {
-      await AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-    } catch (e) {
-      console.error('Failed to save auth token to persistent storage:', e);
+      if (AsyncStorage?.setItem) {
+        await AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+      }
+      memoryFallback.set(STORAGE_KEYS.AUTH_TOKEN, token);
+    } catch (_) {
+      memoryFallback.set(STORAGE_KEYS.AUTH_TOKEN, token);
     }
   },
 
@@ -25,10 +30,13 @@ export const StorageService = {
    */
   async getToken(): Promise<string | null> {
     try {
-      return await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-    } catch (e) {
-      console.error('Failed to get auth token from storage:', e);
-      return null;
+      if (AsyncStorage?.getItem) {
+        const val = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+        if (val) return val;
+      }
+      return memoryFallback.get(STORAGE_KEYS.AUTH_TOKEN) || null;
+    } catch (_) {
+      return memoryFallback.get(STORAGE_KEYS.AUTH_TOKEN) || null;
     }
   },
 
@@ -37,9 +45,12 @@ export const StorageService = {
    */
   async removeToken(): Promise<void> {
     try {
-      await AsyncStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-    } catch (e) {
-      console.error('Failed to remove auth token from storage:', e);
+      if (AsyncStorage?.removeItem) {
+        await AsyncStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+      }
+      memoryFallback.delete(STORAGE_KEYS.AUTH_TOKEN);
+    } catch (_) {
+      memoryFallback.delete(STORAGE_KEYS.AUTH_TOKEN);
     }
   },
 
@@ -48,9 +59,13 @@ export const StorageService = {
    */
   async setItem<T>(key: string, value: T): Promise<void> {
     try {
-      await AsyncStorage.setItem(key, JSON.stringify(value));
-    } catch (e) {
-      console.error(`Failed to save ${key} to storage:`, e);
+      const str = JSON.stringify(value);
+      if (AsyncStorage?.setItem) {
+        await AsyncStorage.setItem(key, str);
+      }
+      memoryFallback.set(key, str);
+    } catch (_) {
+      memoryFallback.set(key, JSON.stringify(value));
     }
   },
 
@@ -59,11 +74,17 @@ export const StorageService = {
    */
   async getItem<T>(key: string): Promise<T | null> {
     try {
-      const val = await AsyncStorage.getItem(key);
+      let val: string | null = null;
+      if (AsyncStorage?.getItem) {
+        val = await AsyncStorage.getItem(key);
+      }
+      if (!val) {
+        val = memoryFallback.get(key) || null;
+      }
       return val ? (JSON.parse(val) as T) : null;
-    } catch (e) {
-      console.error(`Failed to get ${key} from storage:`, e);
-      return null;
+    } catch (_) {
+      const mem = memoryFallback.get(key);
+      return mem ? (JSON.parse(mem) as T) : null;
     }
   },
 
@@ -72,9 +93,12 @@ export const StorageService = {
    */
   async removeItem(key: string): Promise<void> {
     try {
-      await AsyncStorage.removeItem(key);
-    } catch (e) {
-      console.error(`Failed to remove ${key} from storage:`, e);
+      if (AsyncStorage?.removeItem) {
+        await AsyncStorage.removeItem(key);
+      }
+      memoryFallback.delete(key);
+    } catch (_) {
+      memoryFallback.delete(key);
     }
   },
 
@@ -83,9 +107,13 @@ export const StorageService = {
    */
   async clearAll(): Promise<void> {
     try {
-      await AsyncStorage.clear();
-    } catch (e) {
-      console.error('Failed to clear persistent storage:', e);
+      if (AsyncStorage?.clear) {
+        await AsyncStorage.clear();
+      }
+      memoryFallback.clear();
+    } catch (_) {
+      memoryFallback.clear();
     }
   },
 };
+

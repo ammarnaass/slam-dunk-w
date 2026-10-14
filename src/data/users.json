@@ -15,7 +15,7 @@
     "name": "مدير النظام",
     "username": "مدير النظام",
     "email": "admin@slamdunk.com",
-    "password": "$2b$10$rlh3Ekdxp/Y5e1DqJj/j3.01nWGjp9F1Rzo7nEerXVyUhpIN4jN6O",
+    "password": "$2b$10$6989KXx9sX6jJItTXRyy9.oUiXBM5qh5WtaQcfIK74Qyf11wFGd3y",
     "role": "ADMIN",
     "watchlist": [],
     "createdAt": "2026-10-10T07:00:00.000Z",
@@ -33,5 +33,40 @@
       "autoplay": true,
       "favoritePlanet": "مغامرات"
     }
+  },
+  {
+    "id": "55ad0ae5-3f60-4360-87e2-359f264fa7ce",
+    "name": "حسان البطل",
+    "email": "otaku_1791999503276@slamdunk.app",
+    "password": "$2b$10$J.wkemIJ81QSw4KxN6E49uTAtjeyuSU179QmG7RxUKkyLuMI7K992",
+    "role": "USER",
+    "avatar": "/logoep.jpg",
+    "createdAt": "2026-10-14T17:38:25.654Z",
+    "updatedAt": "2026-10-14T17:38:25.654Z",
+    "subscription": {
+      "planType": "premium",
+      "isActive": true,
+      "endDate": "2026-11-13T19:15:07.203Z"
+    }
+  },
+  {
+    "id": "a7b3f2c2-edbc-4347-984d-145a88ef2652",
+    "name": "Test User",
+    "email": "testuser1@slamdunk.app",
+    "password": "$2b$10$.AULtSCP8Ik.85ZsZkXeMOUx7lygfL6.sEYuB7tnIhhl99V/DRoF.",
+    "role": "USER",
+    "avatar": "/logoep.jpg",
+    "createdAt": "2026-10-14T17:38:41.787Z",
+    "updatedAt": "2026-10-14T17:38:41.787Z"
+  },
+  {
+    "id": "c40f80d4-68ab-49fc-a713-6c3950dd5430",
+    "name": "عمار حسان",
+    "email": "otaku_1791999746105@slamdunk.app",
+    "password": "$2b$10$SRxTdL21a3Dwp1lJK8E4juoyKymiR8wBPxLHsewQA6w8sgrEeFYOu",
+    "role": "USER",
+    "avatar": "/logoep.jpg",
+    "createdAt": "2026-10-14T17:42:27.213Z",
+    "updatedAt": "2026-10-14T17:42:27.213Z"
   }
 ]
