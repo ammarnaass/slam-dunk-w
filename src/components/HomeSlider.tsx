@@ -25,6 +25,7 @@ const GENRE_TRANSLATIONS: Record<string, string> = {
 export default function HomeSlider({ animes, config }: HomeSliderProps) {
     const sliderSettings = config || DEFAULT_HERO_SLIDER_SETTINGS;
     const [current, setCurrent] = useState(0);
+    const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
     // If slider is disabled by admin, don't render anything
     if (sliderSettings.isEnabled === false) return null;
@@ -44,6 +45,23 @@ export default function HomeSlider({ animes, config }: HomeSliderProps) {
 
     if (featuredSlides.length === 0) return null;
 
+    const handleTouchStart = (e: React.TouchEvent) => {
+        setTouchStartX(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (touchStartX === null) return;
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+        // In RTL: swipe left (diff > 45) -> next, swipe right (diff < -45) -> prev
+        if (diff > 45) {
+            setCurrent((prev) => (prev + 1) % featuredSlides.length);
+        } else if (diff < -45) {
+            setCurrent((prev) => (prev - 1 + featuredSlides.length) % featuredSlides.length);
+        }
+        setTouchStartX(null);
+    };
+
     const activeAnime = featuredSlides[current] || featuredSlides[0];
     const genresList = (activeAnime?.genres || []).map(g => GENRE_TRANSLATIONS[g] || g);
     const displayRating = activeAnime?.rating && activeAnime.rating > 0 
@@ -53,7 +71,11 @@ export default function HomeSlider({ animes, config }: HomeSliderProps) {
     const darknessOpacity = Math.min(Math.max((sliderSettings.overlayDarkness || 70) / 100, 0.2), 0.95);
 
     return (
-        <section className="relative w-full overflow-hidden bg-surface-container-lowest -mt-20">
+        <section 
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="relative w-full overflow-hidden bg-surface-container-lowest -mt-20 select-none"
+        >
             {/* Slider Master Container */}
             <div className="relative w-full min-h-[520px] sm:min-h-[620px] lg:min-h-[760px] lg:h-[840px] flex items-end">
                 {/* Background Slides */}
@@ -186,18 +208,21 @@ export default function HomeSlider({ animes, config }: HomeSliderProps) {
 
                             {/* Mobile / Tablet Pagination Dots */}
                             {featuredSlides.length > 1 && (
-                                <div className="flex lg:hidden items-center gap-2 pt-3">
+                                <div className="flex lg:hidden items-center gap-1 pt-2">
                                     {featuredSlides.map((_, dotIdx) => (
                                         <button
                                             key={dotIdx}
+                                            type="button"
                                             onClick={() => setCurrent(dotIdx)}
-                                            className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                                                dotIdx === current 
-                                                    ? "w-7 bg-[#dc2626] shadow-[0_0_8px_rgba(220,38,38,0.8)]" 
-                                                    : "w-2 bg-white/20 hover:bg-white/40"
-                                            }`}
+                                            className="min-h-[44px] min-w-[32px] flex items-center justify-center p-1.5 cursor-pointer"
                                             aria-label={`الشريحة ${dotIdx + 1}`}
-                                        />
+                                        >
+                                            <span className={`h-2 rounded-full transition-all duration-300 ${
+                                                dotIdx === current 
+                                                    ? "w-7 bg-[#dc2626] shadow-[0_0_10px_rgba(220,38,38,0.8)]" 
+                                                    : "w-2.5 bg-white/25 hover:bg-white/50"
+                                            }`} />
+                                        </button>
                                     ))}
                                 </div>
                             )}

@@ -94,33 +94,33 @@ export default function WatchEpisodeMetaBar({
         </div>
 
         {/* Previous / Next Navigation Controls */}
-        <div className="flex items-center gap-space-sm shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           {prevEpisode ? (
             <Link
               href={`/watch/${prevEpisode.id}`}
-              className="flex items-center gap-1.5 px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-bright transition-all shadow-sm border border-white/5"
+              className="min-h-[44px] flex items-center gap-1.5 px-3 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-bright transition-all shadow-sm border border-white/5 active:scale-95"
             >
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-              <span className="font-headline-sm text-headline-sm">
+              <span className="font-headline-sm text-headline-sm text-xs sm:text-sm font-bold">
                 السابقة ({prevEpisode.episodeNumber})
               </span>
             </Link>
           ) : (
             <button
               disabled
-              className="flex items-center gap-1.5 px-space-md py-space-sm rounded-lg bg-surface-container-high/40 text-on-surface-variant/40 cursor-not-allowed border border-white/5"
+              className="min-h-[44px] flex items-center gap-1.5 px-3 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high/40 text-on-surface-variant/40 cursor-not-allowed border border-white/5"
             >
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-              <span className="font-headline-sm text-headline-sm">الحلقة السابقة</span>
+              <span className="font-headline-sm text-headline-sm text-xs sm:text-sm">السابقة</span>
             </button>
           )}
 
           {nextEpisode ? (
             <Link
               href={`/watch/${nextEpisode.id}`}
-              className="flex items-center gap-1.5 px-space-md py-space-sm rounded-lg bg-primary-container text-on-primary-container hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)]"
+              className="min-h-[44px] flex items-center gap-1.5 px-4 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-primary-container text-on-primary-container hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)]"
             >
-              <span className="font-headline-sm text-headline-sm">
+              <span className="font-headline-sm text-headline-sm text-xs sm:text-sm font-bold">
                 التالية ({nextEpisode.episodeNumber})
               </span>
               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
@@ -128,9 +128,9 @@ export default function WatchEpisodeMetaBar({
           ) : (
             <button
               disabled
-              className="flex items-center gap-1.5 px-space-md py-space-sm rounded-lg bg-surface-container-high/40 text-on-surface-variant/40 cursor-not-allowed border border-white/5"
+              className="min-h-[44px] flex items-center gap-1.5 px-4 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high/40 text-on-surface-variant/40 cursor-not-allowed border border-white/5"
             >
-              <span className="font-headline-sm text-headline-sm">الحلقة التالية</span>
+              <span className="font-headline-sm text-headline-sm text-xs sm:text-sm">التالية</span>
               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
             </button>
           )}
@@ -138,12 +138,13 @@ export default function WatchEpisodeMetaBar({
       </div>
 
       {/* Broadcast Servers Selector & Quality Switcher */}
-      <div className="w-full pt-space-xs flex flex-col sm:flex-row sm:items-center justify-between gap-space-md bg-surface-container-low p-space-md rounded-xl border border-white/5">
-        {/* Servers */}
-        <div className="flex items-center gap-space-sm flex-wrap">
-          <span className="font-label-md text-label-md text-on-surface-variant flex items-center gap-1 font-bold">
+      <div className="w-full pt-space-xs flex flex-col sm:flex-row sm:items-center justify-between gap-space-md bg-surface-container-low p-3 sm:p-space-md rounded-xl border border-white/5">
+        {/* Servers - Horizontal Touch Carousel */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 max-w-full">
+          <span className="font-label-md text-label-md text-on-surface-variant flex items-center gap-1 font-bold shrink-0">
             <span className="material-symbols-outlined text-primary-container text-[18px]">dns</span>
-            خوادم البث المباشر:
+            <span className="hidden sm:inline">خوادم البث المباشر:</span>
+            <span className="sm:hidden">السيرفر:</span>
           </span>
 
           {servers.map((srv, idx) => {
@@ -152,15 +153,15 @@ export default function WatchEpisodeMetaBar({
               <button
                 key={idx}
                 onClick={() => onSelectServer(idx)}
-                className={`px-space-md py-1.5 rounded-lg font-label-md text-label-md transition-all cursor-pointer flex items-center gap-1.5 border ${
+                className={`min-h-[40px] px-3.5 py-1.5 rounded-xl font-label-md text-label-md transition-all cursor-pointer flex items-center gap-1.5 border shrink-0 text-xs sm:text-sm ${
                   isActive
                     ? "bg-primary-container text-on-primary-container border-primary-container shadow-md font-bold"
-                    : "bg-surface-container-high text-on-surface hover:text-primary border-transparent"
+                    : "bg-surface-container-high text-on-surface hover:text-primary border-white/5"
                 }`}
               >
                 <span>{srv.name || `سيرفر ${idx + 1}`}</span>
                 {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping shrink-0" />
                 )}
               </button>
             );
@@ -168,12 +169,12 @@ export default function WatchEpisodeMetaBar({
         </div>
 
         {/* Quick Resolution Switcher */}
-        <div className="flex items-center gap-1 self-start sm:self-auto bg-surface-container-lowest p-1 rounded-lg border border-white/5">
+        <div className="flex items-center gap-1 self-start sm:self-auto bg-surface-container-lowest p-1 rounded-xl border border-white/5 shrink-0 overflow-x-auto">
           {["4K", "1080p", "720p", "480p", "تلقائي"].map((q) => (
             <button
               key={q}
               onClick={() => onSelectQuality(q)}
-              className={`px-2.5 py-0.5 rounded font-label-sm text-label-sm font-bold transition-all cursor-pointer ${
+              className={`min-h-[36px] px-2.5 py-0.5 rounded-lg font-label-sm text-label-sm font-bold transition-all cursor-pointer shrink-0 ${
                 activeQuality === q
                   ? "bg-primary-container text-on-primary-container shadow-sm"
                   : q === "تلقائي"

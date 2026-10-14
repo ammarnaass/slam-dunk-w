@@ -69,6 +69,9 @@ export default function WatchClientTheater({
   const animeId = anime?.id || episode.animeId || "default";
   const castData: AnimeCastData = DEFAULT_ANIME_CASTS[animeId] || DEFAULT_ANIME_CASTS["default"];
 
+  // Mobile Active Tab State
+  const [mobileTab, setMobileTab] = useState<"episodes" | "details" | "comments">("episodes");
+
   return (
     <div className={`w-full min-h-screen text-on-surface transition-colors duration-500 ${lightsOff ? "bg-[#070709]" : "bg-surface"}`}>
       {/* Toast Notification (Stitch 2 Component) */}
@@ -88,7 +91,7 @@ export default function WatchClientTheater({
         </span>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-gutter-md lg:px-gutter-lg py-space-md pt-24 sm:pt-28">
+      <div className="max-w-[1440px] mx-auto px-gutter-md lg:px-gutter-lg py-space-md pt-20 sm:pt-28">
         {/* Header Breadcrumbs, Sync Indicator & Lights Toggle */}
         <WatchTheaterHeader
           anime={anime}
@@ -100,8 +103,8 @@ export default function WatchClientTheater({
 
         {/* Main Two-Column Layout (RTL: Theater Right visual / Column 1, Sidebar Left visual / Column 2) */}
         <div className="w-full grid grid-cols-1 xl:grid-cols-12 gap-gutter-lg items-start">
-          {/* Main Streaming Theater Column (70-72% Desktop -> 8 cols) */}
-          <div className="xl:col-span-8 flex flex-col gap-space-lg min-w-0">
+          {/* Main Streaming Theater Column */}
+          <div className="xl:col-span-8 flex flex-col gap-space-md sm:gap-space-lg min-w-0">
             {/* 16:9 Cinematic Video Player */}
             <WatchCinematicPlayer
               episode={episode}
@@ -127,20 +130,87 @@ export default function WatchClientTheater({
               onShowToast={showToast}
             />
 
-            {/* Episode Details & Seiyuu Info */}
-            <WatchEpisodeDetails
-              episode={episode}
-              castData={castData}
-            />
+            {/* Mobile Tab Switcher (Visible on mobile/tablet < xl) */}
+            <div className="xl:hidden flex items-center justify-between bg-surface-container-low p-1.5 rounded-2xl border border-white/[0.08] shadow-md gap-1">
+              <button
+                type="button"
+                onClick={() => setMobileTab("episodes")}
+                className={`flex-1 min-h-[44px] px-2 py-2 rounded-xl font-cairo text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  mobileTab === "episodes"
+                    ? "bg-primary-container text-on-primary-container shadow-md"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">playlist_play</span>
+                <span>الحلقات ({animeEpisodes.length})</span>
+              </button>
 
-            {/* Community & Comments Discussions Section */}
-            <WatchCommentsSection
-              onShowToast={showToast}
-            />
+              <button
+                type="button"
+                onClick={() => setMobileTab("details")}
+                className={`flex-1 min-h-[44px] px-2 py-2 rounded-xl font-cairo text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  mobileTab === "details"
+                    ? "bg-primary-container text-on-primary-container shadow-md"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">info</span>
+                <span>عن الحلقة</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMobileTab("comments")}
+                className={`flex-1 min-h-[44px] px-2 py-2 rounded-xl font-cairo text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  mobileTab === "comments"
+                    ? "bg-primary-container text-on-primary-container shadow-md"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">forum</span>
+                <span>النقاشات</span>
+              </button>
+            </div>
+
+            {/* Mobile Tab Content */}
+            <div className="xl:hidden">
+              {mobileTab === "episodes" && (
+                <WatchSidebarPlaylist
+                  currentEpisodeId={episode.id}
+                  episodes={animeEpisodes}
+                  fallbackCoverImage={anime?.coverImage}
+                />
+              )}
+              {mobileTab === "details" && (
+                <WatchEpisodeDetails
+                  episode={episode}
+                  castData={castData}
+                />
+              )}
+              {mobileTab === "comments" && (
+                <WatchCommentsSection
+                  onShowToast={showToast}
+                />
+              )}
+            </div>
+
+            {/* Desktop Views (Always visible on desktop xl+) */}
+            <div className="hidden xl:flex flex-col gap-space-lg">
+              {/* Episode Details & Seiyuu Info */}
+              <WatchEpisodeDetails
+                episode={episode}
+                castData={castData}
+              />
+
+              {/* Community & Comments Discussions Section */}
+              <WatchCommentsSection
+                onShowToast={showToast}
+              />
+            </div>
           </div>
 
-          {/* Sidebar Playlist Rail Column (28-30% Desktop -> 4 cols) */}
-          <div className="xl:col-span-4 flex flex-col gap-space-md w-full sticky top-24">
+          {/* Sidebar Playlist Rail Column (Desktop xl+ only) */}
+          <div className="hidden xl:flex xl:col-span-4 flex-col gap-space-md w-full sticky top-24">
             <WatchSidebarPlaylist
               currentEpisodeId={episode.id}
               episodes={animeEpisodes}

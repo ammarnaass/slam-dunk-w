@@ -205,7 +205,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                         <form onSubmit={handleSubmit} className="space-y-space-md">
                             {/* Username or Email */}
                             <div>
-                                <label className="block font-label-md text-label-md text-on-surface mb-space-xs">
+                                <label className="block font-label-md text-label-md text-on-surface mb-space-xs font-bold">
                                     {isLogin ? "اسم المستخدم أو البريد الإلكتروني" : "اسم المستخدم"}
                                 </label>
                                 <div className="relative flex items-center">
@@ -215,10 +215,12 @@ export default function AuthForm({ type }: AuthFormProps) {
                                     <input
                                         type="text"
                                         required
+                                        autoComplete={isLogin ? "username" : "off"}
+                                        inputMode="text"
                                         value={formData.username}
                                         onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                                         placeholder={isLogin ? "otaku@animedaze.tv أو اسم المستخدم" : "مثال: kaito_otaku"}
-                                        className="w-full bg-surface-container rounded-xl pr-11 pl-space-md py-space-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
+                                        className="w-full min-h-[48px] bg-surface-container rounded-xl pr-11 pl-space-md py-3 text-base sm:text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
                                     />
                                 </div>
                             </div>
@@ -226,7 +228,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                             {/* Email (on Register only) */}
                             {!isLogin && (
                                 <div>
-                                    <label className="block font-label-md text-label-md text-on-surface mb-space-xs">
+                                    <label className="block font-label-md text-label-md text-on-surface mb-space-xs font-bold">
                                         البريد الإلكتروني
                                     </label>
                                     <div className="relative flex items-center">
@@ -236,10 +238,12 @@ export default function AuthForm({ type }: AuthFormProps) {
                                         <input
                                             type="email"
                                             required
+                                            autoComplete="email"
+                                            inputMode="email"
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             placeholder="otaku@animedaze.tv"
-                                            className="w-full bg-surface-container rounded-xl pr-11 pl-space-md py-space-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
+                                            className="w-full min-h-[48px] bg-surface-container rounded-xl pr-11 pl-space-md py-3 text-base sm:text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
                                         />
                                     </div>
                                 </div>
@@ -248,7 +252,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                             {/* Password */}
                             <div>
                                 <div className="flex items-center justify-between mb-space-xs">
-                                    <label className="block font-label-md text-label-md text-on-surface">
+                                    <label className="block font-label-md text-label-md text-on-surface font-bold">
                                         كلمة المرور
                                     </label>
                                     {isLogin && (
@@ -264,15 +268,17 @@ export default function AuthForm({ type }: AuthFormProps) {
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         required
+                                        autoComplete={isLogin ? "current-password" : "new-password"}
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                         placeholder="••••••••••••"
-                                        className="w-full bg-surface-container rounded-xl pr-11 pl-11 py-space-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
+                                        className="w-full min-h-[48px] bg-surface-container rounded-xl pr-11 pl-12 py-3 text-base sm:text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute left-space-md text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                                        className="absolute left-1 min-h-[44px] min-w-[44px] flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                                        aria-label={showPassword ? "إخفاء كلمة المرور" : "عرض كلمة المرور"}
                                     >
                                         <span className="material-symbols-outlined text-xl">
                                             {showPassword ? "visibility_off" : "visibility"}
