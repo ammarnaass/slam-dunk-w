@@ -13,6 +13,7 @@ import { EpisodeCard } from '../components/EpisodeCard';
 import { EpisodeListSkeleton } from '../components/common/Skeleton';
 import { Icon } from '../components/Icon';
 import { THEME } from '../constants/theme';
+import { useAppStore } from '../store/useAppStore';
 
 interface EpisodesScreenProps {
   episodes: Episode[];
@@ -29,6 +30,7 @@ export const EpisodesScreen: React.FC<EpisodesScreenProps> = ({
   onSelectEpisode,
   onBack,
 }) => {
+  const { continueWatching } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRange, setSelectedRange] = useState<RangeKey>('all');
   const [isReverseOrder, setIsReverseOrder] = useState(false);
@@ -182,12 +184,24 @@ export const EpisodesScreen: React.FC<EpisodesScreenProps> = ({
           keyExtractor={(item, index) =>
             item?.id ? String(item.id) : `ep-${index}`
           }
-          renderItem={({ item }) => (
-            <EpisodeCard
-              episode={item}
-              onPress={onSelectEpisode}
-            />
-          )}
+          renderItem={({ item }) => {
+            const progressItem = continueWatching.find(
+              (cw) => cw.episodeId === item.id || cw.episode?.id === item.id
+            );
+            const progress = progressItem
+              ? progressItem.percentage > 0
+                ? progressItem.percentage / 100
+                : undefined
+              : undefined;
+
+            return (
+              <EpisodeCard
+                episode={item}
+                onPress={onSelectEpisode}
+                progress={progress}
+              />
+            );
+          }}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}

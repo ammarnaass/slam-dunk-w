@@ -22,6 +22,7 @@ import { ProfileSettingsForm } from '../components/profile/ProfileSettingsForm';
 import { ProfileAccountActions } from '../components/profile/ProfileAccountActions';
 import { ProfileLoginModal } from '../components/profile/ProfileLoginModal';
 import { CreatePlanModal } from '../components/profile/CreatePlanModal';
+import { useAppStore } from '../store/useAppStore';
 
 interface ProfileScreenProps {
   onServerUrlChange?: () => void;
@@ -29,6 +30,7 @@ interface ProfileScreenProps {
   onOpenRegister?: () => void;
   onOpenVip?: () => void;
   onOpenSettings?: () => void;
+  onEpisodePress?: (ep: any) => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -37,15 +39,25 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onOpenRegister,
   onOpenVip,
   onOpenSettings,
+  onEpisodePress,
 }) => {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const {
+    currentUser,
+    login,
+    logout,
+    favorites,
+    continueWatching,
+    refreshUserData,
+  } = useAppStore();
+
+  const [profile, setProfile] = useState<UserProfile | null>(currentUser);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<string>('yearly');
   const [showCreatePlanModal, setShowCreatePlanModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'fav' | 'history'>('fav');
 
   // Form states
-  const [displayName, setDisplayName] = useState('عمار الناصري');
+  const [displayName, setDisplayName] = useState(currentUser?.name || 'عمار الناصري');
   const [handle, setHandle] = useState('Otaku_King99');
   const [gender, setGender] = useState<'male' | 'female' | 'unspecified'>('male');
 
@@ -58,20 +70,23 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   // Auth states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!currentUser);
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      setProfile(currentUser);
+      setIsLoggedIn(true);
+      if (currentUser.name) setDisplayName(currentUser.name);
+    } else {
+      setProfile(null);
+      setIsLoggedIn(false);
+    }
+  }, [currentUser]);
 
   const loadProfile = useCallback(async () => {
     try {
-      const [data, fetchedPlans] = await Promise.all([
-        fetchUserProfile().catch(() => null),
-        fetchPlans().catch(() => []),
-      ]);
-      if (data) {
-        setProfile(data);
-        setIsLoggedIn(true);
-        if (data.name) setDisplayName(data.name);
-      }
+      const fetchedPlans = await fetchPlans().catch(() => []);
       if (fetchedPlans && fetchedPlans.length > 0) {
         setPlans(fetchedPlans);
         const popular = fetchedPlans.find((p) => p.isPopular);
@@ -81,8 +96,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           setSelectedPlan(fetchedPlans[0].id);
         }
       }
+      refreshUserData();
     } catch (_) {}
-  }, []);
+  }, [refreshUserData]);
 
   const handlePlanCreated = (newPlan: Plan) => {
     setPlans((prev) => [newPlan, ...prev]);
@@ -99,12 +115,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       return;
     }
     try {
-      const res = await loginUser(email, password);
-      if (res.user) {
-        setProfile(res.user);
-        setIsLoggedIn(true);
+      const res = await login(email.trim(), password);
+      if (res.success) {
         setShowLoginModal(false);
-        loadProfile();
         Alert.alert('نجاح', 'تم تسجيل الدخول بنجاح ومزامنة حساب VIP!');
       } else {
         Alert.alert('خطأ', res.error || 'فشل تسجيل الدخول');
@@ -115,9 +128,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   };
 
   const handleLogout = () => {
-    setAuthToken(null);
-    setIsLoggedIn(false);
-    setProfile(null);
+    logout();
     Alert.alert('تم تسجيل الخروج', 'تم حفظ بياناتك المحلية بأمان.');
   };
 
@@ -162,7 +173,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       <ProfileActivityTabs
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        favorites={favorites}
+        continueWatching={continueWatching}
+        onEpisodePress={onEpisodePress}
       />
+
 
       {/* 4. Personal Info Form */}
       <ProfilePersonalInfoForm

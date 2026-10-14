@@ -117,6 +117,28 @@ export interface WatchHistoryItem {
   watchedAt: string;
 }
 
+export interface ContinueWatchingItem {
+  episodeId: string;
+  positionSeconds: number;
+  durationSeconds: number;
+  percentage: number;
+  updatedAt?: string | Date;
+  episode?: Partial<Episode>;
+  anime?: {
+    id: string;
+    title: string;
+    coverImage?: string;
+  };
+}
+
+export interface FavoriteItem {
+  id: string;
+  type?: 'anime' | 'episode';
+  title?: string;
+  coverImage?: string;
+  rating?: number;
+}
+
 export interface Plan {
   id: string;
   name: string;

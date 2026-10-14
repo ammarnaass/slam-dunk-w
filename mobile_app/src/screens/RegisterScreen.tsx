@@ -20,6 +20,7 @@ import {
   SocialAuthGrid,
   registerStyles as styles,
 } from '../components/auth';
+import { useAppStore } from '../store/useAppStore';
 
 interface RegisterScreenProps {
   onBack?: () => void;
@@ -32,6 +33,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   onNavigateToLogin,
   onSuccess,
 }) => {
+  const { setCurrentUser, refreshUserData } = useAppStore();
   // Form State
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
@@ -96,6 +98,8 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       });
 
       if (res.user) {
+        setCurrentUser(res.user);
+        refreshUserData();
         Alert.alert(
           'أهلاً بك في ANIME DAZE! 🚀',
           'تم إنشاء حسابك بنجاح. استمتع بمشاهدة أسطورية ومزامنة فورية.',

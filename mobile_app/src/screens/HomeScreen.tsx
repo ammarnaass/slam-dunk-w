@@ -16,6 +16,7 @@ import { HomeConanSpotlight } from '../components/home/HomeConanSpotlight';
 import { HomeGoldenNostalgia } from '../components/home/HomeGoldenNostalgia';
 import { HomeFanQuote } from '../components/home/HomeFanQuote';
 import { HomeScreenSkeleton } from '../components/common/Skeleton';
+import { useAppStore } from '../store/useAppStore';
 
 interface HomeScreenProps {
   data: HomeApiResponse | null;
@@ -38,8 +39,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onViewAllAnimes,
   characters,
 }) => {
+  const { continueWatching, favorites, toggleFavorite } = useAppStore();
   const [activeSlide, setActiveSlide] = useState(0);
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [quoteIdx, setQuoteIdx] = useState(0);
 
   if (loading && !data) {
@@ -52,6 +53,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       : DEFAULT_HERO_SLIDES;
 
   const currentHero = heroSliderList[activeSlide] || heroSliderList[0];
+  const latestCw = continueWatching && continueWatching.length > 0 ? continueWatching[0] : null;
+
+  const isHeroBookmarked = currentHero
+    ? favorites.some((f) => (typeof f === 'string' ? f === currentHero.id : f?.id === currentHero.id))
+    : false;
 
   const handleShare = async () => {
     try {
@@ -80,6 +86,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   const handleResumeEpisode = () => {
+    if (latestCw && (latestCw.episode || latestCw.episodeId)) {
+      onEpisodePress({
+        id: latestCw.episodeId || latestCw.episode?.id || 'ep-1',
+        animeId: latestCw.anime?.id || 'slam-dunk',
+        title: latestCw.episode?.title || 'متابعة المشاهدة',
+        episodeNumber: latestCw.episode?.episodeNumber || 1,
+        duration: latestCw.episode?.duration || '24:00',
+        thumbnail: latestCw.episode?.thumbnail,
+      });
+      return;
+    }
     if (data?.latest && data.latest.length > 0) {
       onEpisodePress(data.latest[0]);
     } else {
@@ -91,6 +108,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         duration: '23:45',
       });
     }
+  };
+
+  const handleToggleHeroBookmark = async () => {
+    if (!currentHero?.id) return;
+    await toggleFavorite('anime', currentHero.id);
   };
 
   return (
@@ -113,14 +135,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* 2. Hero Section: Slam Dunk Showcase Slider */}
       <HomeHeroSection
         hero={currentHero}
-        isBookmarked={isBookmarked}
+        isBookmarked={isHeroBookmarked}
         onPlayPress={handlePlayHero}
-        onToggleBookmark={() => setIsBookmarked(!isBookmarked)}
+        onToggleBookmark={handleToggleHeroBookmark}
         onShare={handleShare}
       />
 
       {/* 3. Continue Watching Section (متابعة المشاهدة) */}
       <HomeContinueWatching
+        title={latestCw?.episode?.title || 'التحدي الأخير ضد الساحة'}
+        animeName={
+          latestCw?.anime?.title
+            ? `${latestCw.anime.title} • الحلقة ${latestCw.episode?.episodeNumber || ''}`
+            : 'سلام دانك • الموسم الأول'
+        }
+        episodeNumber={latestCw?.episode?.episodeNumber || 47}
+        progressPercent={latestCw?.percentage || 65}
+        thumbnailUrl={latestCw?.episode?.thumbnail}
+        remainingTime={
+          latestCw && latestCw.durationSeconds && latestCw.positionSeconds
+            ? `متبقي ${Math.floor(Math.max(0, latestCw.durationSeconds - latestCw.positionSeconds) / 60)} دقيقة`
+            : 'متبقي 08:24 دقيقة'
+        }
         onEpisodePress={handleResumeEpisode}
         onViewAllEpisodes={onViewAllEpisodes}
       />

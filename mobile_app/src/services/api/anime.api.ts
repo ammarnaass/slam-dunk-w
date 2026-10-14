@@ -4,7 +4,12 @@ import {
   Anime,
   Character,
 } from '../../types';
-import { API_BASE_URL, getHeaders } from './client';
+import {
+  API_BASE_URL,
+  WEB_API_BASE_URL,
+  getHeaders,
+  apiFetch,
+} from './client';
 
 export const normalizeEpisode = (ep: any): Episode => {
   const num = ep?.episodeNumber ?? ep?.episode_number ?? 1;
@@ -92,6 +97,13 @@ export async function fetchEpisodes(animeId: string = 'slam-dunk'): Promise<Epis
 // 4. Episode Details & Streaming Servers
 export async function fetchEpisodeDetails(episodeId: string): Promise<Episode | null> {
   try {
+    // 1. Try unified v1
+    const v1Res = await apiFetch<Episode>(`${WEB_API_BASE_URL}/episodes/${episodeId}`);
+    if (v1Res.success && v1Res.data) {
+      return normalizeEpisode(v1Res.data);
+    }
+
+    // 2. Fallback to mobile v1
     const res = await fetch(`${API_BASE_URL}/episodes/${episodeId}`, { headers: getHeaders() });
     const json = await res.json();
     if (json.success && json.data) {
@@ -107,6 +119,13 @@ export async function fetchEpisodeDetails(episodeId: string): Promise<Episode | 
 // 5. Anime Details
 export async function fetchAnimeDetails(animeId: string): Promise<Anime | null> {
   try {
+    // 1. Try unified v1
+    const v1Res = await apiFetch<Anime>(`${WEB_API_BASE_URL}/animes/${animeId}`);
+    if (v1Res.success && v1Res.data) {
+      return v1Res.data;
+    }
+
+    // 2. Fallback to mobile v1
     const res = await fetch(`${API_BASE_URL}/animes/${animeId}`, { headers: getHeaders() });
     const json = await res.json();
     if (json.success && json.data) {
@@ -159,5 +178,56 @@ export async function searchContent(query: string): Promise<{ animes: Anime[]; e
   } catch (error) {
     console.warn('Search error:', error);
     return { animes: [], episodes: [] };
+  }
+}
+
+// 8. Episode Comments (جلب تعليقات الحلقة)
+export async function fetchEpisodeComments(episodeId: string): Promise<any[]> {
+  try {
+    const res = await apiFetch<any[]>(`${WEB_API_BASE_URL}/episodes/${episodeId}/comments`);
+    if (res.success && Array.isArray(res.data)) {
+      return res.data;
+    }
+    return [];
+  } catch (error) {
+    console.warn('Fetch episode comments error:', error);
+    return [];
+  }
+}
+
+// 9. Post Episode Comment (إرسال تعليق جديد على الحلقة)
+export async function postEpisodeComment(
+  episodeId: string,
+  content: string
+): Promise<any | null> {
+  try {
+    const res = await apiFetch(`${WEB_API_BASE_URL}/episodes/${episodeId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    });
+    if (res.success && res.data) {
+      return res.data;
+    }
+    return null;
+  } catch (error) {
+    console.warn('Post comment error:', error);
+    return null;
+  }
+}
+
+// 10. Report Broken Stream Link (الإبلاغ عن رابط أو سيرفر معطل)
+export async function reportBrokenLink(
+  episodeId: string,
+  reason?: string
+): Promise<boolean> {
+  try {
+    const res = await apiFetch(`${WEB_API_BASE_URL}/episodes/${episodeId}/report-link`, {
+      method: 'POST',
+      body: JSON.stringify({ reason: reason || 'رابط الفيديو لا يعمل' }),
+    });
+    return res.success;
+  } catch (error) {
+    console.warn('Report broken link error:', error);
+    return false;
   }
 }

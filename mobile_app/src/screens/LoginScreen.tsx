@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { THEME } from '../constants/theme';
 import { Icon } from '../components/Icon';
-import { loginUser } from '../services/api';
+import { useAppStore } from '../store/useAppStore';
 import {
   AuthHeaderBar,
   LoginHeroBanner,
@@ -33,6 +33,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   onSuccess,
   onSkipGuest,
 }) => {
+  const { login, currentUser } = useAppStore();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -51,9 +52,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
     setSubmitting(true);
     try {
-      const res = await loginUser(identifier.trim(), password);
-      if (res.user) {
-        Alert.alert('مرحباً بك مجدداً! 🔥', `أهلاً بك يا ${res.user.name || 'بطل الصقور'}. تم تفعيل جلسة VIP.`, [
+      const res = await login(identifier.trim(), password);
+      if (res.success) {
+        Alert.alert('مرحباً بك مجدداً! 🔥', `أهلاً بك يا ${currentUser?.name || 'بطل الصقور'}. تم تفعيل جلسة VIP ومزامنة بياناتك.`, [
           { text: 'متابعة', onPress: () => onSuccess?.() },
         ]);
       } else {
@@ -65,6 +66,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       setSubmitting(false);
     }
   };
+
 
   const handleForgotPassword = () => {
     Alert.alert(
@@ -82,7 +84,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           text: 'متابعة',
           onPress: async () => {
             setSubmitting(true);
-            await loginUser(`${provider.toLowerCase()}@animedaze.app`, 'social_pass');
+            await login(`${provider.toLowerCase()}@animedaze.app`, 'social_pass');
             setSubmitting(false);
             onSuccess?.();
           },
