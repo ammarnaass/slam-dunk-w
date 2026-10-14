@@ -1,288 +1,51 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import Link from "next/link";
-import { 
-    Compass, 
-    Plus, 
-    RotateCcw, 
-    ExternalLink, 
-    Loader2, 
-    Tv, 
-    Search, 
-    Layers, 
-    CheckCircle2,
-    AlertCircle,
-    Orbit
-} from "lucide-react";
-import { AdminPlanetItem, PlanetsSettingsConfig, DEFAULT_PLANETS_SETTINGS } from "@/lib/planets-presets";
-import { Anime } from "@/types";
-import { EditPlanetModal } from "./components/EditPlanetModal";
-import { CreatePlanetModal } from "./components/CreatePlanetModal";
-import { ViewPlanetAnimesModal } from "./components/ViewPlanetAnimesModal";
-import { PlanetCardItem } from "./components/PlanetCardItem";
+import React from "react";
+import { Loader2, Compass, CheckCircle2, AlertCircle } from "lucide-react";
+import { useAdminPlanets } from "./hooks/useAdminPlanets";
+import { PlanetsHeader } from "./components/PlanetsHeader";
+import { PlanetsStatsCards } from "./components/PlanetsStatsCards";
 import { PlanetsDisplayModeCard } from "./components/PlanetsDisplayModeCard";
-import { Planet3DPreviewModal } from "./components/Planet3DPreviewModal";
+import { PlanetsFilterBar } from "./components/PlanetsFilterBar";
+import { PlanetCardItem } from "./components/PlanetCardItem";
+import { PlanetsModalsContainer } from "./components/PlanetsModalsContainer";
 
 export default function AdminPlanetsPage() {
-    const [planets, setPlanets] = useState<Array<AdminPlanetItem & { worksCount?: number }>>([]);
-    const [settings, setSettings] = useState<PlanetsSettingsConfig>(DEFAULT_PLANETS_SETTINGS);
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all");
-    const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
-
-    // Modals state
-    const [editingPlanet, setEditingPlanet] = useState<AdminPlanetItem | null>(null);
-    const [preview3DPlanet, setPreview3DPlanet] = useState<AdminPlanetItem | null>(null);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [viewingAnimesPlanet, setViewingAnimesPlanet] = useState<AdminPlanetItem | null>(null);
-    const [animesList, setAnimesList] = useState<Anime[]>([]);
-    const [loadingAnimes, setLoadingAnimes] = useState(false);
-
-    useEffect(() => {
-        fetchPlanets();
-    }, []);
-
-    // Auto-dismiss toast
-    useEffect(() => {
-        if (toast) {
-            const timer = setTimeout(() => setToast(null), 4000);
-            return () => clearTimeout(timer);
-        }
-    }, [toast]);
-
-    const fetchPlanets = async () => {
-        try {
-            setLoading(true);
-            const res = await fetch("/api/admin/planets");
-            if (res.ok) {
-                const json = await res.json();
-                const payload = json.data || json;
-                if (payload?.planets) {
-                    setPlanets(payload.planets);
-                    if (payload.settings) setSettings(payload.settings);
-                } else if (Array.isArray(payload)) {
-                    setPlanets(payload);
-                }
-            } else {
-                setToast({ type: "error", message: "تعذر جلب بيانات الكواكب من الخادم." });
-            }
-        } catch (error) {
-            console.error("Failed to fetch planets:", error);
-            setToast({ type: "error", message: "حدث خطأ أثناء الاتصال بالنظام." });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSaveSettings = async (newSettings: PlanetsSettingsConfig) => {
-        try {
-            setSaving(true);
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "save-settings", settings: newSettings })
-            });
-            if (res.ok) {
-                setSettings(newSettings);
-                setToast({ type: "success", message: "تم حفظ وتطبيق إعدادات نمط عرض الكواكب بنجاح!" });
-            }
-        } catch (error) {
-            console.error("Save settings error:", error);
-            setToast({ type: "error", message: "تعذر حفظ إعدادات نمط العرض." });
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const handleToggleEnabled = async (planetId: string) => {
-        try {
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "toggle", planetId })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                const target = json.data.find((p: any) => p.id === planetId);
-                setToast({ 
-                    type: "success", 
-                    message: target?.isEnabled ? `تم تفعيل ${target.name} بنجاح!` : `تم تعطيل ${target.name} وإخفاؤه من المنصة.` 
-                });
-            }
-        } catch (error) {
-            console.error("Toggle error:", error);
-            setToast({ type: "error", message: "تعذر تحديث حالة الكوكب." });
-        }
-    };
-
-    const handleMoveOrder = async (index: number, direction: "up" | "down") => {
-        const targetIndex = direction === "up" ? index - 1 : index + 1;
-        if (targetIndex < 0 || targetIndex >= planets.length) return;
-
-        const updated = [...planets];
-        const temp = updated[index];
-        updated[index] = updated[targetIndex];
-        updated[targetIndex] = temp;
-
-        const reordered = updated.map((p, idx) => ({ ...p, order: idx + 1 }));
-        setPlanets(reordered);
-
-        try {
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "save-all", planets: reordered })
-            });
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setToast({ type: "success", message: "تم تحديث ترتيب الكواكب بنجاح!" });
-            }
-        } catch (error) {
-            console.error("Order save error:", error);
-        }
-    };
-
-    const handleResetDefaults = async () => {
-        if (!confirm("هل أنت متأكد من رغبتك في استعادة كواكب سبيستون الرسمية الافتراضية؟")) return;
-
-        try {
-            setSaving(true);
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "reset" })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setToast({ type: "success", message: "تمت استعادة كواكب سبيستون العشرة الافتراضية بنجاح!" });
-            }
-        } catch (error) {
-            console.error("Reset error:", error);
-            setToast({ type: "error", message: "فشلت استعادة الإعدادات الافتراضية." });
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const handleSaveEdit = async (updatedPlanet: AdminPlanetItem) => {
-        try {
-            setSaving(true);
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "update", planet: updatedPlanet })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setEditingPlanet(null);
-                setToast({ type: "success", message: `تم حفظ تعديلات ${updatedPlanet.name} بنجاح!` });
-            }
-        } catch (error) {
-            console.error("Save edit error:", error);
-            setToast({ type: "error", message: "تعذر حفظ التعديلات." });
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const handleCreatePlanet = async (planetPayload: AdminPlanetItem) => {
-        try {
-            setSaving(true);
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "create", planet: planetPayload })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setIsCreateModalOpen(false);
-                setToast({ type: "success", message: `تمت إضافة ${planetPayload.name} بنجاح إلى المنصة!` });
-            }
-        } catch (error) {
-            console.error("Create error:", error);
-            setToast({ type: "error", message: "حدث خطأ أثناء إضافة الكوكب الجديد." });
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const handleDeletePlanet = async (planet: AdminPlanetItem) => {
-        if (!confirm(`هل أنت متأكد من حذف ${planet.name} نهائياً؟`)) return;
-
-        try {
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "delete", planetId: planet.id })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setToast({ type: "success", message: `تم حذف ${planet.name} بنجاح.` });
-            }
-        } catch (error) {
-            console.error("Delete error:", error);
-            setToast({ type: "error", message: "تعذر حذف الكوكب." });
-        }
-    };
-
-    const handleOpenAnimesModal = async (planet: AdminPlanetItem) => {
-        setViewingAnimesPlanet(planet);
-        setLoadingAnimes(true);
-        try {
-            const res = await fetch("/api/animes");
-            if (res.ok) {
-                const all: Anime[] = await res.json();
-                const pGenre = (planet.genreKey || "").toLowerCase();
-                const pArabic = (planet.arabicGenre || "").toLowerCase();
-                const pFlagship = (planet.flagshipWorks || []).map(f => f.toLowerCase());
-
-                const filtered = all.filter(a => {
-                    const title = (a.title || "").toLowerCase();
-                    const genres = (a.genres || []).map(g => g.toLowerCase());
-                    return genres.includes(pGenre) || genres.includes(pArabic) || pFlagship.some(fw => title.includes(fw));
-                });
-                setAnimesList(filtered);
-            }
-        } catch (error) {
-            console.error("Failed to load animes for planet:", error);
-        } finally {
-            setLoadingAnimes(false);
-        }
-    };
-
-    // Filtered planets
-    const filteredPlanets = useMemo(() => {
-        return planets.filter(p => {
-            const matchesSearch = 
-                p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.genreKey.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.arabicGenre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.slogan?.toLowerCase().includes(searchQuery.toLowerCase());
-
-            if (filterStatus === "active") return matchesSearch && p.isEnabled;
-            if (filterStatus === "inactive") return matchesSearch && !p.isEnabled;
-            return matchesSearch;
-        });
-    }, [planets, searchQuery, filterStatus]);
-
-    // Totals
-    const totalPlanets = planets.length;
-    const activePlanets = planets.filter(p => p.isEnabled).length;
-    const totalClassifiedWorks = planets.reduce((acc, p) => acc + (p.worksCount || 0), 0);
+    const {
+        planets,
+        settings,
+        loading,
+        saving,
+        searchQuery,
+        setSearchQuery,
+        filterStatus,
+        setFilterStatus,
+        toast,
+        filteredPlanets,
+        totalPlanets,
+        activePlanets,
+        totalClassifiedWorks,
+        // Modals state
+        editingPlanet,
+        setEditingPlanet,
+        preview3DPlanet,
+        setPreview3DPlanet,
+        isCreateModalOpen,
+        setIsCreateModalOpen,
+        viewingAnimesPlanet,
+        setViewingAnimesPlanet,
+        animesList,
+        loadingAnimes,
+        // Actions
+        handleSaveSettings,
+        handleToggleEnabled,
+        handleMoveOrder,
+        handleResetDefaults,
+        handleSaveEdit,
+        handleCreatePlanet,
+        handleDeletePlanet,
+        handleOpenAnimesModal,
+    } = useAdminPlanets();
 
     return (
         <div className="max-w-7xl mx-auto space-y-8 pb-24" dir="rtl">
@@ -299,107 +62,18 @@ export default function AdminPlanetsPage() {
             )}
 
             {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/[0.08]">
-                <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 via-red-600 to-purple-600 p-0.5 shadow-xl shadow-red-950/40 shrink-0">
-                        <div className="w-full h-full bg-[#131317] rounded-[14px] flex items-center justify-center text-amber-400">
-                            <Compass size={28} />
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-3 flex-wrap">
-                            <h1 className="font-cairo font-black text-2xl text-white">إدارة كواكب الأنمي وسبيستون</h1>
-                            <span className="px-3 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-xs font-bold">
-                                Cosmic Universe CMS
-                            </span>
-                        </div>
-                        <p className="font-tajawal text-xs sm:text-sm text-[#94a3b8] mt-1">
-                            تحكم في عوالم وتصنيفات الكواكب (رياضة، أكشن، مغامرات، زمردة، كوميديا...)، وإدارتها وتخصيص ظهورها على الصفحة الرئيسية وصفحة الكواكب.
-                        </p>
-                    </div>
-                </div>
-
-                {/* Header Actions */}
-                <div className="flex items-center gap-3 flex-wrap">
-                    <button
-                        type="button"
-                        onClick={handleResetDefaults}
-                        disabled={saving}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-xs font-cairo font-bold text-[#e4e1e7] border border-white/[0.08] transition-all cursor-pointer"
-                        title="استعادة كواكب سبيستون الأصلية"
-                    >
-                        <RotateCcw size={15} className="text-amber-400" />
-                        <span>استعادة الافتراضي</span>
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={() => setIsCreateModalOpen(true)}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:brightness-110 text-xs font-cairo font-bold text-white shadow-lg shadow-red-950/40 transition-all cursor-pointer"
-                    >
-                        <Plus size={16} />
-                        <span>إضافة كوكب جديد</span>
-                    </button>
-
-                    <Link
-                        href="/planets"
-                        target="_blank"
-                        className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#1b1b22] hover:bg-[#252530] text-xs font-cairo font-bold text-[#94a3b8] hover:text-white border border-white/5 transition-all"
-                    >
-                        <ExternalLink size={14} />
-                        <span>عرض صفحة الكواكب</span>
-                    </Link>
-                </div>
-            </div>
+            <PlanetsHeader
+                saving={saving}
+                onResetDefaults={handleResetDefaults}
+                onOpenCreateModal={() => setIsCreateModalOpen(true)}
+            />
 
             {/* Quick KPI Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-2xl bg-[#131317] border border-white/[0.08] flex items-center justify-between">
-                    <div>
-                        <span className="font-tajawal text-xs text-[#94a3b8] font-bold">إجمالي الكواكب المتاحة</span>
-                        <h3 className="font-cairo font-black text-2xl text-white mt-1">{totalPlanets} كواكب</h3>
-                        <span className="text-[11px] text-amber-400/80 font-mono mt-0.5 block">10 كواكب نوستالجيا سبيستون</span>
-                    </div>
-                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                        <Compass size={24} />
-                    </div>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-[#131317] border border-white/[0.08] flex items-center justify-between">
-                    <div>
-                        <span className="font-tajawal text-xs text-[#94a3b8] font-bold">الكواكب المفعلة حالياً</span>
-                        <h3 className="font-cairo font-black text-2xl text-emerald-400 mt-1">{activePlanets} كوكب</h3>
-                        <span className="text-[11px] text-emerald-500/80 font-mono mt-0.5 block">ظاهرة للمشاهدين على الموقع</span>
-                    </div>
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                        <CheckCircle2 size={24} />
-                    </div>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-[#131317] border border-white/[0.08] flex items-center justify-between">
-                    <div>
-                        <span className="font-tajawal text-xs text-[#94a3b8] font-bold">إجمالي الأعمال المصنفة</span>
-                        <h3 className="font-cairo font-black text-2xl text-white mt-1">{totalClassifiedWorks} عمل</h3>
-                        <span className="text-[11px] text-[#ffb4ab] font-mono mt-0.5 block">مرتبطة بتصنيفات الكواكب</span>
-                    </div>
-                    <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-[#ffb4ab]">
-                        <Tv size={24} />
-                    </div>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-[#131317] border border-white/[0.08] flex items-center justify-between">
-                    <div>
-                        <span className="font-tajawal text-xs text-[#94a3b8] font-bold">الرابط المباشر في الرئيسية</span>
-                        <h3 className="font-cairo font-black text-base text-white mt-1">قسم كواكب الأنمي</h3>
-                        <Link href="/admin/settings?tab=home" className="text-[11px] text-red-400 hover:underline font-cairo font-bold mt-0.5 block">
-                            تخصيص ترتيب القسم ↗
-                        </Link>
-                    </div>
-                    <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-                        <Layers size={24} />
-                    </div>
-                </div>
-            </div>
+            <PlanetsStatsCards
+                totalPlanets={totalPlanets}
+                activePlanets={activePlanets}
+                totalClassifiedWorks={totalClassifiedWorks}
+            />
 
             {/* Planets Display Mode Configuration Card (2D vs 3D) */}
             <PlanetsDisplayModeCard
@@ -409,49 +83,14 @@ export default function AdminPlanetsPage() {
             />
 
             {/* Filter and Search Bar */}
-            <div className="p-4 rounded-2xl bg-[#131317] border border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="relative flex-1 max-w-md">
-                    <Search size={18} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#94a3b8]" />
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="ابحث عن كوكب بالاسم، التصنيف، الشعار..."
-                        className="w-full bg-[#1b1b22] border border-white/5 rounded-xl pr-10 pl-4 py-2.5 text-xs text-white placeholder-[#94a3b8]/60 focus:outline-none focus:border-red-500 font-tajawal"
-                    />
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <span className="text-xs text-[#94a3b8] font-cairo font-bold">الحالة:</span>
-                    <button
-                        type="button"
-                        onClick={() => setFilterStatus("all")}
-                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
-                            filterStatus === "all" ? "bg-red-600 text-white" : "bg-white/[0.04] text-[#94a3b8] hover:text-white"
-                        }`}
-                    >
-                        الكل ({planets.length})
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setFilterStatus("active")}
-                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
-                            filterStatus === "active" ? "bg-emerald-600 text-white" : "bg-white/[0.04] text-[#94a3b8] hover:text-white"
-                        }`}
-                    >
-                        النشطة ({activePlanets})
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setFilterStatus("inactive")}
-                        className={`px-3 py-1.5 rounded-xl font-cairo font-bold text-xs transition-all cursor-pointer ${
-                            filterStatus === "inactive" ? "bg-red-950 text-red-300" : "bg-white/[0.04] text-[#94a3b8] hover:text-white"
-                        }`}
-                    >
-                        المعطلة ({totalPlanets - activePlanets})
-                    </button>
-                </div>
-            </div>
+            <PlanetsFilterBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                filterStatus={filterStatus}
+                onFilterStatusChange={setFilterStatus}
+                totalCount={totalPlanets}
+                activeCount={activePlanets}
+            />
 
             {/* Planets Grid */}
             {loading ? (
@@ -484,37 +123,22 @@ export default function AdminPlanetsPage() {
                 </div>
             )}
 
-            {/* Modal: Edit Planet */}
-            <EditPlanetModal
-                planet={editingPlanet}
-                isOpen={!!editingPlanet}
-                onClose={() => setEditingPlanet(null)}
-                onSave={handleSaveEdit}
-                saving={saving}
-                onPreview3D={setPreview3DPlanet}
-            />
-
-            {/* Modal: Create Planet */}
-            <CreatePlanetModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-                onCreate={handleCreatePlanet}
-                saving={saving}
-            />
-
-            {/* Modal: View Associated Animes */}
-            <ViewPlanetAnimesModal
-                planet={viewingAnimesPlanet}
-                onClose={() => setViewingAnimesPlanet(null)}
+            {/* Modals Container */}
+            <PlanetsModalsContainer
+                editingPlanet={editingPlanet}
+                onCloseEdit={() => setEditingPlanet(null)}
+                onSaveEdit={handleSaveEdit}
+                isCreateModalOpen={isCreateModalOpen}
+                onCloseCreate={() => setIsCreateModalOpen(false)}
+                onCreatePlanet={handleCreatePlanet}
+                viewingAnimesPlanet={viewingAnimesPlanet}
+                onCloseViewAnimes={() => setViewingAnimesPlanet(null)}
                 animesList={animesList}
-                loading={loadingAnimes}
-            />
-
-            {/* Modal: Live 3D Planet Preview */}
-            <Planet3DPreviewModal
-                planet={preview3DPlanet}
-                isOpen={!!preview3DPlanet}
-                onClose={() => setPreview3DPlanet(null)}
+                loadingAnimes={loadingAnimes}
+                preview3DPlanet={preview3DPlanet}
+                onClosePreview3D={() => setPreview3DPlanet(null)}
+                onPreview3D={setPreview3DPlanet}
+                saving={saving}
             />
         </div>
     );

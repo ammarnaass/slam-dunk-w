@@ -36,7 +36,8 @@ export const AnimeCard: React.FC<AnimeCardProps> = ({
   const isVip = anime.type === 'vip' || anime.ageRating === 'VIP' || anime.id === 'slam-dunk';
   const isOngoing = anime.status === 'ongoing' || anime.status === 'مستمر';
   const isCompleted = anime.status === 'completed' || anime.status === 'مكتمل';
-  const ratingValue = anime.rating || 9.4;
+  const numRating = typeof anime.rating === 'number' ? anime.rating : parseFloat(anime.rating as any);
+  const ratingDisplay = !isNaN(numRating) && numRating > 0 ? numRating.toFixed(1) : '9.4';
   const epCount = anime.totalEpisodes || (anime.episodes ? anime.episodes.length : 101);
 
   return (
@@ -85,7 +86,7 @@ export const AnimeCard: React.FC<AnimeCardProps> = ({
         <View style={styles.scrimBottom}>
           <View style={styles.scorePill}>
             <Icon name="star" size={13} color={THEME.colors.secondary} filled />
-            <Text style={styles.scoreText}>{ratingValue.toFixed(1)}</Text>
+            <Text style={styles.scoreText}>{ratingDisplay}</Text>
           </View>
 
           <View style={styles.epPill}>

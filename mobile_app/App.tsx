@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -13,117 +13,39 @@ import {
   LogBox,
 } from 'react-native';
 
-LogBox.ignoreAllLogs();
+if (__DEV__) {
+  // Only suppress specific benign warnings in development mode
+  LogBox.ignoreLogs([]);
+}
+
 import { THEME } from './src/constants/theme';
 import { Header } from './src/components/Header';
-import { BottomTabs, TabType } from './src/components/BottomTabs';
-import { HomeScreen } from './src/screens/HomeScreen';
-import { AnimesScreen } from './src/screens/AnimesScreen';
-import { EpisodesScreen } from './src/screens/EpisodesScreen';
-import { CharactersScreen } from './src/screens/CharactersScreen';
-import { ProfileScreen } from './src/screens/ProfileScreen';
-import { DownloadsScreen } from './src/screens/DownloadsScreen';
 import { WatchModal } from './src/screens/WatchModal';
-import { HomeApiResponse, Episode, Anime, Character } from './src/types';
-import {
-  fetchHomeData,
-  fetchEpisodes,
-  fetchCharacters,
-  fetchAppConfig,
-  fetchAnimes,
-} from './src/services/api';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { useAppStore } from './src/store/useAppStore';
+import { AppNavigator } from './src/navigation/AppNavigator';
 import { Icon } from './src/components/Icon';
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
-export default function App(): React.JSX.Element {
-  const [currentTab, setCurrentTab] = useState<TabType>('home');
-  const [homeData, setHomeData] = useState<HomeApiResponse | null>(null);
-  const [animes, setAnimes] = useState<Anime[]>([]);
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [appConfig, setAppConfig] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
-  const [selectedAnime, setSelectedAnime] = useState<Anime | null>(null);
-  const [watchModalVisible, setWatchModalVisible] = useState(false);
-
-  // Dev bypass for maintenance mode
-  const [devBypassCode, setDevBypassCode] = useState('');
-  const [isBypassed, setIsBypassed] = useState(false);
-
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [config, hData, eps, chars, anims] = await Promise.all([
-        fetchAppConfig().catch(() => null),
-        fetchHomeData().catch(() => null),
-        fetchEpisodes('slam-dunk').catch(() => []),
-        fetchCharacters().catch(() => []),
-        fetchAnimes().catch(() => []),
-      ]);
-
-      if (config) setAppConfig(config);
-      if (hData) setHomeData(hData);
-      if (chars && chars.length > 0) setCharacters(chars);
-
-      if (anims && anims.length > 0) {
-        setAnimes(anims);
-      } else if (hData?.slider && hData.slider.length > 0) {
-        setAnimes(hData.slider);
-      }
-
-      if (eps && eps.length > 0) {
-        setEpisodes(eps);
-      } else if (hData && hData.latest) {
-        setEpisodes(hData.latest);
-      }
-    } catch (error: any) {
-      console.error('App init error:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+function MainApp(): React.JSX.Element {
+  const {
+    appConfig,
+    selectedEpisode,
+    selectedAnime,
+    watchModalVisible,
+    devBypassCode,
+    isBypassed,
+    setDevBypassCode,
+    setIsBypassed,
+    setWatchModalVisible,
+    loadData,
+    handleNextEpisode,
+    handleHeaderSearch,
+  } = useAppStore();
 
   useEffect(() => {
     loadData();
   }, [loadData]);
-
-  const handleEpisodePress = (ep: Episode) => {
-    setSelectedEpisode(ep);
-    setWatchModalVisible(true);
-  };
-
-  const handleNextEpisode = () => {
-    if (!selectedEpisode || episodes.length === 0) return;
-    const currentIdx = episodes.findIndex((e) => e.id === selectedEpisode.id);
-    if (currentIdx !== -1 && currentIdx < episodes.length - 1) {
-      setSelectedEpisode(episodes[currentIdx + 1]);
-    } else {
-      Alert.alert('نهاية السلسلة', 'لقد وصلت لآخر حلقة متوفرة في هذا القسم!');
-    }
-  };
-
-  const handleAnimePress = async (anime: Anime) => {
-    setSelectedAnime(anime);
-    setCurrentTab('animes');
-    try {
-      const eps = await fetchEpisodes(anime.id);
-      if (eps && eps.length > 0) {
-        setEpisodes(eps);
-      }
-    } catch (_) {}
-  };
-
-  const handleHeaderSearch = () => {
-    setSelectedAnime(null);
-    setCurrentTab('animes');
-  };
-
-  const handleTabChange = (tab: TabType) => {
-    if (tab === 'animes') {
-      setSelectedAnime(null);
-    }
-    setCurrentTab(tab);
-  };
 
   const isMaintenanceActive = appConfig?.maintenance?.is_active && !isBypassed;
   const isForceUpdateActive = appConfig?.version_control?.force_update;
@@ -134,81 +56,18 @@ export default function App(): React.JSX.Element {
 
       {/* Main App Header */}
       <Header
-        title={
-          currentTab === 'home'
-            ? 'ANIME DAZE'
-            : currentTab === 'animes'
-            ? selectedAnime ? selectedAnime.title : 'دليل الأنمي'
-            : currentTab === 'episodes'
-            ? 'استكشاف الأنمي'
-            : currentTab === 'downloads'
-            ? 'إدارة التنزيلات'
-            : currentTab === 'characters'
-            ? 'شخصيات الأنمي'
-            : 'حسابي والإعدادات'
-        }
+        title={selectedAnime ? selectedAnime.title : 'ANIME DAZE'}
         onSearchPress={handleHeaderSearch}
-        showSearch={currentTab !== 'animes' && currentTab !== 'episodes'}
-        onVipPress={() => setCurrentTab('profile')}
+        showSearch={true}
+        onVipPress={() => {}}
         onNotificationPress={() => {
           Alert.alert('الإشعارات', 'لا توجد إشعارات جديدة حالياً، أنت مطلع على أحدث الحلقات!');
         }}
       />
 
-      {/* Active Screen View */}
+      {/* React Navigation Root Navigator */}
       <View style={styles.screenContainer}>
-        {currentTab === 'home' && (
-          <HomeScreen
-            data={homeData}
-            loading={loading}
-            onRefresh={loadData}
-            onEpisodePress={handleEpisodePress}
-            onAnimePress={handleAnimePress}
-            onViewAllEpisodes={() => setCurrentTab('episodes')}
-            onViewAllAnimes={() => {
-              setSelectedAnime(null);
-              setCurrentTab('animes');
-            }}
-            characters={characters.length > 0 ? characters : undefined}
-          />
-        )}
-
-        {currentTab === 'animes' && (
-          <AnimesScreen
-            animes={animes}
-            episodes={episodes}
-            loading={loading}
-            onRefresh={loadData}
-            onSelectAnime={handleAnimePress}
-            selectedAnime={selectedAnime}
-            onBackToCatalog={() => setSelectedAnime(null)}
-            onSelectEpisode={handleEpisodePress}
-          />
-        )}
-
-        {currentTab === 'episodes' && (
-          <EpisodesScreen
-            episodes={episodes}
-            loading={loading}
-            onSelectEpisode={handleEpisodePress}
-            onBack={() => setCurrentTab('home')}
-          />
-        )}
-
-        {currentTab === 'downloads' && (
-          <DownloadsScreen
-            onPlayEpisode={handleEpisodePress}
-            onBack={() => setCurrentTab('profile')}
-          />
-        )}
-
-        {currentTab === 'characters' && (
-          <CharactersScreen onBack={() => setCurrentTab('home')} />
-        )}
-
-        {currentTab === 'profile' && (
-          <ProfileScreen onServerUrlChange={loadData} />
-        )}
+        <AppNavigator />
       </View>
 
       {/* Episode Player & Servers Modal */}
@@ -218,9 +77,6 @@ export default function App(): React.JSX.Element {
         onClose={() => setWatchModalVisible(false)}
         onNextEpisode={handleNextEpisode}
       />
-
-      {/* Floating Bottom Navigation */}
-      <BottomTabs currentTab={currentTab} onSelectTab={handleTabChange} />
 
       {/* MAINTENANCE OVERLAY MODAL */}
       <Modal visible={!!isMaintenanceActive} animationType="fade" transparent={false}>
@@ -260,12 +116,15 @@ export default function App(): React.JSX.Element {
                 <TouchableOpacity
                   style={styles.bypassBtn}
                   onPress={() => {
-                    const expectedKey =
-                      appConfig?.maintenance?.dev_bypass_key || 'SLAM_DEV_2026';
-                    if (devBypassCode.trim() === expectedKey) {
+                    const expectedKey = appConfig?.maintenance?.dev_bypass_key;
+                    if (__DEV__ && (!expectedKey || devBypassCode.trim() === 'DEV')) {
+                      setIsBypassed(true);
+                      return;
+                    }
+                    if (expectedKey && devBypassCode.trim() === expectedKey) {
                       setIsBypassed(true);
                     } else {
-                      Alert.alert('تنبيه', 'كود المطور غير صحيح');
+                      Alert.alert('تنبيه', 'كود المطور غير صحيح أو الصيانة إلزامية');
                     }
                   }}
                   activeOpacity={0.8}
@@ -312,6 +171,16 @@ export default function App(): React.JSX.Element {
         </View>
       </Modal>
     </SafeAreaView>
+  );
+}
+
+export default function App(): React.JSX.Element {
+  return (
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <ErrorBoundary>
+        <MainApp />
+      </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }
 

@@ -15,6 +15,7 @@ import { HomeShohokuRoster } from '../components/home/HomeShohokuRoster';
 import { HomeConanSpotlight } from '../components/home/HomeConanSpotlight';
 import { HomeGoldenNostalgia } from '../components/home/HomeGoldenNostalgia';
 import { HomeFanQuote } from '../components/home/HomeFanQuote';
+import { HomeScreenSkeleton } from '../components/common/Skeleton';
 
 interface HomeScreenProps {
   data: HomeApiResponse | null;
@@ -40,6 +41,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [activeSlide, setActiveSlide] = useState(0);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [quoteIdx, setQuoteIdx] = useState(0);
+
+  if (loading && !data) {
+    return <HomeScreenSkeleton />;
+  }
 
   const heroSliderList =
     data?.slider && data.slider.length > 0
@@ -68,7 +73,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         id: 'ep-1',
         animeId: currentHero.id,
         title: 'عبقري كرة السلة يظهر!',
-        episode_number: 1,
+        episodeNumber: 1,
         duration: '24:10',
       });
     }
@@ -82,7 +87,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         id: 'ep-47',
         animeId: 'slam-dunk',
         title: 'التحدي الأخير ضد الساحة',
-        episode_number: 47,
+        episodeNumber: 47,
         duration: '23:45',
       });
     }

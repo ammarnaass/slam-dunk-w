@@ -25,10 +25,18 @@ import { CreatePlanModal } from '../components/profile/CreatePlanModal';
 
 interface ProfileScreenProps {
   onServerUrlChange?: () => void;
+  onOpenLogin?: () => void;
+  onOpenRegister?: () => void;
+  onOpenVip?: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onServerUrlChange,
+  onOpenLogin,
+  onOpenRegister,
+  onOpenVip,
+  onOpenSettings,
 }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -146,6 +154,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         plans={plans}
         selectedPlan={selectedPlan}
         onSelectPlan={setSelectedPlan}
+        onManagePlan={onOpenVip}
         onCreatePlanPress={() => setShowCreatePlanModal(true)}
       />
 
@@ -180,7 +189,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* 6. Account Actions & Logout */}
       <ProfileAccountActions
         isLoggedIn={isLoggedIn}
-        onLogin={() => setShowLoginModal(true)}
+        onLogin={onOpenLogin || (() => setShowLoginModal(true))}
         onLogout={handleLogout}
         onShareProfile={handleShareProfile}
       />

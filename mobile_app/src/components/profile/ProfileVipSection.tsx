@@ -28,26 +28,7 @@ export const ProfileVipSection: React.FC<ProfileVipSectionProps> = ({
     }
   };
 
-  const displayPlans = plans.length > 0 ? plans : [
-    {
-      id: 'yearly',
-      name: 'الاشتراك السنوي',
-      price: 29.99,
-      duration: '365',
-      description: 'وفر 37% مقارنة بالشهري',
-      features: [],
-      isPopular: true,
-    },
-    {
-      id: 'monthly',
-      name: 'الاشتراك الشهري',
-      price: 3.99,
-      duration: '30',
-      description: 'إلغاء التجديد في أي وقت',
-      features: [],
-      isPopular: false,
-    },
-  ];
+  const displayPlans = plans;
 
   return (
     <View style={styles.section}>

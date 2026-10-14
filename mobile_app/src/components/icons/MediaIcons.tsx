@@ -91,7 +91,8 @@ export function renderMediaIcon(name: string, ctx: IconRenderContext): React.Rea
       );
     }
 
-    case 'download': {
+    case 'download':
+    case 'cloud_download': {
       return (
         <View style={containerStyle}>
           <View style={{ width: strokeWidth, height: size * 0.45, backgroundColor: color }} />

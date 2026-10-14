@@ -114,7 +114,30 @@ export type IconName =
   | 'sports_basketball'
   | 'search_insights'
   | 'swords'
-  | 'translate';
+  | 'translate'
+  | 'visibility'
+  | 'visibility_off'
+  | 'mail'
+  | 'alternate_email'
+  | 'badge'
+  | 'lock_reset'
+  | 'rocket_launch'
+  | 'login'
+  | 'logout'
+  | 'devices'
+  | 'fast_forward'
+  | 'hd'
+  | 'sports_mma'
+  | 'psychology'
+  | 'history_edu'
+  | 'verified_user'
+  | 'signal_cellular_alt_2_bar'
+  | 'cloud_download'
+  | 'notifications_active'
+  | 'record_voice_over'
+  | 'category'
+  | 'auto_awesome'
+  | 'hotel_class';
 
 export interface IconProps {
   name: IconName;

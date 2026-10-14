@@ -410,7 +410,8 @@ export function renderFeatureIcon(name: string, ctx: IconRenderContext): React.R
       );
     }
 
-    case 'notifications': {
+    case 'notifications':
+    case 'notifications_active': {
       return (
         <View style={containerStyle}>
           <View
@@ -697,6 +698,65 @@ export function renderFeatureIcon(name: string, ctx: IconRenderContext): React.R
       return (
         <View style={containerStyle}>
           <Text style={{ color, fontSize: size * 0.65, fontWeight: '800' }}>文</Text>
+        </View>
+      );
+    }
+
+    case 'signal_cellular_alt_2_bar': {
+      return (
+        <View style={[containerStyle, { flexDirection: 'row', alignItems: 'flex-end', gap: 2, paddingBottom: 2 }]}>
+          <View style={{ width: strokeWidth * 1.5, height: size * 0.35, backgroundColor: color, borderRadius: 1 }} />
+          <View style={{ width: strokeWidth * 1.5, height: size * 0.55, backgroundColor: color, borderRadius: 1 }} />
+          <View style={{ width: strokeWidth * 1.5, height: size * 0.75, backgroundColor: color + '44', borderRadius: 1 }} />
+        </View>
+      );
+    }
+
+    case 'record_voice_over': {
+      return (
+        <View style={[containerStyle, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
+          <View
+            style={{
+              width: size * 0.42,
+              height: size * 0.42,
+              borderRadius: size * 0.21,
+              borderWidth: strokeWidth,
+              borderColor: color,
+              marginRight: 2,
+            }}
+          />
+          <View style={{ flexDirection: 'column', gap: 2 }}>
+            <View style={{ width: strokeWidth * 1.5, height: 4, backgroundColor: color, borderRadius: 1 }} />
+            <View style={{ width: strokeWidth * 2.5, height: 6, backgroundColor: color, borderRadius: 1 }} />
+            <View style={{ width: strokeWidth * 1.5, height: 4, backgroundColor: color, borderRadius: 1 }} />
+          </View>
+        </View>
+      );
+    }
+
+    case 'category': {
+      return (
+        <View style={[containerStyle, { flexDirection: 'row', flexWrap: 'wrap', width: size * 0.7, height: size * 0.7, justifyContent: 'space-between', alignContent: 'space-between' }]}>
+          <View style={{ width: size * 0.28, height: size * 0.28, borderRadius: size * 0.14, backgroundColor: color }} />
+          <View style={{ width: size * 0.28, height: size * 0.28, backgroundColor: color, transform: [{ rotate: '45deg' }] }} />
+          <View style={{ width: size * 0.28, height: size * 0.28, borderRadius: 2, backgroundColor: color }} />
+          <View style={{ width: size * 0.28, height: size * 0.28, borderWidth: strokeWidth, borderColor: color }} />
+        </View>
+      );
+    }
+
+    case 'auto_awesome': {
+      return (
+        <View style={containerStyle}>
+          <Text style={{ color, fontSize: size * 0.75, fontWeight: '900', lineHeight: size }}>✦</Text>
+        </View>
+      );
+    }
+
+    case 'hotel_class': {
+      return (
+        <View style={containerStyle}>
+          <Text style={{ color, fontSize: size * 0.75, fontWeight: '800' }}>★</Text>
         </View>
       );
     }

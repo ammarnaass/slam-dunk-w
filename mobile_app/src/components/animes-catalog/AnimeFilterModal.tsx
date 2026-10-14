@@ -1,22 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   ScrollView,
   Modal,
 } from 'react-native';
 import { THEME } from '../../constants/theme';
 import { Icon } from '../Icon';
+import { filterStyles as styles } from './filter.styles';
+import { AudioFilterSection } from './AudioFilterSection';
+import { GenreFilterSection } from './GenreFilterSection';
+import { StatusFilterSection } from './StatusFilterSection';
+import { QualityFilterSection } from './QualityFilterSection';
+import { EraFilterSection } from './EraFilterSection';
+import { SortFilterSection } from './SortFilterSection';
 
-interface AnimeFilterModalProps {
+export {
+  GENRE_OPTIONS,
+  AUDIO_OPTIONS,
+  QUALITY_OPTIONS,
+  ERA_OPTIONS,
+  SORT_OPTIONS,
+  STATUS_OPTIONS,
+} from '../../constants/filter-options';
+
+export type {
+  GenreOption,
+  AudioOption,
+  QualityOption,
+  EraOption,
+  SortOption,
+  StatusOption,
+} from '../../constants/filter-options';
+
+export interface AnimeFilterModalProps {
   visible: boolean;
   onClose: () => void;
-  activeFilterAudio: 'all' | 'dub' | 'sub';
-  onChangeFilterAudio: (val: 'all' | 'dub' | 'sub') => void;
-  activeFilterStatus: 'all' | 'completed' | 'ongoing';
-  onChangeFilterStatus: (val: 'all' | 'completed' | 'ongoing') => void;
+  activeFilterAudio: string;
+  onChangeFilterAudio: (val: any) => void;
+  activeFilterStatus: string;
+  onChangeFilterStatus: (val: any) => void;
+  selectedGenres?: string[];
+  onToggleGenre?: (genre: string) => void;
+  selectedQuality?: string;
+  onChangeQuality?: (quality: string) => void;
+  selectedEra?: string;
+  onChangeEra?: (era: string) => void;
+  selectedSort?: string;
+  onChangeSort?: (sort: string) => void;
+  onReset?: () => void;
   totalFilteredCount: number;
 }
 
@@ -27,8 +60,66 @@ export const AnimeFilterModal: React.FC<AnimeFilterModalProps> = ({
   onChangeFilterAudio,
   activeFilterStatus,
   onChangeFilterStatus,
+  selectedGenres = ['sports', 'shonen'],
+  onToggleGenre,
+  selectedQuality = '1080p',
+  onChangeQuality,
+  selectedEra = 'golden',
+  onChangeEra,
+  selectedSort = 'top_rated',
+  onChangeSort,
+  onReset,
   totalFilteredCount,
 }) => {
+  const [localGenres, setLocalGenres] = useState<string[]>(selectedGenres);
+  const [localQuality, setLocalQuality] = useState<string>(selectedQuality);
+  const [localEra, setLocalEra] = useState<string>(selectedEra);
+  const [localSort, setLocalSort] = useState<string>(selectedSort);
+
+  const toggleGenre = (genreId: string) => {
+    if (onToggleGenre) {
+      onToggleGenre(genreId);
+    }
+    setLocalGenres((prev) =>
+      prev.includes(genreId) ? prev.filter((g) => g !== genreId) : [...prev, genreId]
+    );
+  };
+
+  const handleQualitySelect = (q: string) => {
+    if (onChangeQuality) onChangeQuality(q);
+    setLocalQuality(q);
+  };
+
+  const handleEraSelect = (era: string) => {
+    if (onChangeEra) onChangeEra(era);
+    setLocalEra(era);
+  };
+
+  const handleSortSelect = (sort: string) => {
+    if (onChangeSort) onChangeSort(sort);
+    setLocalSort(sort);
+  };
+
+  const handleReset = () => {
+    if (onReset) {
+      onReset();
+    } else {
+      onChangeFilterAudio('all');
+      onChangeFilterStatus('all');
+      setLocalGenres([]);
+      setLocalQuality('1080p');
+      setLocalEra('all');
+      setLocalSort('top_rated');
+    }
+  };
+
+  const activeCount =
+    (activeFilterAudio !== 'all' ? 1 : 0) +
+    (activeFilterStatus !== 'all' ? 1 : 0) +
+    localGenres.length +
+    (localQuality !== '1080p' ? 1 : 0) +
+    (localEra !== 'all' ? 1 : 0);
+
   return (
     <Modal
       visible={visible}
@@ -38,171 +129,97 @@ export const AnimeFilterModal: React.FC<AnimeFilterModalProps> = ({
     >
       <View style={styles.modalBackdrop}>
         <View style={styles.modalSheet}>
-          <View style={styles.modalHeader}>
-            <View style={styles.modalHeaderTitleRow}>
-              <Icon name="tune" size={20} color={THEME.colors.secondary} />
-              <Text style={styles.modalTitle}>خيارات التصفية المتقدمة</Text>
-            </View>
-            <TouchableOpacity
-              onPress={onClose}
-              style={styles.modalCloseBtn}
-            >
-              <Icon name="close" size={20} color={THEME.colors.onSurfaceVariant} />
-            </TouchableOpacity>
+          {/* Drag Handle */}
+          <View style={styles.dragHandleContainer}>
+            <View style={styles.dragHandle} />
           </View>
 
-          <ScrollView contentContainerStyle={styles.modalContent}>
-            {/* Audio Filter */}
-            <Text style={styles.filterGroupTitle}>المسار الصوتي</Text>
-            <View style={styles.filterPillsRow}>
-              {[
-                { key: 'all', label: 'الكل' },
-                { key: 'dub', label: 'دبلجة عربية (سبيستون)' },
-                { key: 'sub', label: 'ياباني مترجم' },
-              ].map((item) => (
-                <TouchableOpacity
-                  key={item.key}
-                  style={[
-                    styles.modalPill,
-                    activeFilterAudio === item.key && styles.modalPillActive,
-                  ]}
-                  onPress={() => onChangeFilterAudio(item.key as any)}
-                >
-                  <Text
-                    style={[
-                      styles.modalPillText,
-                      activeFilterAudio === item.key && styles.modalPillTextActive,
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+          {/* Modal Header */}
+          <View style={styles.modalHeader}>
+            <View style={styles.modalHeaderTitleRow}>
+              <View style={styles.headerIconContainer}>
+                <Icon name="tune" size={20} color={THEME.colors.primaryContainer} />
+              </View>
+              <View style={styles.headerTitles}>
+                <Text style={styles.modalTitle}>تصفية متقدمة</Text>
+                <Text style={styles.modalSubtitle}>تخصيص أرشيف دبلجة الأنمي والمواسم</Text>
+              </View>
             </View>
+            <View style={styles.headerActions}>
+              <TouchableOpacity onPress={handleReset} style={styles.resetBtn}>
+                <Text style={styles.resetBtnText}>إعادة تعيين</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onClose} style={styles.modalCloseBtn} accessibilityLabel="إغلاق النافذة">
+                <Icon name="close" size={18} color={THEME.colors.onSurfaceVariant} />
+              </TouchableOpacity>
+            </View>
+          </View>
 
-            {/* Status Filter */}
-            <Text style={styles.filterGroupTitle}>حالة العرض</Text>
-            <View style={styles.filterPillsRow}>
-              {[
-                { key: 'all', label: 'الكل' },
-                { key: 'completed', label: 'مكتمل' },
-                { key: 'ongoing', label: 'مستمر' },
-              ].map((item) => (
-                <TouchableOpacity
-                  key={item.key}
-                  style={[
-                    styles.modalPill,
-                    activeFilterStatus === item.key && styles.modalPillActive,
-                  ]}
-                  onPress={() => onChangeFilterStatus(item.key as any)}
-                >
-                  <Text
-                    style={[
-                      styles.modalPillText,
-                      activeFilterStatus === item.key && styles.modalPillTextActive,
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Scrollable Filter Content */}
+          <ScrollView
+            style={styles.scrollArea}
+            contentContainerStyle={styles.modalContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* 1. Audio / Dubbing Section */}
+            <AudioFilterSection
+              activeFilterAudio={activeFilterAudio}
+              onChangeFilterAudio={onChangeFilterAudio}
+            />
+
+            {/* 2. Genres & Themes Section */}
+            <GenreFilterSection
+              localGenres={localGenres}
+              onToggleGenre={toggleGenre}
+            />
+
+            {/* 3. Anime Work Status */}
+            <StatusFilterSection
+              activeFilterStatus={activeFilterStatus}
+              onChangeFilterStatus={onChangeFilterStatus}
+            />
+
+            {/* 4. Video Quality & Resolution */}
+            <QualityFilterSection
+              localQuality={localQuality}
+              onQualitySelect={handleQualitySelect}
+            />
+
+            {/* 5. Era Quick Chips & Timeline */}
+            <EraFilterSection
+              localEra={localEra}
+              onEraSelect={handleEraSelect}
+            />
+
+            {/* 6. Sort Order */}
+            <SortFilterSection
+              localSort={localSort}
+              onSortSelect={handleSortSelect}
+            />
           </ScrollView>
 
-          <TouchableOpacity
-            style={styles.applyFilterBtn}
-            onPress={onClose}
-          >
-            <Text style={styles.applyFilterText}>
-              تطبيق التصفية • {totalFilteredCount} عمل متاح
-            </Text>
-          </TouchableOpacity>
+          {/* Sticky Bottom Modal Action Bar */}
+          <View style={styles.bottomActionBar}>
+            <View style={styles.counterBadge}>
+              <Text style={styles.counterBadgeLabel}>نشط الآن</Text>
+              <Text style={styles.counterBadgeValue}>{activeCount}</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.applyFilterBtn}
+              onPress={onClose}
+              activeOpacity={0.85}
+            >
+              <Icon name="auto_awesome" size={20} color={THEME.colors.onPrimaryContainer} />
+              <Text style={styles.applyFilterText}>
+                تطبيق الفلاتر (عرض {totalFilteredCount} نتيجة)
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-    justifyContent: 'flex-end',
-  },
-  modalSheet: {
-    backgroundColor: THEME.colors.surfaceContainerLow,
-    borderTopLeftRadius: THEME.radius.xl,
-    borderTopRightRadius: THEME.radius.xl,
-    padding: 20,
-    maxHeight: '80%',
-    gap: 16,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  modalHeaderTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  modalTitle: {
-    ...THEME.typography.titleMd,
-    color: THEME.colors.onSurface,
-  },
-  modalCloseBtn: {
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalContent: {
-    gap: 14,
-    paddingVertical: 8,
-  },
-  filterGroupTitle: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurface,
-    fontWeight: '700',
-  },
-  filterPillsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  modalPill: {
-    backgroundColor: THEME.colors.surfaceContainerHigh,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: THEME.radius.DEFAULT,
-  },
-  modalPillActive: {
-    backgroundColor: THEME.colors.primaryContainer,
-  },
-  modalPillText: {
-    ...THEME.typography.labelMd,
-    color: THEME.colors.onSurfaceVariant,
-  },
-  modalPillTextActive: {
-    color: THEME.colors.onPrimaryContainer,
-    fontWeight: '800',
-  },
-  applyFilterBtn: {
-    height: 48,
-    borderRadius: THEME.radius.md,
-    backgroundColor: THEME.colors.primaryContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: THEME.colors.primaryContainer,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.45,
-    shadowRadius: 14,
-    elevation: 5,
-  },
-  applyFilterText: {
-    ...THEME.typography.titleMd,
-    color: THEME.colors.onPrimaryContainer,
-    fontWeight: '700',
-  },
-});

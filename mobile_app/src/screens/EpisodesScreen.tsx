@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Episode } from '../types';
 import { EpisodeCard } from '../components/EpisodeCard';
+import { EpisodeListSkeleton } from '../components/common/Skeleton';
 import { Icon } from '../components/Icon';
 import { THEME } from '../constants/theme';
 
@@ -174,10 +175,7 @@ export const EpisodesScreen: React.FC<EpisodesScreenProps> = ({
 
       {/* Episodes List */}
       {loading ? (
-        <View style={styles.centerBox}>
-          <ActivityIndicator size="large" color={THEME.colors.primaryContainer} />
-          <Text style={styles.loadingText}>جارٍ تحميل الحلقات بدقة فائقة...</Text>
-        </View>
+        <EpisodeListSkeleton />
       ) : (
         <FlatList
           data={filteredEpisodes}

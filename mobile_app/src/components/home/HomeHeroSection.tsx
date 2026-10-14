@@ -63,7 +63,13 @@ export const HomeHeroSection: React.FC<HomeHeroSectionProps> = ({
             <View style={styles.statRating}>
               <Icon name="star" size={13} color={THEME.colors.secondary} filled />
               <Text style={styles.statRatingText}>
-                {hero.rating ? hero.rating.toFixed(1) : '9.4'}
+                {hero.rating
+                  ? (typeof hero.rating === 'number'
+                      ? hero.rating.toFixed(1)
+                      : parseFloat(hero.rating) > 0
+                      ? parseFloat(hero.rating).toFixed(1)
+                      : String(hero.rating))
+                  : '9.4'}
               </Text>
             </View>
           </View>

@@ -1,0 +1,205 @@
+import { StyleSheet } from 'react-native';
+import { THEME } from '../../constants/theme';
+
+export const registerStyles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: THEME.colors.background,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  ambientCrimsonBlob: {
+    position: 'absolute',
+    top: -40,
+    right: -40,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(220, 38, 38, 0.12)',
+  },
+  ambientAmberBlob: {
+    position: 'absolute',
+    top: 140,
+    left: -40,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: 'rgba(238, 152, 0, 0.08)',
+  },
+  formContainer: {
+    paddingHorizontal: 20,
+    gap: 16,
+  },
+  fieldGroup: {
+    gap: 6,
+  },
+  fieldLabelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: THEME.colors.onSurface,
+    textAlign: 'right',
+  },
+  fieldHelper: {
+    fontSize: 11,
+    color: THEME.colors.textMuted,
+  },
+  requiredBadge: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: THEME.colors.primaryContainer,
+  },
+  inputWrapper: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  inputWithIcon: {
+    backgroundColor: THEME.colors.surfaceContainerLow,
+    borderRadius: 12,
+    height: 50,
+    paddingRight: 44,
+    paddingLeft: 14,
+    color: THEME.colors.onSurface,
+    fontSize: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  inputWithEye: {
+    paddingLeft: 44,
+  },
+  ltrInput: {
+    writingDirection: 'ltr',
+  },
+  inputIconRight: {
+    position: 'absolute',
+    right: 14,
+    zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  atSymbol: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: THEME.colors.textMuted,
+  },
+  eyeButton: {
+    position: 'absolute',
+    left: 12,
+    zIndex: 2,
+    padding: 6,
+  },
+  inputBottomHint: {
+    fontSize: 11,
+    color: THEME.colors.textMuted,
+    textAlign: 'right',
+    paddingRight: 4,
+  },
+  matchBadgeGreen: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: THEME.colors.emerald,
+  },
+  matchBadgeRed: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: THEME.colors.primaryContainer,
+  },
+  checkboxContainer: {
+    gap: 12,
+    marginTop: 6,
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  checkboxBox: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    borderWidth: 1.5,
+    borderColor: THEME.colors.outline,
+    backgroundColor: THEME.colors.surfaceContainerLow,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+  },
+  checkboxBoxActive: {
+    backgroundColor: THEME.colors.primaryContainer,
+    borderColor: THEME.colors.primaryContainer,
+  },
+  checkboxText: {
+    flex: 1,
+    fontSize: 12,
+    color: THEME.colors.textMuted,
+    lineHeight: 18,
+    textAlign: 'right',
+  },
+  linkRed: {
+    color: THEME.colors.primaryContainer,
+    fontWeight: '700',
+  },
+  submitButton: {
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: THEME.colors.primaryContainer,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 8,
+    shadowColor: THEME.colors.primaryContainer,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.55,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+  submitButtonText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FFF',
+  },
+  footerContainer: {
+    paddingHorizontal: 20,
+    marginTop: 24,
+    alignItems: 'center',
+    gap: 14,
+  },
+  loginRedirectBox: {
+    backgroundColor: THEME.colors.surfaceContainerLow,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.04)',
+  },
+  loginRedirectPrompt: {
+    fontSize: 13,
+    color: THEME.colors.textMuted,
+  },
+  loginRedirectAction: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: THEME.colors.primaryContainer,
+  },
+  securityFootnote: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  securityText: {
+    fontSize: 11,
+    color: 'rgba(223, 226, 238, 0.5)',
+  },
+});

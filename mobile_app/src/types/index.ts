@@ -12,10 +12,10 @@ export interface Episode {
   description?: string;
   thumbnail?: string;
   duration?: string;
-  episode_number?: number;
-  episodeNumber?: number;
-  season_number?: number;
-  seasonNumber?: number;
+  episodeNumber?: number; // Unified primary field (camelCase)
+  episode_number?: number; // @deprecated legacy alias, use episodeNumber
+  seasonNumber?: number; // Unified primary field (camelCase)
+  season_number?: number; // @deprecated legacy alias, use seasonNumber
   mega_link?: string;
   animeTitle?: string;
   animeCover?: string;
@@ -126,5 +126,28 @@ export interface Plan {
   features: string[];
   isActive?: boolean;
   isPopular?: boolean;
+}
+
+export interface MaintenanceConfig {
+  is_active: boolean;
+  title?: string;
+  message?: string;
+  estimated_end_time?: string;
+  dev_bypass_key?: string;
+}
+
+export interface VersionControlConfig {
+  latest_version?: string;
+  force_update?: boolean;
+  direct_apk_url?: string;
+  store_url?: string;
+}
+
+export interface AppConfig {
+  maintenance?: MaintenanceConfig;
+  version_control?: VersionControlConfig;
+  features?: Record<string, boolean>;
+  api_endpoints?: Record<string, string>;
+  [key: string]: any;
 }
 
