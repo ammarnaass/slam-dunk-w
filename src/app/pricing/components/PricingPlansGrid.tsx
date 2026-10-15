@@ -76,7 +76,7 @@ export default function PricingPlansGrid({
                     <div className="mt-space-xl">
                         <Link
                             href="/animes"
-                            className="w-full py-space-sm rounded-xl bg-surface-container-high text-on-surface-variant font-cairo font-bold text-xs text-center block hover:bg-surface-container-highest hover:text-on-surface transition-all"
+                            className="w-full py-space-sm min-h-[48px] rounded-xl bg-surface-container-high text-on-surface-variant font-cairo font-bold text-xs text-center flex items-center justify-center hover:bg-surface-container-highest hover:text-on-surface transition-all active:scale-98"
                         >
                             تصفح الحلقات المجانية
                         </Link>
@@ -140,7 +140,7 @@ export default function PricingPlansGrid({
                         <button
                             onClick={() => onSubscribe("otaku-plus")}
                             disabled={subscribing !== null}
-                            className="w-full py-space-md rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-cairo font-bold text-sm border border-white/10 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            className="w-full py-space-md min-h-[48px] rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-cairo font-bold text-sm border border-white/10 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                         >
                             <span>اشترك في أوتاكو بلس</span>
                         </button>
@@ -215,7 +215,7 @@ export default function PricingPlansGrid({
                         <button
                             onClick={() => onSubscribe("emperor-vip")}
                             disabled={subscribing !== null}
-                            className="w-full py-space-md rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-[0_0_24px_rgba(220,38,38,0.5)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            className="w-full py-space-md min-h-[52px] rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-[0_0_24px_rgba(220,38,38,0.5)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <span className="material-symbols-outlined text-xl">diamond</span>
                             <span>ترقية حسابي إلى إمبراطور VIP</span>

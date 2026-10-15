@@ -570,7 +570,7 @@ export default function UsersPage() {
                                                 <div className="relative group/upgrade">
                                                     <button
                                                         disabled={isRowLoading}
-                                                        className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-bold text-xs transition-all shadow-sm ${
+                                                        className={`inline-flex items-center justify-center gap-1 px-3 py-2 min-h-[40px] rounded-xl font-bold text-xs transition-all shadow-sm active:scale-95 ${
                                                             isPremium
                                                                 ? "bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30"
                                                                 : "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black shadow-amber-600/20"
@@ -595,21 +595,21 @@ export default function UsersPage() {
                                                         </div>
                                                         <button
                                                             onClick={() => handleQuickUpgrade(user.id, "UPGRADE_30")}
-                                                            className="w-full text-right px-2.5 py-1.5 text-[11px] font-bold text-slate-200 hover:text-amber-300 hover:bg-slate-900 rounded-lg flex items-center justify-between transition-colors"
+                                                            className="w-full text-right px-2.5 py-2 min-h-[38px] text-[11px] font-bold text-slate-200 hover:text-amber-300 hover:bg-slate-900 rounded-lg flex items-center justify-between transition-colors"
                                                         >
                                                             <span>+ شهر (30 يوم)</span>
                                                             <span className="text-[10px] text-amber-400/80">شهري</span>
                                                         </button>
                                                         <button
                                                             onClick={() => handleQuickUpgrade(user.id, "UPGRADE_90")}
-                                                            className="w-full text-right px-2.5 py-1.5 text-[11px] font-bold text-slate-200 hover:text-amber-300 hover:bg-slate-900 rounded-lg flex items-center justify-between transition-colors"
+                                                            className="w-full text-right px-2.5 py-2 min-h-[38px] text-[11px] font-bold text-slate-200 hover:text-amber-300 hover:bg-slate-900 rounded-lg flex items-center justify-between transition-colors"
                                                         >
                                                             <span>+ 3 أشهر (90 يوم)</span>
                                                             <span className="text-[10px] text-amber-400/80">موسمي</span>
                                                         </button>
                                                         <button
                                                             onClick={() => handleQuickUpgrade(user.id, "UPGRADE_365")}
-                                                            className="w-full text-right px-2.5 py-1.5 text-[11px] font-bold text-slate-200 hover:text-amber-300 hover:bg-slate-900 rounded-lg flex items-center justify-between transition-colors"
+                                                            className="w-full text-right px-2.5 py-2 min-h-[38px] text-[11px] font-bold text-slate-200 hover:text-amber-300 hover:bg-slate-900 rounded-lg flex items-center justify-between transition-colors"
                                                         >
                                                             <span>+ سنة كاملة (365 يوم)</span>
                                                             <span className="text-[10px] text-amber-400/80">سنوي ذهبي</span>
@@ -617,7 +617,7 @@ export default function UsersPage() {
                                                         {isPremium && (
                                                             <button
                                                                 onClick={() => handleQuickUpgrade(user.id, "CANCEL_VIP")}
-                                                                className="w-full text-right px-2.5 py-1.5 text-[11px] font-bold text-rose-400 hover:bg-rose-950/40 rounded-lg transition-colors border-t border-slate-800/80 mt-1"
+                                                                className="w-full text-right px-2.5 py-2 min-h-[38px] text-[11px] font-bold text-rose-400 hover:bg-rose-950/40 rounded-lg transition-colors border-t border-slate-800/80 mt-1"
                                                             >
                                                                 إلغاء اشتراك VIP
                                                             </button>
@@ -628,10 +628,10 @@ export default function UsersPage() {
                                                 {/* Edit User Button */}
                                                 <Link
                                                     href={`/admin/users/${user.id}`}
-                                                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold transition-colors text-xs border border-slate-700/50"
+                                                    className="inline-flex items-center justify-center gap-1 px-3 py-2 min-h-[40px] rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold transition-colors text-xs border border-slate-700/50 active:scale-95"
                                                     title="تفاصيل وتعديل العضو"
                                                 >
-                                                    <Edit size={13} />
+                                                    <Edit size={14} />
                                                     <span className="hidden sm:inline">تفاصيل</span>
                                                 </Link>
 
@@ -639,13 +639,13 @@ export default function UsersPage() {
                                                 <button
                                                     onClick={() => handleDelete(user.id, user.name || user.email)}
                                                     disabled={isRowLoading}
-                                                    className="p-1.5 rounded-xl bg-rose-950/20 hover:bg-rose-900/40 text-rose-400 hover:text-rose-300 transition-colors border border-rose-900/30 disabled:opacity-50"
+                                                    className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center rounded-xl bg-rose-950/20 hover:bg-rose-900/40 text-rose-400 hover:text-rose-300 transition-colors border border-rose-900/30 disabled:opacity-50 active:scale-95"
                                                     title="حذف الحساب نهائياً"
                                                 >
                                                     {deletingId === user.id ? (
-                                                        <Loader2 size={14} className="animate-spin" />
+                                                        <Loader2 size={15} className="animate-spin" />
                                                     ) : (
-                                                        <Trash2 size={14} />
+                                                        <Trash2 size={15} />
                                                     )}
                                                 </button>
                                             </div>

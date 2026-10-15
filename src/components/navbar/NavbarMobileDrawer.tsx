@@ -68,10 +68,10 @@ export function NavbarMobileDrawer({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="p-2 rounded-xl bg-[#1b1b1f] hover:bg-[#25252b] text-[#94a3b8] hover:text-white border border-white/5 cursor-pointer"
-                            aria-label="إغلاق"
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#1b1b1f] hover:bg-[#25252b] text-[#94a3b8] hover:text-white border border-white/5 cursor-pointer active:scale-95"
+                            aria-label="إغلاق القائمة"
                         >
-                            <X size={18} />
+                            <X size={20} />
                         </button>
                     </div>
 
@@ -95,7 +95,7 @@ export function NavbarMobileDrawer({
                             <Link
                                 href="/login"
                                 onClick={onClose}
-                                className="px-3 py-1.5 rounded-xl bg-[#dc2626] text-white text-xs font-cairo font-bold hover:brightness-110 shadow"
+                                className="min-h-[44px] px-4 rounded-xl bg-[#dc2626] text-white text-xs font-cairo font-bold hover:brightness-110 shadow flex items-center justify-center active:scale-95"
                             >
                                 دخول
                             </Link>
@@ -114,7 +114,7 @@ export function NavbarMobileDrawer({
                                     key={link.href}
                                     href={link.href}
                                     onClick={onClose}
-                                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-cairo font-bold transition-all ${
+                                    className={`flex items-center justify-between px-3.5 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-cairo font-bold transition-all active:scale-98 ${
                                         isActive
                                             ? "bg-[#dc2626] text-white shadow-[0_0_12px_rgba(220,38,38,0.4)]"
                                             : "text-[#94a3b8] hover:text-[#e4e1e7] hover:bg-white/[0.04]"
@@ -142,7 +142,7 @@ export function NavbarMobileDrawer({
                                     key={planet.name}
                                     href={planet.href}
                                     onClick={onClose}
-                                    className="flex items-center gap-1.5 p-2 rounded-xl bg-[#181820]/80 hover:bg-[#20202a] border border-white/[0.03] text-xs font-cairo font-bold text-[#e4e1e7] transition-all"
+                                    className="flex items-center gap-1.5 p-2 min-h-[44px] rounded-xl bg-[#181820]/80 hover:bg-[#20202a] border border-white/[0.03] text-xs font-cairo font-bold text-[#e4e1e7] transition-all active:scale-95"
                                 >
                                     <span className="text-sm">{planet.badge}</span>
                                     <span className="truncate">{planet.name}</span>
@@ -157,7 +157,7 @@ export function NavbarMobileDrawer({
                     <Link
                         href="/admin"
                         onClick={onClose}
-                        className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-[#181820] text-xs font-cairo font-bold text-[#ffb4ab] hover:bg-[#dc2626]/20 transition-all border border-white/5"
+                        className="flex items-center justify-between px-3.5 py-2 min-h-[44px] rounded-xl bg-[#181820] text-xs font-cairo font-bold text-[#ffb4ab] hover:bg-[#dc2626]/20 transition-all border border-white/5 active:scale-98"
                     >
                         <span className="flex items-center gap-2">
                             <ShieldCheck size={16} className="text-[#dc2626]" />
@@ -172,7 +172,7 @@ export function NavbarMobileDrawer({
                                 onClose();
                                 logout();
                             }}
-                            className="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#dc2626]/10 text-xs font-cairo font-bold text-[#ffb4ab] hover:bg-[#dc2626]/20 transition-all cursor-pointer"
+                            className="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[44px] rounded-xl bg-[#dc2626]/10 text-xs font-cairo font-bold text-[#ffb4ab] hover:bg-[#dc2626]/20 transition-all cursor-pointer active:scale-98"
                         >
                             <LogOut size={16} className="text-[#dc2626]" />
                             <span>تسجيل الخروج</span>
@@ -181,7 +181,7 @@ export function NavbarMobileDrawer({
                         <Link
                             href="/login"
                             onClick={onClose}
-                            className="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#dc2626] text-white text-xs font-cairo font-bold hover:brightness-110 shadow-[0_0_12px_rgba(220,38,38,0.4)] transition-all"
+                            className="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[44px] rounded-xl bg-[#dc2626] text-white text-xs font-cairo font-bold hover:brightness-110 shadow-[0_0_12px_rgba(220,38,38,0.4)] transition-all active:scale-98"
                         >
                             <LogIn size={16} />
                             <span>تسجيل الدخول إلى حسابك</span>

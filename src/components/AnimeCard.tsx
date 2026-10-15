@@ -101,7 +101,7 @@ export default function AnimeCard({ anime, priority = false }: AnimeCardProps) {
 
             {/* Content Details */}
             <div className="p-3.5 flex flex-col justify-between flex-grow bg-[#15151c]">
-                <h3 className="font-cairo font-bold text-sm text-[#e4e1e7] group-hover:text-white group-hover:text-[#ffb4ab] transition-colors line-clamp-1 leading-snug">
+                <h3 className="font-cairo font-bold text-xs sm:text-sm text-[#e4e1e7] group-hover:text-white group-hover:text-[#ffb4ab] transition-colors line-clamp-2 min-h-[2.25rem] sm:min-h-[2.5rem] leading-snug">
                     {anime.title}
                 </h3>
 

@@ -36,7 +36,7 @@ export default function PricingHeader({
                 <button
                     type="button"
                     onClick={() => onBillingCycleChange("monthly")}
-                    className={`px-3 sm:px-space-lg py-2 sm:py-space-sm rounded-xl font-cairo font-bold text-xs sm:text-sm transition-all cursor-pointer ${
+                    className={`px-4 sm:px-space-lg py-2.5 sm:py-space-sm min-h-[44px] rounded-xl font-cairo font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center justify-center active:scale-95 ${
                         billingCycle === "monthly"
                             ? "text-on-surface bg-surface-container-high shadow-md"
                             : "text-on-surface-variant hover:text-on-surface"
@@ -47,7 +47,7 @@ export default function PricingHeader({
                 <button
                     type="button"
                     onClick={() => onBillingCycleChange("yearly")}
-                    className={`px-3 sm:px-space-lg py-2 sm:py-space-sm rounded-xl font-cairo font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 sm:gap-space-xs cursor-pointer ${
+                    className={`px-4 sm:px-space-lg py-2.5 sm:py-space-sm min-h-[44px] rounded-xl font-cairo font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-space-xs cursor-pointer active:scale-95 ${
                         billingCycle === "yearly"
                             ? "bg-primary-container text-on-primary-container shadow-[0_0_16px_rgba(220,38,38,0.5)]"
                             : "text-on-surface-variant hover:text-on-surface"
