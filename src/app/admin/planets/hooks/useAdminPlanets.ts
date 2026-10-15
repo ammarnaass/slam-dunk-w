@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { AdminPlanetItem, PlanetsSettingsConfig, DEFAULT_PLANETS_SETTINGS } from "@/lib/planets-presets";
 import { Anime } from "@/types";
+import { adminPlanetsApi } from "../services/admin-planets.api";
 
 export interface PlanetWithWorks extends AdminPlanetItem {
     worksCount?: number;
@@ -40,22 +41,16 @@ export function useAdminPlanets() {
     const fetchPlanets = async () => {
         try {
             setLoading(true);
-            const res = await fetch("/api/admin/planets");
-            if (res.ok) {
-                const json = await res.json();
-                const payload = json.data || json;
-                if (payload?.planets) {
-                    setPlanets(payload.planets);
-                    if (payload.settings) setSettings(payload.settings);
-                } else if (Array.isArray(payload)) {
-                    setPlanets(payload);
-                }
-            } else {
-                setToast({ type: "error", message: "تعذر جلب بيانات الكواكب من الخادم." });
+            const payload = await adminPlanetsApi.fetchPlanets();
+            if (payload?.planets) {
+                setPlanets(payload.planets);
+                if (payload.settings) setSettings(payload.settings);
+            } else if (Array.isArray(payload)) {
+                setPlanets(payload);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch planets:", error);
-            setToast({ type: "error", message: "حدث خطأ أثناء الاتصال بالنظام." });
+            setToast({ type: "error", message: error.message || "حدث خطأ أثناء الاتصال بالنظام." });
         } finally {
             setLoading(false);
         }
@@ -64,18 +59,12 @@ export function useAdminPlanets() {
     const handleSaveSettings = async (newSettings: PlanetsSettingsConfig) => {
         try {
             setSaving(true);
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "save-settings", settings: newSettings })
-            });
-            if (res.ok) {
-                setSettings(newSettings);
-                setToast({ type: "success", message: "تم حفظ وتطبيق إعدادات نمط عرض الكواكب بنجاح!" });
-            }
-        } catch (error) {
+            await adminPlanetsApi.saveSettings(newSettings);
+            setSettings(newSettings);
+            setToast({ type: "success", message: "تم حفظ وتطبيق إعدادات نمط عرض الكواكب بنجاح!" });
+        } catch (error: any) {
             console.error("Save settings error:", error);
-            setToast({ type: "error", message: "تعذر حفظ إعدادات نمط العرض." });
+            setToast({ type: "error", message: error.message || "تعذر حفظ إعدادات نمط العرض." });
         } finally {
             setSaving(false);
         }
@@ -83,24 +72,18 @@ export function useAdminPlanets() {
 
     const handleToggleEnabled = async (planetId: string) => {
         try {
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "toggle", planetId })
+            const json = await adminPlanetsApi.togglePlanet(planetId);
+            setPlanets(json.data);
+            const target = json.data.find((p: any) => p.id === planetId);
+            setToast({
+                type: "success",
+                message: target?.isEnabled
+                    ? `تم تفعيل ${target.name} بنجاح!`
+                    : `تم تعطيل ${target.name} وإخفاؤه من المنصة.`,
             });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                const target = json.data.find((p: any) => p.id === planetId);
-                setToast({ 
-                    type: "success", 
-                    message: target?.isEnabled ? `تم تفعيل ${target.name} بنجاح!` : `تم تعطيل ${target.name} وإخفاؤه من المنصة.` 
-                });
-            }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Toggle error:", error);
-            setToast({ type: "error", message: "تعذر تحديث حالة الكوكب." });
+            setToast({ type: "error", message: error.message || "تعذر تحديث حالة الكوكب." });
         }
     };
 
@@ -117,16 +100,9 @@ export function useAdminPlanets() {
         setPlanets(reordered);
 
         try {
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "save-all", planets: reordered })
-            });
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setToast({ type: "success", message: "تم تحديث ترتيب الكواكب بنجاح!" });
-            }
+            const json = await adminPlanetsApi.saveOrder(reordered);
+            setPlanets(json.data);
+            setToast({ type: "success", message: "تم تحديث ترتيب الكواكب بنجاح!" });
         } catch (error) {
             console.error("Order save error:", error);
         }
@@ -137,20 +113,12 @@ export function useAdminPlanets() {
 
         try {
             setSaving(true);
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "reset" })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setToast({ type: "success", message: "تمت استعادة كواكب سبيستون العشرة الافتراضية بنجاح!" });
-            }
-        } catch (error) {
+            const json = await adminPlanetsApi.resetDefaults();
+            setPlanets(json.data);
+            setToast({ type: "success", message: "تمت استعادة كواكب سبيستون العشرة الافتراضية بنجاح!" });
+        } catch (error: any) {
             console.error("Reset error:", error);
-            setToast({ type: "error", message: "فشلت استعادة الإعدادات الافتراضية." });
+            setToast({ type: "error", message: error.message || "فشلت استعادة الإعدادات الافتراضية." });
         } finally {
             setSaving(false);
         }
@@ -159,21 +127,13 @@ export function useAdminPlanets() {
     const handleSaveEdit = async (updatedPlanet: AdminPlanetItem) => {
         try {
             setSaving(true);
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "update", planet: updatedPlanet })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setEditingPlanet(null);
-                setToast({ type: "success", message: `تم حفظ تعديلات ${updatedPlanet.name} بنجاح!` });
-            }
-        } catch (error) {
+            const json = await adminPlanetsApi.updatePlanet(updatedPlanet);
+            setPlanets(json.data);
+            setEditingPlanet(null);
+            setToast({ type: "success", message: `تم حفظ تعديلات ${updatedPlanet.name} بنجاح!` });
+        } catch (error: any) {
             console.error("Save edit error:", error);
-            setToast({ type: "error", message: "تعذر حفظ التعديلات." });
+            setToast({ type: "error", message: error.message || "تعذر حفظ التعديلات." });
         } finally {
             setSaving(false);
         }
@@ -182,21 +142,13 @@ export function useAdminPlanets() {
     const handleCreatePlanet = async (planetPayload: AdminPlanetItem) => {
         try {
             setSaving(true);
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "create", planet: planetPayload })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setIsCreateModalOpen(false);
-                setToast({ type: "success", message: `تمت إضافة ${planetPayload.name} بنجاح إلى المنصة!` });
-            }
-        } catch (error) {
+            const json = await adminPlanetsApi.createPlanet(planetPayload);
+            setPlanets(json.data);
+            setIsCreateModalOpen(false);
+            setToast({ type: "success", message: `تمت إضافة ${planetPayload.name} بنجاح إلى المنصة!` });
+        } catch (error: any) {
             console.error("Create error:", error);
-            setToast({ type: "error", message: "حدث خطأ أثناء إضافة الكوكب الجديد." });
+            setToast({ type: "error", message: error.message || "حدث خطأ أثناء إضافة الكوكب الجديد." });
         } finally {
             setSaving(false);
         }
@@ -206,20 +158,12 @@ export function useAdminPlanets() {
         if (!confirm(`هل أنت متأكد من حذف ${planet.name} نهائياً؟`)) return;
 
         try {
-            const res = await fetch("/api/admin/planets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "delete", planetId: planet.id })
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                setPlanets(json.data);
-                setToast({ type: "success", message: `تم حذف ${planet.name} بنجاح.` });
-            }
-        } catch (error) {
+            const json = await adminPlanetsApi.deletePlanet(planet.id);
+            setPlanets(json.data);
+            setToast({ type: "success", message: `تم حذف ${planet.name} بنجاح.` });
+        } catch (error: any) {
             console.error("Delete error:", error);
-            setToast({ type: "error", message: "تعذر حذف الكوكب." });
+            setToast({ type: "error", message: error.message || "تعذر حذف الكوكب." });
         }
     };
 
@@ -227,20 +171,8 @@ export function useAdminPlanets() {
         setViewingAnimesPlanet(planet);
         setLoadingAnimes(true);
         try {
-            const res = await fetch("/api/animes");
-            if (res.ok) {
-                const all: Anime[] = await res.json();
-                const pGenre = (planet.genreKey || "").toLowerCase();
-                const pArabic = (planet.arabicGenre || "").toLowerCase();
-                const pFlagship = (planet.flagshipWorks || []).map(f => f.toLowerCase());
-
-                const filtered = all.filter(a => {
-                    const title = (a.title || "").toLowerCase();
-                    const genres = (a.genres || []).map(g => g.toLowerCase());
-                    return genres.includes(pGenre) || genres.includes(pArabic) || pFlagship.some(fw => title.includes(fw));
-                });
-                setAnimesList(filtered);
-            }
+            const filtered = await adminPlanetsApi.fetchPlanetAnimes(planet);
+            setAnimesList(filtered);
         } catch (error) {
             console.error("Failed to load animes for planet:", error);
         } finally {
