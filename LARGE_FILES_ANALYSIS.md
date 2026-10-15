@@ -98,7 +98,7 @@ pie title توزيع أسطر الشيفرة البرمجية الصافية ف�
 | 47 | [`src/lib/planets-presets.ts`](file:///home/ammar/slam-dunk-w/src/lib/planets-presets.ts) | **308** | Static Data | مصفوفة كواكب سبيستون والبيانات الفلكية والألوان الافتراضية | 🟢 بيانات ثابتة (Seed) |
 | 48 | [`mobile_app/src/components/icons/action/SystemAuthActionIcons.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/icons/action/SystemAuthActionIcons.tsx) | **307** | Mobile Icons | قاموس مسارات أيقونات المصادقة والنظام (Pure SVG) | 🟡 معمارية (SVG Data) |
 | 49 | [`src/app/admin/planets/hooks/useAdminPlanets.ts`](file:///home/ammar/slam-dunk-w/src/app/admin/planets/hooks/useAdminPlanets.ts) | **306** | Admin Hook | خطاف إدارة الحالة والطلبات غير المتزامنة لصفحة الكواكب | 🟢 خطاف مستخرج حديثاً |
-| 50 | [`src/app/checkout/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/checkout/page.tsx) | **303** | Web Page | صفحة إتمام الدفع والاشتراك وتأكيد الطلب | 🟠 أولوية متوسطة |
+| 50 | [`src/app/checkout/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/checkout/page.tsx) | ~~303~~ ➔ **125** | Web Page | صفحة إتمام الدفع والاشتراك وتأكيد الطلب (تم استخراج خطاف useCheckout و 6 مكونات فرعية) | 🟢 تم الإنجاز (-59%) |
 | 51 | [`mobile_app/src/components/Header.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/Header.tsx) | ~~302~~ ➔ **171** | Mobile Component | الترويسة الرئيسية للتطبيق (تم استخراج header.styles.ts) | 🟢 تم الإنجاز (-43%) |
 
 ---
@@ -136,6 +136,7 @@ pie title توزيع أسطر الشيفرة البرمجية الصافية ف�
 | [`mobile_app/App.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/App.tsx) | 347 سطر | **101 سطر** | **-71%** | استخراج أنماط الشاشة [`app.styles.ts`](file:///home/ammar/slam-dunk-w/mobile_app/src/app.styles.ts) ومودالات التحديث والصيانة [`MaintenanceModal.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/modals/MaintenanceModal.tsx) و [`ForceUpdateModal.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/modals/ForceUpdateModal.tsx). |
 | [`mobile_app/src/screens/AnimesScreen.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/AnimesScreen.tsx) | 315 سطر | **163 سطر** | **-48%** | استخراج الأنماط إلى [`animes-screen.styles.ts`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/animes-catalog/animes-screen.styles.ts)، وخطاف التصفية [`useAnimeCatalogFilter.ts`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/animes-catalog/useAnimeCatalogFilter.ts)، ومكونات [`AnimeCatalogResultsBar.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/animes-catalog/AnimeCatalogResultsBar.tsx) و [`AnimeCatalogEmptyState.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/animes-catalog/AnimeCatalogEmptyState.tsx). |
 | [`mobile_app/src/components/Header.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/Header.tsx) | 302 سطر | **171 سطر** | **-43%** | استخراج ملف الأنماط والتنسيقات المعزولة [`header.styles.ts`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/header.styles.ts). |
+| [`src/app/checkout/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/checkout/page.tsx) | 303 سطر | **125 سطر** | **-59%** | استخراج الخطاف المركزي [`useCheckout.ts`](file:///home/ammar/slam-dunk-w/src/app/checkout/hooks/useCheckout.ts) و 6 مكونات فرعية في [`src/app/checkout/components/`](file:///home/ammar/slam-dunk-w/src/app/checkout/components/). |
 
 ---
 
