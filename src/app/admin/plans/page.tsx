@@ -299,7 +299,7 @@ export default function PlansPage() {
                                     <button
                                         onClick={() => handleToggleActive(plan)}
                                         disabled={isToggling}
-                                        className="flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors"
+                                        className="min-h-[40px] flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors cursor-pointer"
                                     >
                                         <span className={`w-2 h-2 rounded-full ${plan.isActive ? 'bg-emerald-400' : 'bg-slate-600'}`} />
                                         <span>{plan.isActive ? 'معروضة للجمهور' : 'معطلة مخفية'}</span>
@@ -309,7 +309,7 @@ export default function PlansPage() {
                                     <button
                                         onClick={() => handleTogglePopular(plan)}
                                         disabled={isToggling}
-                                        className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border transition-all ${
+                                        className={`min-h-[40px] text-[11px] font-bold px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
                                             plan.isPopular 
                                                 ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' 
                                                 : 'text-slate-500 border-slate-800 hover:text-slate-300'
@@ -323,7 +323,7 @@ export default function PlansPage() {
                                 <div className="flex gap-2">
                                     <Link
                                         href={`/admin/plans/${plan.id}`}
-                                        className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl text-center transition-all flex items-center justify-center gap-2 text-xs font-bold border border-slate-700/60"
+                                        className="flex-1 min-h-[44px] bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl text-center transition-all flex items-center justify-center gap-2 text-xs font-bold border border-slate-700/60 active:scale-95"
                                     >
                                         <Edit size={14} />
                                         <span>تعديل الخطة</span>
@@ -332,7 +332,7 @@ export default function PlansPage() {
                                     <button
                                         onClick={() => handleDelete(plan.id, plan.name)}
                                         disabled={isDeleting}
-                                        className="p-2.5 rounded-xl bg-rose-950/20 hover:bg-rose-900/40 text-rose-400 hover:text-rose-300 transition-colors border border-rose-900/30 disabled:opacity-50"
+                                        className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-rose-950/20 hover:bg-rose-900/40 text-rose-400 hover:text-rose-300 transition-colors border border-rose-900/30 disabled:opacity-50 active:scale-95 cursor-pointer"
                                         title="حذف الخطة"
                                     >
                                         {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}

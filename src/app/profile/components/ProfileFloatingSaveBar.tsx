@@ -14,7 +14,7 @@ export default function ProfileFloatingSaveBar({
     onSave
 }: ProfileFloatingSaveBarProps) {
     return (
-        <div className="fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-2xl bg-surface-container-high/95 backdrop-blur-xl border border-primary-container/40 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] flex items-center justify-between gap-3 sm:gap-4 animate-in slide-in-from-bottom duration-300">
+        <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-6 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-2xl bg-surface-container-high/95 backdrop-blur-xl border border-primary-container/40 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] flex items-center justify-between gap-3 sm:gap-4 animate-in slide-in-from-bottom duration-300">
             <div className="flex items-center gap-2.5 text-xs font-bold text-on-surface">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
                 <span className="line-clamp-1">لديك تغييرات غير محفوظة!</span>

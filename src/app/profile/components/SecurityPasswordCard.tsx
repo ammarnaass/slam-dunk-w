@@ -69,12 +69,13 @@ export default function SecurityPasswordCard({
                             value={currentPassword}
                             onChange={(e) => onChangeField("currentPassword", e.target.value)}
                             placeholder="أدخل كلمة المرور الحالية"
-                            className="w-full bg-surface-container rounded-xl pr-4 pl-10 py-3 text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none font-mono"
+                            className="w-full min-h-[48px] bg-surface-container rounded-xl pr-4 pl-12 py-3.5 text-base sm:text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none font-mono"
                         />
                         <button
                             type="button"
                             onClick={() => setShowCurrent(!showCurrent)}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                            className="absolute left-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                            aria-label={showCurrent ? "إخفاء كلمة المرور" : "عرض كلمة المرور"}
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 {showCurrent ? "visibility_off" : "visibility"}
@@ -95,12 +96,13 @@ export default function SecurityPasswordCard({
                                 value={newPassword}
                                 onChange={(e) => onChangeField("newPassword", e.target.value)}
                                 placeholder="6 أحرف على الأقل"
-                                className="w-full bg-surface-container rounded-xl pr-4 pl-10 py-3 text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none font-mono"
+                                className="w-full min-h-[48px] bg-surface-container rounded-xl pr-4 pl-12 py-3.5 text-base sm:text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none font-mono"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowNew(!showNew)}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                                className="absolute left-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                                aria-label={showNew ? "إخفاء كلمة المرور" : "عرض كلمة المرور"}
                             >
                                 <span className="material-symbols-outlined text-[18px]">
                                     {showNew ? "visibility_off" : "visibility"}
@@ -119,12 +121,13 @@ export default function SecurityPasswordCard({
                                 value={confirmPassword}
                                 onChange={(e) => onChangeField("confirmPassword", e.target.value)}
                                 placeholder="أعد كتابة كلمة المرور"
-                                className="w-full bg-surface-container rounded-xl pr-4 pl-10 py-3 text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none font-mono"
+                                className="w-full min-h-[48px] bg-surface-container rounded-xl pr-4 pl-12 py-3.5 text-base sm:text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none font-mono"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowConfirm(!showConfirm)}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                                className="absolute left-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                                aria-label={showConfirm ? "إخفاء كلمة المرور" : "عرض كلمة المرور"}
                             >
                                 <span className="material-symbols-outlined text-[18px]">
                                     {showConfirm ? "visibility_off" : "visibility"}

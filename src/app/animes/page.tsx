@@ -177,60 +177,89 @@ function AnimesListContent() {
                 </div>
 
                 {/* Main Search & Filters Bar */}
-                <div className="py-6 flex flex-col gap-5">
+                <div className="py-4 sm:py-6 flex flex-col gap-3.5 sm:gap-5">
                     {/* Search Input Box */}
                     <div className="relative w-full">
-                        <div className="relative flex items-center bg-surface-container-low rounded-xl border border-white/[0.08] shadow-lg focus-within:border-primary-container focus-within:shadow-[0_0_24px_rgba(220,38,38,0.3)] transition-all">
-                            <div className="pr-4 pl-2 flex items-center pointer-events-none text-on-surface-variant">
+                        <div className="relative flex items-center bg-surface-container-low rounded-2xl border border-white/[0.08] shadow-lg focus-within:border-primary-container focus-within:shadow-[0_0_24px_rgba(220,38,38,0.3)] min-h-[50px] sm:min-h-[54px] transition-all">
+                            <div className="pr-3.5 sm:pr-4 pl-2 flex items-center pointer-events-none text-on-surface-variant shrink-0">
                                 <span className="material-symbols-outlined text-[22px]">search</span>
                             </div>
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="ابحث بالاسم، الكوكب، التصنيف، أو الشخصية..."
-                                className="w-full bg-transparent py-3.5 pr-2 pl-12 text-sm font-tajawal text-on-surface placeholder:text-on-surface-variant focus:outline-none"
+                                placeholder="ابحث بالاسم، الكوكب، أو التصنيف..."
+                                className="w-full bg-transparent py-3 sm:py-3.5 pr-1 pl-12 text-base sm:text-sm font-tajawal text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none"
                             />
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery("")}
-                                    className="absolute left-3 p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+                                    className="absolute left-1.5 sm:left-2 w-10 h-10 sm:w-11 sm:h-11 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center rounded-xl bg-surface-container-high/90 text-on-surface-variant hover:text-on-surface active:scale-95 transition-all cursor-pointer"
                                     title="مسح"
+                                    aria-label="مسح البحث"
                                 >
-                                    <span className="material-symbols-outlined text-[16px]">close</span>
+                                    <span className="material-symbols-outlined text-[18px]">close</span>
                                 </button>
                             )}
                         </div>
                     </div>
 
+                    {/* Quick Searches Tags Ribbon */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-pan-x -mt-1 pb-0.5 text-xs">
+                        <span className="text-on-surface-variant shrink-0 flex items-center gap-1 font-tajawal px-1 text-xs">
+                            <span className="material-symbols-outlined text-[15px] text-primary">trending_up</span>
+                            <span className="font-bold">شائع:</span>
+                        </span>
+                        {RECENT_SEARCHES.map((item) => (
+                            <button
+                                key={item.label}
+                                type="button"
+                                onClick={() => {
+                                    if (item.genre) {
+                                        setSelectedPlanet(item.genre);
+                                    } else if (item.query) {
+                                        setSearchQuery(item.query);
+                                    }
+                                }}
+                                className="inline-flex items-center px-3 py-1.5 min-h-[36px] rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-tajawal whitespace-nowrap border border-white/5 active:scale-95 transition-all cursor-pointer"
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
+
                     {/* Spacetoon Planets Filter Chips */}
-                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                    <div className="flex items-center gap-2 overflow-x-auto scrollbar-none touch-pan-x py-1">
                         {SPACETOON_PLANETS.map((planet) => {
                             const isSelected = selectedPlanet === planet.genre;
                             return (
                                 <button
                                     key={planet.name}
                                     onClick={() => setSelectedPlanet(planet.genre)}
-                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-cairo font-bold transition-all whitespace-nowrap cursor-pointer border ${
+                                    className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm font-cairo font-bold transition-all whitespace-nowrap cursor-pointer border active:scale-95 ${
                                         isSelected
-                                            ? "bg-primary-container text-on-primary-container border-primary-container shadow-[0_0_14px_rgba(220,38,38,0.4)]"
+                                            ? "bg-primary-container text-on-primary-container border-primary-container shadow-[0_0_16px_rgba(220,38,38,0.45)]"
                                             : "bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container border-white/5"
                                     }`}
                                 >
-                                    {planet.name}
+                                    <span className="material-symbols-outlined text-[18px]">
+                                        {planet.icon}
+                                    </span>
+                                    <span>{planet.name}</span>
                                 </button>
                             );
                         })}
                     </div>
 
                     {/* Secondary Filter Controls (Status & Sort) */}
-                    <div className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-xl bg-surface-container-low border border-white/[0.05]">
-                        <div className="flex items-center gap-3">
-                            <span className="text-xs text-on-surface-variant flex items-center gap-1.5 font-bold">
-                                <span className="material-symbols-outlined text-sm text-primary-container">filter_list</span>
-                                الحالة:
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.05]">
+                        {/* Status Segmented Control */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs text-on-surface-variant flex items-center gap-1 font-bold shrink-0">
+                                <span className="material-symbols-outlined text-[16px] text-primary-container">filter_list</span>
+                                <span>الحالة:</span>
                             </span>
-                            <div className="flex items-center gap-1">
+                            <div className="flex-1 sm:flex-initial grid grid-cols-3 sm:flex items-center gap-1 bg-surface-container p-1 rounded-xl border border-white/5">
                                 {[
                                     { label: "الكل", value: "all" },
                                     { label: "مكتمل", value: "completed" },
@@ -239,9 +268,9 @@ function AnimesListContent() {
                                     <button
                                         key={s.value}
                                         onClick={() => setSelectedStatus(s.value)}
-                                        className={`px-2.5 py-1 rounded-md text-xs font-tajawal transition-all cursor-pointer ${
+                                        className={`px-3 py-2 min-h-[40px] rounded-lg text-xs font-tajawal transition-all cursor-pointer text-center active:scale-95 ${
                                             selectedStatus === s.value
-                                                ? "bg-surface-container-high text-on-surface font-bold border border-white/10"
+                                                ? "bg-primary-container text-on-primary-container font-bold shadow-[0_2px_8px_rgba(220,38,38,0.3)]"
                                                 : "text-on-surface-variant hover:text-on-surface"
                                         }`}
                                     >
@@ -251,26 +280,35 @@ function AnimesListContent() {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            <span className="text-xs text-on-surface-variant">الترتيب:</span>
-                            <select
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value as any)}
-                                className="bg-surface-container text-on-surface text-xs font-cairo py-1.5 px-3 rounded-lg border border-white/10 focus:outline-none focus:border-primary-container cursor-pointer"
-                            >
-                                <option value="latest">الأحدث إضافة</option>
-                                <option value="rating">الأعلى تقييماً</option>
-                                <option value="episodes">الأكثر حلقات</option>
-                                <option value="year">سنة الإنتاج</option>
-                            </select>
+                        {/* Sort and Reset controls */}
+                        <div className="flex items-center gap-2 justify-between sm:justify-end">
+                            <div className="flex items-center gap-2 flex-1 sm:flex-initial">
+                                <span className="text-xs text-on-surface-variant shrink-0 font-tajawal">الترتيب:</span>
+                                <div className="relative flex-1 sm:flex-initial">
+                                    <select
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value as any)}
+                                        className="w-full sm:w-auto bg-surface-container text-on-surface text-xs sm:text-sm font-cairo py-2.5 px-3 pl-8 min-h-[44px] rounded-xl border border-white/10 focus:outline-none focus:border-primary-container cursor-pointer appearance-none"
+                                    >
+                                        <option value="latest">الأحدث إضافة</option>
+                                        <option value="rating">الأعلى تقييماً</option>
+                                        <option value="episodes">الأكثر حلقات</option>
+                                        <option value="year">سنة الإنتاج</option>
+                                    </select>
+                                    <span className="material-symbols-outlined text-[18px] text-on-surface-variant absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                                        expand_more
+                                    </span>
+                                </div>
+                            </div>
 
                             {(searchQuery || selectedPlanet !== "all" || selectedStatus !== "all" || sortBy !== "latest") && (
                                 <button
                                     onClick={resetFilters}
-                                    className="p-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+                                    className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary active:scale-95 transition-all border border-white/5 cursor-pointer shrink-0"
                                     title="إعادة ضبط الفلاتر"
+                                    aria-label="إعادة ضبط الفلاتر"
                                 >
-                                    <span className="material-symbols-outlined text-sm">restart_alt</span>
+                                    <span className="material-symbols-outlined text-[18px]">restart_alt</span>
                                 </button>
                             )}
                         </div>
@@ -295,7 +333,7 @@ function AnimesListContent() {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-surface-container-low rounded-2xl border border-dashed border-white/10 flex flex-col items-center gap-3">
+                    <div className="text-center py-16 sm:py-20 px-4 bg-surface-container-low rounded-2xl border border-dashed border-white/10 flex flex-col items-center gap-3">
                         <span className="material-symbols-outlined text-5xl text-on-surface-variant">search_off</span>
                         <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">لم نجد أي نتائج مطابقة</h3>
                         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-sm">
@@ -303,7 +341,7 @@ function AnimesListContent() {
                         </p>
                         <button
                             onClick={resetFilters}
-                            className="mt-2 px-4 py-2 rounded-xl bg-primary-container text-on-primary-container font-cairo font-bold text-xs"
+                            className="mt-2 min-h-[44px] px-6 py-2.5 rounded-xl bg-primary-container text-on-primary-container font-cairo font-bold text-xs sm:text-sm active:scale-95 shadow-md cursor-pointer transition-all"
                         >
                             إلغاء جميع الفلاتر
                         </button>

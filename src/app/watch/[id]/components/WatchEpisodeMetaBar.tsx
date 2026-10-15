@@ -94,11 +94,11 @@ export default function WatchEpisodeMetaBar({
         </div>
 
         {/* Previous / Next Navigation Controls */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
           {prevEpisode ? (
             <Link
               href={`/watch/${prevEpisode.id}`}
-              className="min-h-[44px] flex items-center gap-1.5 px-3 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-bright transition-all shadow-sm border border-white/5 active:scale-95"
+              className="flex-1 sm:flex-none min-h-[44px] flex items-center justify-center gap-1.5 px-3.5 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-bright transition-all shadow-sm border border-white/5 active:scale-95"
             >
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               <span className="font-headline-sm text-headline-sm text-xs sm:text-sm font-bold">
@@ -108,7 +108,7 @@ export default function WatchEpisodeMetaBar({
           ) : (
             <button
               disabled
-              className="min-h-[44px] flex items-center gap-1.5 px-3 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high/40 text-on-surface-variant/40 cursor-not-allowed border border-white/5"
+              className="flex-1 sm:flex-none min-h-[44px] flex items-center justify-center gap-1.5 px-3.5 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high/40 text-on-surface-variant/40 cursor-not-allowed border border-white/5"
             >
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               <span className="font-headline-sm text-headline-sm text-xs sm:text-sm">السابقة</span>
@@ -118,7 +118,7 @@ export default function WatchEpisodeMetaBar({
           {nextEpisode ? (
             <Link
               href={`/watch/${nextEpisode.id}`}
-              className="min-h-[44px] flex items-center gap-1.5 px-4 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-primary-container text-on-primary-container hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)]"
+              className="flex-1 sm:flex-none min-h-[44px] flex items-center justify-center gap-1.5 px-4 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-primary-container text-on-primary-container hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)]"
             >
               <span className="font-headline-sm text-headline-sm text-xs sm:text-sm font-bold">
                 التالية ({nextEpisode.episodeNumber})
@@ -128,7 +128,7 @@ export default function WatchEpisodeMetaBar({
           ) : (
             <button
               disabled
-              className="min-h-[44px] flex items-center gap-1.5 px-4 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high/40 text-on-surface-variant/40 cursor-not-allowed border border-white/5"
+              className="flex-1 sm:flex-none min-h-[44px] flex items-center justify-center gap-1.5 px-4 sm:px-space-md py-2 sm:py-space-sm rounded-xl bg-surface-container-high/40 text-on-surface-variant/40 cursor-not-allowed border border-white/5"
             >
               <span className="font-headline-sm text-headline-sm text-xs sm:text-sm">التالية</span>
               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
@@ -140,7 +140,7 @@ export default function WatchEpisodeMetaBar({
       {/* Broadcast Servers Selector & Quality Switcher */}
       <div className="w-full pt-space-xs flex flex-col sm:flex-row sm:items-center justify-between gap-space-md bg-surface-container-low p-3 sm:p-space-md rounded-xl border border-white/5">
         {/* Servers - Horizontal Touch Carousel */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 max-w-full">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none touch-pan-x py-1 max-w-full">
           <span className="font-label-md text-label-md text-on-surface-variant flex items-center gap-1 font-bold shrink-0">
             <span className="material-symbols-outlined text-primary-container text-[18px]">dns</span>
             <span className="hidden sm:inline">خوادم البث المباشر:</span>
@@ -153,7 +153,7 @@ export default function WatchEpisodeMetaBar({
               <button
                 key={idx}
                 onClick={() => onSelectServer(idx)}
-                className={`min-h-[40px] px-3.5 py-1.5 rounded-xl font-label-md text-label-md transition-all cursor-pointer flex items-center gap-1.5 border shrink-0 text-xs sm:text-sm ${
+                className={`min-h-[44px] px-3.5 py-2 rounded-xl font-label-md text-label-md transition-all cursor-pointer flex items-center gap-1.5 border shrink-0 text-xs sm:text-sm ${
                   isActive
                     ? "bg-primary-container text-on-primary-container border-primary-container shadow-md font-bold"
                     : "bg-surface-container-high text-on-surface hover:text-primary border-white/5"
@@ -169,12 +169,12 @@ export default function WatchEpisodeMetaBar({
         </div>
 
         {/* Quick Resolution Switcher */}
-        <div className="flex items-center gap-1 self-start sm:self-auto bg-surface-container-lowest p-1 rounded-xl border border-white/5 shrink-0 overflow-x-auto">
+        <div className="flex items-center gap-1 self-start sm:self-auto bg-surface-container-lowest p-1 rounded-xl border border-white/5 shrink-0 overflow-x-auto scrollbar-none touch-pan-x">
           {["4K", "1080p", "720p", "480p", "تلقائي"].map((q) => (
             <button
               key={q}
               onClick={() => onSelectQuality(q)}
-              className={`min-h-[36px] px-2.5 py-0.5 rounded-lg font-label-sm text-label-sm font-bold transition-all cursor-pointer shrink-0 ${
+              className={`min-h-[44px] min-w-[44px] px-2.5 py-1 rounded-lg font-label-sm text-label-sm font-bold transition-all cursor-pointer shrink-0 flex items-center justify-center ${
                 activeQuality === q
                   ? "bg-primary-container text-on-primary-container shadow-sm"
                   : q === "تلقائي"
@@ -190,11 +190,11 @@ export default function WatchEpisodeMetaBar({
 
       {/* Secondary Interaction Strip */}
       <div className="w-full flex flex-wrap items-center justify-between gap-space-sm pt-space-xs text-on-surface-variant border-t border-white/[0.04]">
-        <div className="flex items-center gap-space-xs flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* Favorite */}
           <button
             onClick={handleFavoriteToggle}
-            className={`flex items-center gap-1.5 px-space-md py-space-xs rounded-lg transition-all cursor-pointer border ${
+            className={`min-h-[44px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer border ${
               isFavorited
                 ? "bg-primary-container/20 text-primary border-primary-container/40"
                 : "bg-surface-container-high hover:text-primary-container border-transparent"
@@ -204,7 +204,7 @@ export default function WatchEpisodeMetaBar({
             <span className="material-symbols-outlined text-[18px]">
               {isFavorited ? "favorite" : "favorite_border"}
             </span>
-            <span className="font-body-md text-body-md font-semibold">
+            <span className="font-body-md text-body-md font-semibold text-xs sm:text-sm">
               {isFavorited ? "في المفضلة" : "أضف للمفضلة"}
             </span>
           </button>
@@ -212,28 +212,28 @@ export default function WatchEpisodeMetaBar({
           {/* VIP Download */}
           <Link
             href="/pricing"
-            className="flex items-center gap-1.5 px-space-md py-space-xs rounded-lg bg-surface-container-high hover:text-secondary transition-all text-on-surface-variant border border-transparent"
+            className="min-h-[44px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-high hover:text-secondary transition-all text-on-surface-variant border border-transparent"
             id="vip-download-btn"
           >
             <span className="material-symbols-outlined text-secondary text-[18px]">download_for_offline</span>
-            <span className="font-body-md text-body-md font-semibold">تنزيل بجودة 4K (VIP)</span>
+            <span className="font-body-md text-body-md font-semibold text-xs sm:text-sm">تنزيل 4K (VIP)</span>
           </Link>
 
           {/* Share */}
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-space-md py-space-xs rounded-lg bg-surface-container-high hover:text-on-surface transition-all cursor-pointer border border-transparent"
+            className="min-h-[44px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-high hover:text-on-surface transition-all cursor-pointer border border-transparent"
             id="share-btn"
           >
             <span className="material-symbols-outlined text-[18px]">share</span>
-            <span className="font-body-md text-body-md font-semibold">مشاركة</span>
+            <span className="font-body-md text-body-md font-semibold text-xs sm:text-sm">مشاركة</span>
           </button>
         </div>
 
         {/* Broken link reporting */}
         <button
           onClick={handleReport}
-          className={`flex items-center gap-1 px-space-md py-space-xs rounded-lg transition-all cursor-pointer border ${
+          className={`min-h-[44px] flex items-center gap-1 px-3.5 py-2 rounded-xl transition-all cursor-pointer border ${
             isReported
               ? "bg-emerald-950 text-emerald-400 border-emerald-500/50"
               : "bg-surface-container-low hover:bg-error-container hover:text-on-error-container text-on-surface-variant border-transparent"
@@ -243,7 +243,7 @@ export default function WatchEpisodeMetaBar({
           <span className="material-symbols-outlined text-[18px]">
             {isReported ? "check_circle" : "report_problem"}
           </span>
-          <span className="font-label-md text-label-md">
+          <span className="font-label-md text-label-md text-xs sm:text-sm">
             {isReported ? "تم الإبلاغ بنجاح" : "الإبلاغ عن سيرفر معطّل"}
           </span>
         </button>

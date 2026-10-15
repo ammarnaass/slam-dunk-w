@@ -39,10 +39,10 @@ export function AnimeEpisodesSection({
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="flex items-center bg-surface-container-low p-1 rounded-xl border border-white/[0.05]">
+                <div className="w-full lg:w-auto flex items-center overflow-x-auto scrollbar-none touch-pan-x bg-surface-container-low p-1 rounded-xl border border-white/[0.05]">
                     <button
                         onClick={() => setFilterEpisodeType("all")}
-                        className={`px-space-md py-1.5 rounded-lg font-label-sm text-label-sm transition-all cursor-pointer ${
+                        className={`flex-1 sm:flex-initial px-3 sm:px-space-md py-2 min-h-[44px] rounded-lg font-label-sm text-label-sm transition-all whitespace-nowrap active:scale-95 cursor-pointer ${
                             filterEpisodeType === "all" ? "bg-primary-container text-on-primary-container font-bold shadow" : "text-on-surface-variant hover:text-on-surface"
                         }`}
                     >
@@ -50,7 +50,7 @@ export function AnimeEpisodesSection({
                     </button>
                     <button
                         onClick={() => setFilterEpisodeType("free")}
-                        className={`px-space-md py-1.5 rounded-lg font-label-sm text-label-sm transition-all cursor-pointer ${
+                        className={`flex-1 sm:flex-initial px-3 sm:px-space-md py-2 min-h-[44px] rounded-lg font-label-sm text-label-sm transition-all whitespace-nowrap active:scale-95 cursor-pointer ${
                             filterEpisodeType === "free" ? "bg-primary-container text-on-primary-container font-bold shadow" : "text-on-surface-variant hover:text-on-surface"
                         }`}
                     >
@@ -58,7 +58,7 @@ export function AnimeEpisodesSection({
                     </button>
                     <button
                         onClick={() => setFilterEpisodeType("vip")}
-                        className={`px-space-md py-1.5 rounded-lg font-label-sm text-label-sm transition-all cursor-pointer ${
+                        className={`flex-1 sm:flex-initial px-3 sm:px-space-md py-2 min-h-[44px] rounded-lg font-label-sm text-label-sm transition-all whitespace-nowrap active:scale-95 cursor-pointer ${
                             filterEpisodeType === "vip" ? "bg-secondary-container text-on-secondary font-bold shadow" : "text-on-surface-variant hover:text-on-surface"
                         }`}
                     >
@@ -84,7 +84,7 @@ export function AnimeEpisodesSection({
                     {firstEpisodeId && (
                         <Link
                             href={`/watch/${firstEpisodeId}`}
-                            className="w-full sm:w-auto text-center px-space-lg py-space-sm rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md font-bold hover:brightness-110 active:scale-95 transition-all shadow-md"
+                            className="w-full sm:w-auto text-center inline-flex items-center justify-center min-h-[44px] px-space-lg py-2.5 rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md font-bold hover:brightness-110 active:scale-95 transition-all shadow-md shrink-0"
                         >
                             تشغيل الآن
                         </Link>

@@ -103,7 +103,7 @@ export default function AccountDetailsCard({
                             type="text"
                             value={username}
                             onChange={(e) => onChangeField("username", e.target.value)}
-                            className="w-full bg-surface-container rounded-xl pr-10 pl-4 py-3 text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none transition-all font-bold"
+                            className="w-full min-h-[48px] bg-surface-container rounded-xl pr-10 pl-4 py-3.5 text-base sm:text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none transition-all font-bold"
                             placeholder="مثال: حسان شوهوكو"
                         />
                     </div>
@@ -120,9 +120,10 @@ export default function AccountDetailsCard({
                         </span>
                         <input
                             type="email"
+                            inputMode="email"
                             value={email}
                             onChange={(e) => onChangeField("email", e.target.value)}
-                            className="w-full bg-surface-container rounded-xl pr-10 pl-4 py-3 text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none transition-all font-mono"
+                            className="w-full min-h-[48px] bg-surface-container rounded-xl pr-10 pl-4 py-3.5 text-base sm:text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none transition-all font-mono"
                             placeholder="user@example.com"
                         />
                     </div>
@@ -139,9 +140,10 @@ export default function AccountDetailsCard({
                         </span>
                         <input
                             type="tel"
+                            inputMode="tel"
                             value={phoneNumber}
                             onChange={(e) => onChangeField("phoneNumber", e.target.value)}
-                            className="w-full bg-surface-container rounded-xl pr-10 pl-4 py-3 text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none transition-all font-mono"
+                            className="w-full min-h-[48px] bg-surface-container rounded-xl pr-10 pl-4 py-3.5 text-base sm:text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none transition-all font-mono"
                             placeholder="+966 50 123 4567"
                         />
                     </div>
@@ -156,7 +158,7 @@ export default function AccountDetailsCard({
                         <button
                             type="button"
                             onClick={() => onChangeField("gender", "male")}
-                            className={`py-3 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                            className={`min-h-[48px] py-2.5 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
                                 gender === "male"
                                     ? "bg-primary-container text-on-primary-container border-primary-container shadow"
                                     : "bg-surface-container text-on-surface-variant border-white/5 hover:bg-surface-container-high"
@@ -168,7 +170,7 @@ export default function AccountDetailsCard({
                         <button
                             type="button"
                             onClick={() => onChangeField("gender", "female")}
-                            className={`py-3 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                            className={`min-h-[48px] py-2.5 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
                                 gender === "female"
                                     ? "bg-rose-600 text-white border-rose-500 shadow"
                                     : "bg-surface-container text-on-surface-variant border-white/5 hover:bg-surface-container-high"
@@ -201,7 +203,7 @@ export default function AccountDetailsCard({
                     value={bio}
                     onChange={(e) => onChangeField("bio", e.target.value)}
                     placeholder="اكتب عبارة تصف شغفك بالأنمي أو مقولتك المفضلة..."
-                    className="w-full bg-surface-container rounded-xl p-3 text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none resize-none transition-all leading-relaxed"
+                    className="w-full bg-surface-container rounded-xl p-3 text-base sm:text-sm text-on-surface border border-white/5 focus:border-primary-container outline-none resize-none transition-all leading-relaxed"
                 />
 
                 {/* Quick Bio Suggestions */}

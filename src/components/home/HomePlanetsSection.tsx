@@ -43,7 +43,7 @@ export function HomePlanetsSection({ section, planetsList }: HomePlanetsSectionP
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-space-md">
+                <div className="flex sm:grid sm:grid-cols-3 lg:grid-cols-6 gap-space-md overflow-x-auto sm:overflow-visible scrollbar-none touch-pan-x pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">
                     {planetsList.slice(0, planetsLimit).map((planet: any) => {
                         const planetId = planet.id || planet.planetId || "all";
                         const badgeText = planet.slogan || planet.badge || "";
@@ -51,7 +51,7 @@ export function HomePlanetsSection({ section, planetsList }: HomePlanetsSectionP
                             <Link
                                 key={planet.name || planet.id}
                                 href={`/planets?planet=${encodeURIComponent(planetId)}`}
-                                className="group flex flex-col items-center justify-center p-space-md rounded-2xl bg-surface-container-low hover:bg-surface-container border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center"
+                                className="group flex-shrink-0 w-[138px] sm:w-auto snap-start flex flex-col items-center justify-center p-space-md rounded-2xl bg-surface-container-low hover:bg-surface-container border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center active:scale-95"
                             >
                                 <div 
                                     className="w-14 h-14 rounded-2xl flex items-center justify-center mb-space-sm group-hover:scale-110 transition-transform duration-300 shadow-md text-2xl"

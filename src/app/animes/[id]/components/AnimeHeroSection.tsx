@@ -161,11 +161,11 @@ export function AnimeHeroSection({
                         </div>
 
                         {/* CTA Action Buttons */}
-                        <div className="flex flex-wrap items-center gap-space-md pt-space-xs">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-space-md pt-space-xs w-full">
                             {firstEpisodeId ? (
                                 <Link
                                     href={`/watch/${firstEpisodeId}`}
-                                    className="relative group flex items-center gap-space-sm px-space-xl py-space-md rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-[0_8px_24px_rgba(220,38,38,0.4)] hover:brightness-110 active:scale-95 transition-all"
+                                    className="relative group flex items-center justify-center gap-space-sm px-space-xl py-3.5 sm:py-space-md min-h-[48px] rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-[0_8px_24px_rgba(220,38,38,0.4)] hover:brightness-110 active:scale-95 transition-all text-center"
                                 >
                                     <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
                                     <span>ابدأ المشاهدة (الحلقة 1)</span>
@@ -173,37 +173,40 @@ export function AnimeHeroSection({
                             ) : (
                                 <button
                                     disabled
-                                    className="px-space-xl py-space-md rounded-xl bg-surface-container-high text-on-surface-variant font-headline-sm"
+                                    className="px-space-xl py-3.5 sm:py-space-md min-h-[48px] rounded-xl bg-surface-container-high text-on-surface-variant font-headline-sm text-center"
                                 >
                                     الحلقات قادمة قريباً
                                 </button>
                             )}
 
-                            <button
-                                onClick={onWatchlistToggle}
-                                disabled={toggling}
-                                className={`flex items-center gap-space-xs px-space-md py-space-md rounded-xl font-label-md text-label-md transition-all border cursor-pointer ${
-                                    isInWatchlist 
-                                        ? "bg-primary-container/20 border-primary-container text-primary" 
-                                        : "bg-surface-container-low hover:bg-surface-container-high border-white/[0.08] text-on-surface-variant hover:text-on-surface"
-                                }`}
-                            >
-                                <span 
-                                    className={`material-symbols-outlined text-[20px] ${isInWatchlist ? "text-primary-container" : ""}`}
-                                    style={{ fontVariationSettings: isInWatchlist ? "'FILL' 1" : "'FILL' 0" }}
+                            <div className="flex items-center gap-2.5 sm:gap-space-md">
+                                <button
+                                    onClick={onWatchlistToggle}
+                                    disabled={toggling}
+                                    className={`flex-1 sm:flex-initial flex items-center justify-center gap-space-xs px-space-md py-3 sm:py-space-md min-h-[48px] rounded-xl font-label-md text-label-md transition-all border cursor-pointer active:scale-95 ${
+                                        isInWatchlist 
+                                            ? "bg-primary-container/20 border-primary-container text-primary" 
+                                            : "bg-surface-container-low hover:bg-surface-container-high border-white/[0.08] text-on-surface-variant hover:text-on-surface"
+                                    }`}
                                 >
-                                    favorite
-                                </span>
-                                <span>{isInWatchlist ? "في المفضلة ❤️" : "أضف للمفضلة"}</span>
-                            </button>
+                                    <span 
+                                        className={`material-symbols-outlined text-[20px] ${isInWatchlist ? "text-primary-container" : ""}`}
+                                        style={{ fontVariationSettings: isInWatchlist ? "'FILL' 1" : "'FILL' 0" }}
+                                    >
+                                        favorite
+                                    </span>
+                                    <span>{isInWatchlist ? "في المفضلة ❤️" : "أضف للمفضلة"}</span>
+                                </button>
 
-                            <button
-                                onClick={onCopyShare}
-                                className="flex items-center justify-center w-11 h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-white/[0.08] text-on-surface-variant hover:text-on-surface transition-all cursor-pointer"
-                                title="مشاركة الرابط"
-                            >
-                                <span className="material-symbols-outlined text-[20px]">share</span>
-                            </button>
+                                <button
+                                    onClick={onCopyShare}
+                                    className="flex items-center justify-center w-12 h-12 min-w-[48px] min-h-[48px] rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-white/[0.08] text-on-surface-variant hover:text-on-surface transition-all active:scale-95 cursor-pointer shrink-0"
+                                    title="مشاركة الرابط"
+                                    aria-label="مشاركة رابط العمل"
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">share</span>
+                                </button>
+                            </div>
                         </div>
 
                     </div>

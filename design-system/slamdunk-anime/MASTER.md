@@ -7,8 +7,8 @@
 ---
 
 **Project:** SlamDunk Anime
-**Generated:** 2026-10-14 21:15:31
-**Category:** News/Media Platform
+**Generated:** 2026-10-15 17:49:42
+**Category:** Directory / Listing Site
 
 ---
 
@@ -33,14 +33,14 @@
 
 ### Typography
 
-- **Heading Font:** Inter
-- **Body Font:** Inter
-- **Mood:** dark, cinematic, technical, precision, clean, premium, developer, professional, high-end utility
-- **Google Fonts:** [Inter + Inter](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap)
+- **Heading Font:** Noto Serif JP
+- **Body Font:** Noto Sans JP
+- **Mood:** japanese, elegant, traditional, modern, multilingual, readable
+- **Google Fonts:** [Noto Serif JP + Noto Sans JP](https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap)
 
 **CSS Import:**
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap');
 ```
 
 ### Spacing Variables
@@ -158,28 +158,28 @@
 
 ## Style Guidelines
 
-**Style:** Dark Mode (OLED)
+**Style:** Vibrant & Block-based
 
-**Keywords:** Dark theme, low light, high contrast, deep black, midnight blue, eye-friendly, OLED, night mode, power efficient
+**Keywords:** Bold, energetic, playful, block layout, geometric shapes, high color contrast, duotone, modern, energetic
 
-**Best For:** Night-mode apps, coding platforms, entertainment, eye-strain prevention, OLED devices, low-light
+**Best For:** Startups, creative agencies, gaming, social media, youth-focused, entertainment, consumer
 
-**Key Effects:** Minimal glow (text-shadow: 0 0 10px), dark-to-light transitions, low white emission, high readability, visible focus
+**Key Effects:** Large sections (48px+ gaps), animated patterns, bold hover (color shift), scroll-snap, large type (32px+), 200-300ms
 
 ### Page Pattern
 
-**Pattern Name:** App Store Style Landing
+**Pattern Name:** Marketplace / Directory
 
-- **Conversion Strategy:** Show real screenshots. Include ratings (4.5+ stars). QR code for mobile. Platform-specific CTAs.
-- **CTA Placement:** Download buttons prominent (App Store + Play Store) throughout
-- **Section Order:** 1. Hero with device mockup, 2. Screenshots carousel, 3. Features with icons, 4. Reviews/ratings, 5. Download CTAs
+- **Conversion Strategy:** Search bar is the CTA. Reduce friction to search. Popular searches suggestions.
+- **CTA Placement:** Hero Search Bar + Navbar 'List your item'
+- **Section Order:** 1. Hero (Search focused), 2. Categories, 3. Featured Listings, 4. Trust/Safety, 5. CTA (Become a host/seller)
 
 ---
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ Cluttered layout
-- ❌ Slow loading
+- ❌ Flat design without depth
+- ❌ Text-heavy pages
 
 ### Additional Forbidden Patterns
 

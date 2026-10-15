@@ -138,8 +138,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                         <button
                             type="button"
                             onClick={() => setQuery("")}
-                            className="p-1.5 rounded-lg hover:bg-white/[0.08] text-[#94a3b8] hover:text-white transition-colors cursor-pointer"
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 rounded-xl hover:bg-white/[0.08] text-[#94a3b8] hover:text-white transition-colors cursor-pointer"
                             title="مسح النص"
+                            aria-label="مسح النص"
                         >
                             <span className="material-symbols-outlined text-lg">cancel</span>
                         </button>
@@ -149,8 +150,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     <button 
                         type="button"
                         onClick={onClose} 
-                        className="p-2 hover:bg-white/[0.08] rounded-xl text-[#94a3b8] hover:text-white transition-colors cursor-pointer shrink-0"
+                        className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 hover:bg-white/[0.08] rounded-xl text-[#94a3b8] hover:text-white transition-colors cursor-pointer shrink-0"
                         title="إغلاق النافذة"
+                        aria-label="إغلاق النافذة"
                     >
                         <span className="material-symbols-outlined text-xl">close</span>
                     </button>

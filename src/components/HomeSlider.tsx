@@ -183,7 +183,7 @@ export default function HomeSlider({ animes, config }: HomeSliderProps) {
                             <div className="flex flex-wrap items-center gap-2.5 sm:gap-space-md pt-2 sm:pt-space-sm">
                                 <Link
                                     href={`/animes/${activeAnime.id}`}
-                                    className="group flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 sm:px-space-xl py-3 rounded-xl bg-primary-container text-on-primary-container font-cairo font-bold text-sm sm:text-base hover:brightness-110 transition-all shadow-[0_0_24px_rgba(220,38,38,0.45)] hover:shadow-[0_0_36px_rgba(220,38,38,0.7)] active:scale-95"
+                                    className="group flex-1 sm:flex-none min-h-[48px] flex items-center justify-center gap-2 px-5 sm:px-space-xl py-3 rounded-xl bg-primary-container text-on-primary-container font-cairo font-bold text-sm sm:text-base hover:brightness-110 transition-all shadow-[0_0_24px_rgba(220,38,38,0.45)] hover:shadow-[0_0_36px_rgba(220,38,38,0.7)] active:scale-95"
                                 >
                                     <span className="material-symbols-outlined text-xl sm:text-2xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>
                                         play_arrow
@@ -192,14 +192,14 @@ export default function HomeSlider({ animes, config }: HomeSliderProps) {
                                 </Link>
                                 <Link
                                     href="/pricing"
-                                    className="flex items-center justify-center gap-1.5 px-4 sm:px-space-lg py-3 rounded-xl bg-surface-container-high/90 hover:bg-surface-container-highest text-on-surface font-cairo font-bold text-xs sm:text-sm transition-all hover:shadow-lg active:scale-95"
+                                    className="min-h-[48px] flex items-center justify-center gap-1.5 px-4 sm:px-space-lg py-3 rounded-xl bg-surface-container-high/90 hover:bg-surface-container-highest text-on-surface font-cairo font-bold text-xs sm:text-sm transition-all hover:shadow-lg active:scale-95"
                                 >
                                     <span className="material-symbols-outlined text-base sm:text-lg text-secondary">workspace_premium</span>
                                     <span>ترقية VIP</span>
                                 </Link>
                                 <Link
                                     href={`/animes/${activeAnime.id}`}
-                                    className="hidden xs:flex items-center justify-center gap-1.5 px-3.5 sm:px-space-md py-3 rounded-xl bg-surface-container-low/80 hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-cairo font-medium text-xs sm:text-sm transition-all"
+                                    className="hidden xs:flex min-h-[48px] items-center justify-center gap-1.5 px-3.5 sm:px-space-md py-3 rounded-xl bg-surface-container-low/80 hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-cairo font-medium text-xs sm:text-sm transition-all"
                                 >
                                     <span className="material-symbols-outlined text-base sm:text-lg">info</span>
                                     <span>التفاصيل</span>
@@ -214,7 +214,7 @@ export default function HomeSlider({ animes, config }: HomeSliderProps) {
                                             key={dotIdx}
                                             type="button"
                                             onClick={() => setCurrent(dotIdx)}
-                                            className="min-h-[44px] min-w-[32px] flex items-center justify-center p-1.5 cursor-pointer"
+                                            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1.5 cursor-pointer active:scale-90 transition-transform"
                                             aria-label={`الشريحة ${dotIdx + 1}`}
                                         >
                                             <span className={`h-2 rounded-full transition-all duration-300 ${

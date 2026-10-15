@@ -80,9 +80,10 @@ export function AnimeReviewsSection({
 
                         <button 
                             onClick={onAddReviewClick}
-                            className="mt-space-lg w-full py-space-sm rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm text-sm font-bold shadow-md hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                            className="mt-space-lg w-full py-3 min-h-[48px] rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm text-sm font-bold shadow-md hover:brightness-110 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
                         >
-                            أضف تقييمك للعمل
+                            <span className="material-symbols-outlined text-[18px]">rate_review</span>
+                            <span>أضف تقييمك للعمل</span>
                         </button>
                     </div>
 

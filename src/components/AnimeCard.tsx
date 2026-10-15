@@ -43,7 +43,7 @@ export default function AnimeCard({ anime, priority = false }: AnimeCardProps) {
         <Link
             href={`/animes/${anime.id}`}
             aria-label={`مشاهدة ${anime.title}`}
-            className="group relative flex flex-col overflow-hidden rounded-xl bg-[#15151c] border border-white/[0.05] hover:border-[#dc2626]/50 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_12px_32px_-6px_rgba(220,38,38,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626]"
+            className="group relative flex flex-col overflow-hidden rounded-xl sm:rounded-2xl bg-[#15151c] border border-white/[0.05] hover:border-[#dc2626]/50 transition-all duration-300 hover:-translate-y-1.5 active:scale-[0.98] hover:shadow-[0_12px_32px_-6px_rgba(220,38,38,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626]"
         >
             {/* Poster container with 2:3 ratio */}
             <div className="relative aspect-[2/3] w-full overflow-hidden bg-[#0b0b0f]">
@@ -65,27 +65,27 @@ export default function AnimeCard({ anime, priority = false }: AnimeCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent opacity-60" />
 
                 {/* Top Badges */}
-                <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between z-10 pointer-events-none">
+                <div className="absolute top-2 inset-x-2 sm:top-2.5 sm:inset-x-2.5 flex items-center justify-between z-10 pointer-events-none">
                     {/* Rating badge with amber gold */}
-                    <div className="flex items-center gap-1 bg-[#15151c]/85 backdrop-blur-md border border-[#f59e0b]/30 text-[#f59e0b] px-2 py-0.5 rounded-full text-xs font-bold shadow-md">
+                    <div className="flex items-center gap-1 bg-[#15151c]/85 backdrop-blur-md border border-[#f59e0b]/30 text-[#f59e0b] px-1.5 sm:px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-bold shadow-md">
                         <Star size={11} className="fill-[#f59e0b] text-[#f59e0b]" />
                         <span>{displayRating}</span>
                     </div>
 
                     {/* Quality badge */}
-                    <div className="bg-[#dc2626]/90 backdrop-blur-md text-white text-[9px] font-black px-2 py-0.5 rounded-full tracking-wider shadow">
+                    <div className="bg-[#dc2626]/90 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-black px-1.5 sm:px-2 py-0.5 rounded-full tracking-wider shadow">
                         4K UHD
                     </div>
                 </div>
 
                 {/* Bottom Badges Strip on Poster */}
-                <div className="absolute bottom-2.5 inset-x-2.5 flex items-center justify-between z-10 pointer-events-none">
-                    <span className="flex items-center gap-1 bg-black/70 backdrop-blur-md border border-white/10 text-[#e4e1e7] text-[10px] font-tajawal font-medium px-2 py-0.5 rounded-md">
-                        <Volume2 size={11} className="text-[#ffb95f]" />
+                <div className="absolute bottom-2 inset-x-2 sm:bottom-2.5 sm:inset-x-2.5 flex items-center justify-between z-10 pointer-events-none">
+                    <span className="flex items-center gap-1 bg-black/75 backdrop-blur-md border border-white/10 text-[#e4e1e7] text-[9px] sm:text-[10px] font-tajawal font-medium px-1.5 sm:px-2 py-0.5 rounded-md">
+                        <Volume2 size={10} className="text-[#ffb95f]" />
                         <span>مدبلج</span>
                     </span>
 
-                    <span className="flex items-center gap-1 bg-black/70 backdrop-blur-md border border-white/10 px-2 py-0.5 rounded-md text-[10px] font-medium text-[#e4e1e7]">
+                    <span className="flex items-center gap-1 bg-black/75 backdrop-blur-md border border-white/10 px-1.5 sm:px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-medium text-[#e4e1e7]">
                         <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? "bg-emerald-400" : "bg-[#dc2626] animate-pulse"}`} />
                         <span>{isCompleted ? "مكتمل" : "مستمر"}</span>
                     </span>
@@ -100,16 +100,16 @@ export default function AnimeCard({ anime, priority = false }: AnimeCardProps) {
             </div>
 
             {/* Content Details */}
-            <div className="p-3.5 flex flex-col justify-between flex-grow bg-[#15151c]">
+            <div className="p-2.5 sm:p-3.5 flex flex-col justify-between flex-grow bg-[#15151c]">
                 <h3 className="font-cairo font-bold text-xs sm:text-sm text-[#e4e1e7] group-hover:text-white group-hover:text-[#ffb4ab] transition-colors line-clamp-2 min-h-[2.25rem] sm:min-h-[2.5rem] leading-snug">
                     {anime.title}
                 </h3>
 
-                <div className="flex items-center justify-between text-[11px] font-tajawal text-[#94a3b8] mt-2">
-                    <span className="truncate max-w-[110px]">
+                <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-tajawal text-[#94a3b8] mt-1.5 sm:mt-2">
+                    <span className="truncate max-w-[90px] sm:max-w-[110px]">
                         {genresList[0] || anime.type || "أنمي"}
                     </span>
-                    <span className="text-[#94a3b8] font-mono">
+                    <span className="text-[#94a3b8] font-mono shrink-0">
                         {anime.releaseYear || (anime.totalEpisodes ? `${anime.totalEpisodes} حلقة` : "سبيستون")}
                     </span>
                 </div>

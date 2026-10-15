@@ -39,8 +39,8 @@ export default function Toast({ message, type = "success", duration = 3000, onCl
     };
 
     return (
-        <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] transition-all duration-300 transform ${isVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0 pointer-events-none"}`}>
-            <div className={`flex items-center gap-3 px-6 py-4 rounded-2xl border backdrop-blur-xl shadow-2xl ${colors[type]}`}>
+        <div className={`fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-8 left-1/2 -translate-x-1/2 z-[100] transition-all duration-300 transform ${isVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0 pointer-events-none"}`}>
+            <div className={`flex items-center gap-3 px-5 py-3.5 sm:px-6 sm:py-4 rounded-2xl border backdrop-blur-xl shadow-2xl ${colors[type]}`}>
                 {icons[type]}
                 <p className="text-sm font-bold whitespace-nowrap">{message}</p>
                 <button
@@ -48,7 +48,8 @@ export default function Toast({ message, type = "success", duration = 3000, onCl
                         setIsVisible(false);
                         setTimeout(onClose, 300);
                     }}
-                    className="ml-2 hover:opacity-70 transition-opacity"
+                    className="mr-2 min-h-[44px] min-w-[44px] flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer"
+                    aria-label="إغلاق التنبيه"
                 >
                     <X className="w-4 h-4" />
                 </button>

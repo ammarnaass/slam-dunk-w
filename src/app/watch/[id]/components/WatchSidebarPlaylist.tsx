@@ -63,7 +63,7 @@ export default function WatchSidebarPlaylist({
           <select 
             value={selectedSeason}
             onChange={(e) => setSelectedSeason(e.target.value)}
-            className="w-full bg-surface-container-low text-on-surface font-body-sm text-body-sm px-space-md py-2 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary-container border border-white/5"
+            className="w-full min-h-[44px] bg-surface-container-low text-on-surface text-base sm:text-body-sm px-space-md py-2.5 rounded-xl appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary-container border border-white/5"
           >
             <option value="all">الموسم الأول: عهد البطولة (الحلقات 1 - {episodes.length})</option>
             <option value="s2">الموسم الثاني: صعود الأبطال (قريباً)</option>
@@ -84,7 +84,7 @@ export default function WatchSidebarPlaylist({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline text-body-sm font-body-sm pr-8 pl-space-sm py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-container border border-white/5"
+              className="w-full min-h-[44px] bg-surface-container-lowest text-on-surface placeholder:text-outline text-base sm:text-body-sm pr-9 pl-space-sm py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary-container border border-white/5"
               id="episode-search"
               placeholder="بحث برقم أو اسم الحلقة..."
             />
@@ -92,7 +92,7 @@ export default function WatchSidebarPlaylist({
 
           <button
             onClick={() => setIsAscending(!isAscending)}
-            className="p-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center cursor-pointer border border-white/5"
+            className="min-h-[44px] min-w-[44px] rounded-xl bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center cursor-pointer border border-white/5 shrink-0"
             id="sort-order-btn"
             title={isAscending ? "الترتيب: تصاعدي (انقر للعكس)" : "الترتيب: تنازلي (انقر للعكس)"}
           >
@@ -101,8 +101,38 @@ export default function WatchSidebarPlaylist({
         </div>
       </div>
 
+      {/* Quick Horizontal Episode Selector for Mobile Swiping */}
+      <div className="xl:hidden pb-1 border-b border-white/[0.04]">
+        <div className="flex items-center justify-between text-xs text-on-surface-variant font-bold mb-2">
+          <span className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-[16px] text-primary">touch_app</span>
+            <span>تنقل سريع بين الحلقات:</span>
+          </span>
+          <span className="text-[10px] text-secondary font-mono">اسحب أفقياً ←</span>
+        </div>
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none touch-pan-x pb-2 snap-x">
+          {filteredEpisodes.map((ep) => {
+            const isCur = String(ep.id) === String(currentEpisodeId);
+            return (
+              <Link
+                key={`quick-${ep.id}`}
+                href={`/watch/${ep.id}`}
+                className={`snap-start shrink-0 min-h-[44px] px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all border active:scale-95 ${
+                  isCur
+                    ? "bg-primary-container text-on-primary-container border-primary-container shadow-md"
+                    : "bg-surface-container-low text-on-surface-variant hover:text-on-surface border-white/5"
+                }`}
+              >
+                <span>حلقة {ep.episodeNumber}</span>
+                {isCur && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Scrollable Episode Items List */}
-      <div className="flex flex-col gap-space-sm overflow-y-auto pr-1 -mr-1 max-h-[580px] no-scrollbar" id="episodes-container">
+      <div className="flex flex-col gap-space-sm overflow-y-auto pr-1 -mr-1 max-h-[580px] scrollbar-none" id="episodes-container">
         {filteredEpisodes.length === 0 ? (
           <div className="text-center py-8 text-on-surface-variant font-body-sm text-body-sm">
             لا توجد حلقات تطابق بحثك "{searchQuery}"
@@ -159,7 +189,7 @@ export default function WatchSidebarPlaylist({
               <Link
                 key={ep.id}
                 href={`/watch/${ep.id}`}
-                className="group flex items-center gap-space-sm p-space-xs rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-all border border-transparent hover:border-white/5"
+                className="group flex items-center gap-space-sm p-space-xs rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-all border border-transparent hover:border-white/5 min-h-[56px] active:scale-[0.99]"
               >
                 {/* Thumbnail */}
                 <div className="relative w-28 aspect-video rounded-lg overflow-hidden shrink-0 bg-surface-container-lowest">
