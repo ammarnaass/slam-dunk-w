@@ -1,0 +1,131 @@
+import { StyleSheet, Platform, StatusBar } from 'react-native';
+import { THEME } from '../constants/theme';
+
+export const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0;
+
+export const styles = StyleSheet.create({
+  container: {
+    backgroundColor: THEME.colors.surfaceGlass,
+    paddingTop: STATUSBAR_HEIGHT,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.04)',
+    zIndex: 50,
+  },
+  inner: {
+    height: 64,
+    paddingHorizontal: THEME.spacing.margin,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  leadingSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: THEME.spacing.spaceSm,
+    flex: 1,
+  },
+  miniAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+  },
+  avatarBtn: {
+    padding: 2,
+  },
+  titleContainer: {
+    justifyContent: 'center',
+    flex: 1,
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  brandTitle: {
+    ...THEME.typography.headlineSm,
+    color: THEME.colors.onSurface,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  brandDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: THEME.colors.primaryContainer,
+  },
+  subTitle: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.primary,
+    marginTop: -2,
+  },
+  pageTitle: {
+    ...THEME.typography.headlineSm,
+    color: THEME.colors.onSurface,
+    fontWeight: '700',
+  },
+  trailingSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: THEME.spacing.spaceXs,
+  },
+  iconBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: THEME.radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  notifDot: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: THEME.colors.primaryContainer,
+    borderWidth: 1.5,
+    borderColor: THEME.colors.surface,
+  },
+  vipContainer: {
+    position: 'relative',
+    marginLeft: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  vipRing: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+    borderWidth: 1,
+    borderColor: 'rgba(238, 152, 0, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  vipTag: {
+    position: 'absolute',
+    bottom: -3,
+    left: -3,
+    backgroundColor: THEME.colors.secondaryContainer,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: THEME.radius.full,
+    shadowColor: THEME.colors.secondaryContainer,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  vipTagText: {
+    color: THEME.colors.onSecondary,
+    fontSize: 9,
+    fontWeight: '800',
+    lineHeight: 11,
+  },
+});

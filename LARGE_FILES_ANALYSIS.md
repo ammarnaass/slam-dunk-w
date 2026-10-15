@@ -81,9 +81,9 @@ pie title توزيع أسطر الشيفرة البرمجية الصافية ف�
 | 30 | [`src/app/admin/animes/[id]/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/animes/[id]/page.tsx) | **359** | Admin Page | صفحة تعديل تفاصيل الأنمي والمواسم والحلقات | 🟠 أولوية متوسطة |
 | 31 | [`src/server/services/auth.service.ts`](file:///home/ammar/slam-dunk-w/src/server/services/auth.service.ts) | **358** | Backend Service | خدمة المصادقة المركزية (الجلسات، الرموز، والتحقق المزدوج) | 🟢 مفككة ومستقرة |
 | 32 | [`mobile_app/src/components/icons/action/ControlActionIcons.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/icons/action/ControlActionIcons.tsx) | **354** | Mobile Icons | قاموس مسارات أيقونات التحكم والأزرار التفاعلية | 🟡 معمارية (SVG Data) |
-| 33 | [`src/app/admin/settings/components/HomeScreenManagerCard.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/HomeScreenManagerCard.tsx) | **353** | Admin Component | بطاقة تخصيص وترتيب أقسام الصفحة الرئيسية للويب والتطبيق | 🟠 أولوية متوسطة |
-| 34 | [`src/app/admin/planets/components/EditPlanetModal.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/planets/components/EditPlanetModal.tsx) | **351** | Admin Component | نافذة تعديل خصائص الكوكب ومحاوره الفلكية وتعيين الأعمال | 🟠 أولوية متوسطة |
-| 35 | [`mobile_app/App.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/App.tsx) | **347** | Mobile Root | نقطة دخول التطبيق، مزودات الحالة، تهيئة الروابط العميقة، والتنقل | 🟠 أولوية متوسطة |
+| 33 | [`src/app/admin/settings/components/HomeScreenManagerCard.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/HomeScreenManagerCard.tsx) | ~~353~~ ➔ **99** | Admin Component | بطاقة تخصيص وترتيب أقسام الصفحة الرئيسية (تم استخراج HomeSectionRow و HomeScreenHeader و HomeScreenWireframeFooter) | 🟢 تم الإنجاز (-72%) |
+| 34 | [`src/app/admin/planets/components/EditPlanetModal.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/planets/components/EditPlanetModal.tsx) | ~~351~~ ➔ **170** | Admin Component | نافذة تعديل خصائص الكوكب (تم استخراج PlanetGeneralTab و Planet3DTab) | 🟢 تم الإنجاز (-52%) |
+| 35 | [`mobile_app/App.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/App.tsx) | ~~347~~ ➔ **101** | Mobile Root | نقطة دخول التطبيق (تم استخراج app.styles.ts و MaintenanceModal و ForceUpdateModal) | 🟢 تم الإنجاز (-71%) |
 | 36 | [`src/lib/anime-presets.ts`](file:///home/ammar/slam-dunk-w/src/lib/anime-presets.ts) | **345** | Static Data | مصفوفة بيانات الأنمي الجاهزة للتغذية الأولية للمنصة | 🟢 بيانات ثابتة (Seed) |
 | 37 | [`src/components/SearchModal.tsx`](file:///home/ammar/slam-dunk-w/src/components/SearchModal.tsx) | **338** | Web Component | نافذة البحث الفوري الشامل للأنمي والشخصيات بالنتائج المباشرة | 🟠 أولوية متوسطة |
 | 38 | [`src/server/services/anime-admin.service.ts`](file:///home/ammar/slam-dunk-w/src/server/services/anime-admin.service.ts) | **338** | Backend Service | خدمة إدارة العمليات الإدارية للأعمال والمواسم والحلقات | 🟢 مستقرة |
@@ -91,15 +91,15 @@ pie title توزيع أسطر الشيفرة البرمجية الصافية ف�
 | 40 | [`src/app/api/admin/users/[id]/route.ts`](file:///home/ammar/slam-dunk-w/src/app/api/admin/users/[id]/route.ts) | **331** | Backend Route | مسار API لتحديث وحذف وقراءة المستخدمين والاشتراكات في لوحة الإدارة | 🟠 أولوية متوسطة |
 | 41 | [`src/app/globals.css`](file:///home/ammar/slam-dunk-w/src/app/globals.css) | **330** | Stylesheet | ملف التنسيقات العامة للموقع ومؤثرات الزجاج والنيون وحركات الكواكب | 🟢 ملف أنماط عام |
 | 42 | [`src/components/notifications/NotificationDropdown.tsx`](file:///home/ammar/slam-dunk-w/src/components/notifications/NotificationDropdown.tsx) | **327** | Web Component | القائمة المنسدلة للإشعارات والتنبيهات المباشرة | 🟢 مقبولة ومستقرة |
-| 43 | [`mobile_app/src/screens/AnimesScreen.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/AnimesScreen.tsx) | **315** | Mobile Screen | شاشة فهرس الأنمي للموبايل مع التصفية الشبكية والتمرير اللانهائي | 🟠 أولوية متوسطة |
-| 44 | [`src/app/admin/settings/components/PromoBannerCard.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/PromoBannerCard.tsx) | **314** | Admin Component | بطاقة تخصيص البانر الترويجي العلوي وزر التحويل وتأثيرات الوميض | 🟠 أولوية متوسطة |
+| 43 | [`mobile_app/src/screens/AnimesScreen.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/AnimesScreen.tsx) | ~~315~~ ➔ **163** | Mobile Screen | شاشة فهرس الأنمي للموبايل (تم استخراج animes-screen.styles.ts و useAnimeCatalogFilter و AnimeCatalogResultsBar و AnimeCatalogEmptyState) | 🟢 تم الإنجاز (-48%) |
+| 44 | [`src/app/admin/settings/components/PromoBannerCard.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/PromoBannerCard.tsx) | ~~314~~ ➔ **80** | Admin Component | بطاقة تخصيص البانر الترويجي العلوي (تم استخراج PromoHeaderSection و PromoGeneralTextsSection) | 🟢 تم الإنجاز (-75%) |
 | 45 | [`src/server/services/user.service.ts`](file:///home/ammar/slam-dunk-w/src/server/services/user.service.ts) | **310** | Backend Service | خدمة المستخدمين وسجل المشاهدة والمفضلة وفحص انتهاء صلاحية VIP | 🟢 مستقرة |
-| 46 | [`src/app/admin/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/page.tsx) | **308** | Admin Page | لوحة القيادة الرئيسية للإحصائيات ومخططات المشاهدة والنشاط | 🟠 أولوية متوسطة |
+| 46 | [`src/app/admin/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/page.tsx) | ~~308~~ ➔ **31** | Admin Page | لوحة القيادة الرئيسية للإحصائيات (تم استخراج getAdminDashboardStats و AdminDashboardHeader و AdminDashboardMetrics و AdminRecentAnimesTable) | 🟢 تم الإنجاز (-90%) |
 | 47 | [`src/lib/planets-presets.ts`](file:///home/ammar/slam-dunk-w/src/lib/planets-presets.ts) | **308** | Static Data | مصفوفة كواكب سبيستون والبيانات الفلكية والألوان الافتراضية | 🟢 بيانات ثابتة (Seed) |
 | 48 | [`mobile_app/src/components/icons/action/SystemAuthActionIcons.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/icons/action/SystemAuthActionIcons.tsx) | **307** | Mobile Icons | قاموس مسارات أيقونات المصادقة والنظام (Pure SVG) | 🟡 معمارية (SVG Data) |
 | 49 | [`src/app/admin/planets/hooks/useAdminPlanets.ts`](file:///home/ammar/slam-dunk-w/src/app/admin/planets/hooks/useAdminPlanets.ts) | **306** | Admin Hook | خطاف إدارة الحالة والطلبات غير المتزامنة لصفحة الكواكب | 🟢 خطاف مستخرج حديثاً |
 | 50 | [`src/app/checkout/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/checkout/page.tsx) | **303** | Web Page | صفحة إتمام الدفع والاشتراك وتأكيد الطلب | 🟠 أولوية متوسطة |
-| 51 | [`mobile_app/src/components/Header.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/Header.tsx) | **302** | Mobile Component | الترويسة الرئيسية للتطبيق وزر البحث وزر القائمة والإشعارات | 🟠 أولوية متوسطة |
+| 51 | [`mobile_app/src/components/Header.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/Header.tsx) | ~~302~~ ➔ **171** | Mobile Component | الترويسة الرئيسية للتطبيق (تم استخراج header.styles.ts) | 🟢 تم الإنجاز (-43%) |
 
 ---
 
@@ -129,6 +129,10 @@ pie title توزيع أسطر الشيفرة البرمجية الصافية ف�
 | [`src/app/admin/settings/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/page.tsx) | 586 سطر | **176 سطر** | **-70%** | استخراج الثوابت والخطاف المركزي [`useAdminSettingsManager.ts`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/hooks/useAdminSettingsManager.ts) و 5 مكونات فرعية (`SettingsHeader`, `SettingsTabsNav`, `SettingsStickySaveBar`, `SettingsToast`, `SettingsLoader`). |
 | [`src/app/admin/animes/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/animes/page.tsx) | 440 سطر | **74 سطر** | **-83%** | استخراج الخطاف المركزي [`useAdminAnimes.ts`](file:///home/ammar/slam-dunk-w/src/app/admin/animes/hooks/useAdminAnimes.ts) ومكونات [`AnimeAdminHeader.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/animes/components/AnimeAdminHeader.tsx)، [`AnimeAdminFilterBar.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/animes/components/AnimeAdminFilterBar.tsx)، [`AnimeAdminCard.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/animes/components/AnimeAdminCard.tsx)، و [`AnimeAdminEmptyState.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/animes/components/AnimeAdminEmptyState.tsx). |
 | [`src/app/admin/characters/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/characters/page.tsx) | 387 سطر | **65 سطر** | **-83%** | استخراج الخطاف المركزي [`useAdminCharacters.ts`](file:///home/ammar/slam-dunk-w/src/app/admin/characters/hooks/useAdminCharacters.ts) ومكونات [`CharactersAdminHeader.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/characters/components/CharactersAdminHeader.tsx)، [`CharactersAdminFilterBar.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/characters/components/CharactersAdminFilterBar.tsx)، [`CharactersAdminRow.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/characters/components/CharactersAdminRow.tsx)، و [`CharactersAdminTable.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/characters/components/CharactersAdminTable.tsx). |
+| [`HomeScreenManagerCard.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/HomeScreenManagerCard.tsx) | 353 سطر | **99 سطر** | **-72%** | استخراج مكون صف القسم المستقل [`HomeSectionRow.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/home-screen/HomeSectionRow.tsx) وترويسة البطاقة [`HomeScreenHeader.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/home-screen/HomeScreenHeader.tsx) ومحاكي التسلسل [`HomeScreenWireframeFooter.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/home-screen/HomeScreenWireframeFooter.tsx). |
+| [`EditPlanetModal.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/planets/components/EditPlanetModal.tsx) | 351 سطر | **170 سطر** | **-52%** | فصل تبويب البيانات العامة [`PlanetGeneralTab.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/planets/components/edit-planet/PlanetGeneralTab.tsx) وتبويب المدار ثلاثي الأبعاد [`Planet3DTab.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/planets/components/edit-planet/Planet3DTab.tsx). |
+| [`PromoBannerCard.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/PromoBannerCard.tsx) | 314 سطر | **80 سطر** | **-75%** | استخراج بطاقة ترويسة التحكم [`PromoHeaderSection.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/promo/PromoHeaderSection.tsx) وقسم الشارة ورفع الأيقونة والعناوين [`PromoGeneralTextsSection.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/components/promo/PromoGeneralTextsSection.tsx). |
+| [`src/app/admin/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/page.tsx) | 308 سطر | **31 سطر** | **-90%** | استخراج خدمة البيانات [`getAdminDashboardStats.ts`](file:///home/ammar/slam-dunk-w/src/app/admin/components/dashboard/getAdminDashboardStats.ts) والمكونات الهيكلية [`AdminDashboardHeader.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/components/dashboard/AdminDashboardHeader.tsx)، [`AdminDashboardMetrics.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/components/dashboard/AdminDashboardMetrics.tsx)، و [`AdminRecentAnimesTable.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/components/dashboard/AdminRecentAnimesTable.tsx). |
 
 ---
 
@@ -370,7 +374,7 @@ flowchart TD
 | [`mobile_app/src/screens/RegisterScreen.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/RegisterScreen.tsx) | **مرتفع** | متوسطة | منخفض | تعقيد التحقق من صحة المدخلات ودمج الأنماط الثقيلة داخل الشاشة | 🟢 تم الإنجاز بنجاح (-69%) |
 | [`mobile_app/src/screens/EpisodesScreen.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/EpisodesScreen.tsx) | **متوسط** | متوسطة | منخفض | تداخل منطق اختيار المواسم والبحث مع تشغيل الحلقات | 🟢 تم الإنجاز بنجاح (-72%) |
 | [`mobile_app/src/components/EpisodeCard.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/EpisodeCard.tsx) | **متوسط** | متوسطة | منخفض | تعدد الـ Props واحتساب شريط التقدم الزمني لكل بطاقة داخل القوائم الكبيرة | 🟢 تم الإنجاز بنجاح (-77%) |
-| [`src/app/admin/settings/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/page.tsx) | **مرتفع** | متوسطة | متوسط | بطء استجابة التبويبات بسبب تحميل كافة بطاقات الإعدادات في وقت واحد | 🟠 مرحلة ثانية |
+| [`src/app/admin/settings/page.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/settings/page.tsx) | **مرتفع** | جيدة | منخفض | تم استخراج خطاف useAdminSettingsManager و 5 مكونات فرعية لتسريع استجابة التبويبات | 🟢 تم الإنجاز بنجاح (-70%) |
 | [`src/components/admin/CharacterForm.tsx`](file:///home/ammar/slam-dunk-w/src/components/admin/CharacterForm.tsx) | **متوسط** | متوسطة | منخفض | تضخم كود فحص الحقول والرفع السحابي لصور الشخصيات | 🟢 تم الإنجاز بنجاح (-78%) |
 | [`src/components/admin/PlanForm.tsx`](file:///home/ammar/slam-dunk-w/src/components/admin/PlanForm.tsx) | **متوسط** | متوسطة | منخفض | دمج مصفوفات ميزات الباقة والمقارنات المباشرة في نفس النموذج | 🟢 تم الإنجاز بنجاح (-81%) |
 | [`src/app/admin/layout.tsx`](file:///home/ammar/slam-dunk-w/src/app/admin/layout.tsx) | **متوسط** | جيدة | منخفض | صعوبة تعديل مسارات القائمة الإدارية دون تعديل هيكل الصفحة | 🟢 تم الإنجاز بنجاح (-79%) |
@@ -456,14 +460,17 @@ flowchart TD
 
 ---
 
-### 📌 المرحلة الرابعة (الحوكمة وضمان الجودة البرمجية - CI/CD Guardrails):
-- تفعيل قاعدة ESLint في المشروع للتحذير التلقائي عند تجاوز أي مكون React لحاجز **350 سطراً**:
-  ```json
-  "rules": {
-    "max-lines": ["warn", { "max": 350, "skipBlankLines": true, "skipComments": true }]
-  }
-  ```
-- استمرار الفصل التام لملفات الأنماط `*.styles.ts` في تطبيق React Native لضمان نظافة وخفة المكونات.
+### 📌 المرحلة الرابعة (الحوكمة وضمان الجودة البرمجية - CI/CD Guardrails - ✅ تم التفعيل):
+- [x] تم تفعيل قاعدة ESLint في المشروع للتحذير التلقائي عند تجاوز أي مكون/ملف لحاجز **350 سطراً**:
+  - إعدادات الويب المركزية في [`eslint.config.mjs`](file:///home/ammar/slam-dunk-w/eslint.config.mjs):
+    ```javascript
+    "max-lines": ["warn", { max: 350, skipBlankLines: true, skipComments: true }]
+    ```
+  - إعدادات تطبيق الموبايل في [`mobile_app/.eslintrc.js`](file:///home/ammar/slam-dunk-w/mobile_app/.eslintrc.js):
+    ```javascript
+    "max-lines": ["warn", { max: 350, skipBlankLines: true, skipComments: true }]
+    ```
+- [x] استمرار الفصل التام لملفات الأنماط `*.styles.ts` في تطبيق React Native لضمان نظافة وخفة المكونات.
 
 ---
 

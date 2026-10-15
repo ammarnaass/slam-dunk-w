@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Check, Loader2, Orbit, Sparkles } from "lucide-react";
+import { X, Check, Loader2, Orbit } from "lucide-react";
 import { AdminPlanetItem, Planet3DConfig } from "@/lib/planets-presets";
+import { PlanetGeneralTab, Planet3DTab } from "./edit-planet";
 
 interface EditPlanetModalProps {
     planet: AdminPlanetItem | null;
@@ -113,202 +114,20 @@ export function EditPlanetModal({
                     </button>
                 </div>
 
-                {/* Form Fields */}
+                {/* Form Fields Content */}
                 <div className="space-y-4 max-h-[58vh] overflow-y-auto pr-1">
                     {activeTab === "general" ? (
-                        <>
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">اسم الكوكب</label>
-                                <input
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block font-cairo font-bold text-xs text-white mb-1.5">الرمز التعبيري (Badge)</label>
-                                    <input
-                                        type="text"
-                                        value={formData.badge}
-                                        onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                                        className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block font-cairo font-bold text-xs text-white mb-1.5">التصنيف المرتبط في النظام</label>
-                                    <select
-                                        value={formData.genreKey}
-                                        onChange={(e) => setFormData({ ...formData, genreKey: e.target.value })}
-                                        className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-cairo font-bold focus:outline-none focus:border-red-500"
-                                    >
-                                        <option value="Action">Action (أكشن)</option>
-                                        <option value="Sports">Sports (رياضة)</option>
-                                        <option value="Adventure">Adventure (مغامرات)</option>
-                                        <option value="Comedy">Comedy (كوميديا)</option>
-                                        <option value="Drama">Drama (زمردة / دراما)</option>
-                                        <option value="Mystery">Mystery (غموض)</option>
-                                        <option value="Sci-Fi">Sci-Fi (علوم وخيال)</option>
-                                        <option value="Historical">Historical (تاريخ)</option>
-                                        <option value="Movie">Movie (أفلام)</option>
-                                        <option value="Kids">Kids (بون بون / أطفال)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">الشعار الترويجي (Slogan)</label>
-                                <input
-                                    type="text"
-                                    value={formData.slogan}
-                                    onChange={(e) => setFormData({ ...formData, slogan: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">شطر من شارة سبيستون (Anthem Snippet)</label>
-                                <input
-                                    type="text"
-                                    value={formData.anthemSnippet || ""}
-                                    onChange={(e) => setFormData({ ...formData, anthemSnippet: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                    placeholder="شطر الشارة الخالدة المستوحى من سبيستون..."
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">الوصف الكوني</label>
-                                <textarea
-                                    rows={3}
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">الأعمال البارزة (مفصولة بفواصل)</label>
-                                <input
-                                    type="text"
-                                    value={(formData.flagshipWorks || []).join(", ")}
-                                    onChange={(e) => setFormData({ 
-                                        ...formData, 
-                                        flagshipWorks: e.target.value.split(",").map(s => s.trim()).filter(Boolean) 
-                                    })}
-                                    className="w-full bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-tajawal focus:outline-none focus:border-red-500"
-                                    placeholder="سلام دانك, كابتن ماجد, بي بليد..."
-                                />
-                            </div>
-                        </>
+                        <PlanetGeneralTab
+                            formData={formData}
+                            onChange={setFormData}
+                        />
                     ) : (
-                        /* 3D Spacetoon Settings Tab */
-                        <div className="space-y-4">
-                            {/* Toggle Rings */}
-                            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#1b1b22] border border-white/5">
-                                <div>
-                                    <span className="font-cairo font-bold text-xs text-white block">حلقات الكوكب المدارية (Planetary Rings)</span>
-                                    <span className="font-tajawal text-[11px] text-[#94a3b8]">حلقات كوكبية مضيئة ثلاثية الأبعاد تحيط بالجرم</span>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => handle3DChange("hasRings", !threeD.hasRings)}
-                                    className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                                        threeD.hasRings ? "bg-amber-500" : "bg-white/10"
-                                    }`}
-                                >
-                                    <span className={`block w-4 h-4 rounded-full bg-white transition-transform absolute top-1 ${
-                                        threeD.hasRings ? "right-1" : "right-6"
-                                    }`} />
-                                </button>
-                            </div>
-
-                            {/* Ring Tilt Angle */}
-                            {threeD.hasRings && (
-                                <div>
-                                    <div className="flex items-center justify-between mb-1.5">
-                                        <label className="font-cairo font-bold text-xs text-white">درجة ميلان الحلقة المدارية</label>
-                                        <span className="font-mono text-xs text-amber-400">{threeD.ringTilt || 25}°</span>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        min="-60"
-                                        max="60"
-                                        step="5"
-                                        value={threeD.ringTilt || 25}
-                                        onChange={(e) => handle3DChange("ringTilt", parseInt(e.target.value, 10))}
-                                        className="w-full accent-amber-500 cursor-pointer"
-                                    />
-                                </div>
-                            )}
-
-                            {/* Rotation Speed */}
-                            <div>
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <label className="font-cairo font-bold text-xs text-white">سرعة دوران الكوكب حول نفسه</label>
-                                    <span className="font-mono text-xs text-amber-400">{threeD.rotationSpeed || 1.0}x</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0.4"
-                                    max="2.5"
-                                    step="0.1"
-                                    value={threeD.rotationSpeed || 1.0}
-                                    onChange={(e) => handle3DChange("rotationSpeed", parseFloat(e.target.value))}
-                                    className="w-full accent-amber-500 cursor-pointer"
-                                />
-                            </div>
-
-                            {/* Scale / Relative Size */}
-                            <div>
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <label className="font-cairo font-bold text-xs text-white">الحجم النسبي للجرم الكروي</label>
-                                    <span className="font-mono text-xs text-amber-400">{threeD.scale || 1.0}x</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0.8"
-                                    max="1.4"
-                                    step="0.05"
-                                    value={threeD.scale || 1.0}
-                                    onChange={(e) => handle3DChange("scale", parseFloat(e.target.value))}
-                                    className="w-full accent-amber-500 cursor-pointer"
-                                />
-                            </div>
-
-                            {/* Atmosphere Glow Color */}
-                            <div>
-                                <label className="block font-cairo font-bold text-xs text-white mb-1.5">لون هالة الغلاف الجوي (Atmosphere Glow)</label>
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="color"
-                                        value={threeD.atmosphereGlow?.startsWith("#") ? threeD.atmosphereGlow : (formData.color || "#ea580c")}
-                                        onChange={(e) => handle3DChange("atmosphereGlow", e.target.value)}
-                                        className="w-10 h-10 rounded-xl bg-transparent border-0 cursor-pointer"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={threeD.atmosphereGlow || formData.color || "#ea580c"}
-                                        onChange={(e) => handle3DChange("atmosphereGlow", e.target.value)}
-                                        className="flex-1 bg-[#1b1b22] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-mono"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* 3D Preview Button inside Modal */}
-                            {onPreview3D && (
-                                <button
-                                    type="button"
-                                    onClick={() => onPreview3D(formData)}
-                                    className="w-full py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-cairo font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer mt-2"
-                                >
-                                    <Orbit size={16} />
-                                    <span>معاينة الجرم ثلاثي الأبعاد الآن في نافذة حية</span>
-                                </button>
-                            )}
-                        </div>
+                        <Planet3DTab
+                            formData={formData}
+                            threeD={threeD}
+                            onThreeDChange={handle3DChange}
+                            onPreview3D={onPreview3D}
+                        />
                     )}
                 </div>
 
