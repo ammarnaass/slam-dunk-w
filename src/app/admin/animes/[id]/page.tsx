@@ -1,177 +1,62 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
-import { Anime, Episode } from "@/types";
-import { Loader2, Plus, Film, Save, Trash2, Video, ArrowRight, PlayCircle, Edit } from "lucide-react";
-import Link from "next/link";
+import { use } from "react";
+import { Loader2, Plus } from "lucide-react";
 import AnimeForm from "@/components/admin/AnimeForm";
+import { useAdminEditAnime } from "./hooks/useAdminEditAnime";
+import {
+    EditAnimeHeader,
+    EditAnimeTabsNav,
+    EpisodeFormCard,
+    EpisodesAdminTable,
+} from "./components";
 
 export default function AnimeDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
-    const [anime, setAnime] = useState<Anime | null>(null);
-    const [episodes, setEpisodes] = useState<Episode[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<"details" | "episodes">("details");
+    const {
+        anime,
+        episodes,
+        loading,
+        activeTab,
+        setActiveTab,
+        showEpisodeForm,
+        editingEpisode,
+        epFormData,
+        setEpFormData,
+        epSaving,
+        handleEpisodeSubmit,
+        handleDeleteEpisode,
+        startEditEpisode,
+        openNewEpisodeForm,
+        closeEpisodeForm,
+        addServerField,
+        removeServerField,
+        updateServerField,
+    } = useAdminEditAnime(id);
 
-    // Episode Form State
-    const [showEpisodeForm, setShowEpisodeForm] = useState(false);
-    const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
-    const [epFormData, setEpFormData] = useState({
-        title: "",
-        episodeNumber: "",
-        servers: [{ name: "Mega", url: "", quality: "HD" }],
-    });
-    const [epSaving, setEpSaving] = useState(false);
+    if (loading) {
+        return (
+            <div className="flex justify-center p-20">
+                <Loader2 className="animate-spin text-red-600" />
+            </div>
+        );
+    }
 
-    useEffect(() => {
-        const fetchAll = async () => {
-            try {
-                // Fetch Anime
-                const animeRes = await fetch(`/api/admin/animes/${id}`);
-                if (animeRes.ok) {
-                    const data = await animeRes.json();
-                    setAnime(data);
-                }
-
-                // Fetch Episodes
-                const epsRes = await fetch(`/api/admin/animes/${id}/episodes`);
-                if (epsRes.ok) {
-                    const data = await epsRes.json();
-                    setEpisodes(data);
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAll();
-    }, [id]);
-
-    const handleEpisodeSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setEpSaving(true);
-
-        const url = editingEpisode
-            ? `/api/admin/episodes/${editingEpisode.id}`
-            : `/api/admin/animes/${id}/episodes`;
-
-        const method = editingEpisode ? "PUT" : "POST";
-
-        try {
-            const res = await fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(epFormData),
-            });
-
-            if (res.ok) {
-                const newEp = await res.json();
-                if (editingEpisode) {
-                    setEpisodes(prev => prev.map(ep => ep.id === newEp.id ? newEp : ep));
-                } else {
-                    setEpisodes(prev => [...prev, newEp].sort((a, b) => a.episodeNumber - b.episodeNumber));
-                }
-                setShowEpisodeForm(false);
-                setEditingEpisode(null);
-                setEpFormData({ title: "", episodeNumber: "", servers: [{ name: "Mega", url: "", quality: "HD" }] });
-            } else {
-                alert("حدث خطأ");
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setEpSaving(false);
-        }
-    };
-
-    const handleDeleteEpisode = async (id: string) => {
-        if (!confirm("هل أنت متأكد من حذف الحلقة؟")) return;
-        try {
-            const res = await fetch(`/api/admin/episodes/${id}`, { method: "DELETE" });
-            if (res.ok) {
-                setEpisodes(prev => prev.filter(ep => ep.id !== id));
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const startEditEpisode = (ep: Episode) => {
-        setEditingEpisode(ep);
-        setEpFormData({
-            title: ep.title,
-            episodeNumber: ep.episodeNumber.toString(),
-            servers: ep.servers && ep.servers.length > 0
-                ? ep.servers.map(s => ({ name: s.name, url: s.url, quality: s.quality || "HD" }))
-                : [{ name: "Mega", url: ep.mega_link || "", quality: "HD" }],
-        });
-        setShowEpisodeForm(true);
-    };
-
-    const addServerField = () => {
-        setEpFormData({
-            ...epFormData,
-            servers: [...epFormData.servers, { name: "", url: "", quality: "HD" }]
-        });
-    };
-
-    const removeServerField = (index: number) => {
-        setEpFormData({
-            ...epFormData,
-            servers: epFormData.servers.filter((_, i) => i !== index)
-        });
-    };
-
-    const updateServerField = (index: number, field: string, value: string) => {
-        const nextServers = [...epFormData.servers];
-        nextServers[index] = { ...nextServers[index], [field]: value };
-        setEpFormData({ ...epFormData, servers: nextServers });
-    };
-
-    if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin text-red-600" /></div>;
-    if (!anime) return <div className="text-white">العمل غير موجود</div>;
+    if (!anime) {
+        return <div className="text-white">العمل غير موجود</div>;
+    }
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="mb-6 flex items-center gap-2 text-slate-400 hover:text-white transition-colors w-fit">
-                <Link href="/admin/animes" className="flex items-center gap-2">
-                    <ArrowRight size={20} /> العودة للقائمة
-                </Link>
-            </div>
+            {/* Anime Info Header */}
+            <EditAnimeHeader anime={anime} />
 
-            <div className="flex flex-col md:flex-row gap-6 mb-8">
-                <div className="w-full md:w-64 flex-shrink-0">
-                    <div className="rounded-xl overflow-hidden border border-slate-800 shadow-lg">
-                        <img src={anime.coverImage} alt={anime.title} className="w-full h-auto" />
-                    </div>
-                </div>
-                <div>
-                    <h1 className="text-4xl font-bold text-white mb-2">{anime.title}</h1>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                        <span className="bg-red-600 text-white px-2 py-1 rounded text-sm font-bold">{anime.type}</span>
-                        <span className="bg-slate-800 text-slate-300 px-2 py-1 rounded text-sm">{anime.totalEpisodes} حلقة</span>
-                        <span className="bg-green-600/20 text-green-500 px-2 py-1 rounded text-sm border border-green-600/30">{anime.status}</span>
-                    </div>
-                    <p className="text-slate-400 max-w-2xl">{anime.description}</p>
-                </div>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex border-b border-slate-800 mb-6">
-                <button
-                    onClick={() => setActiveTab("details")}
-                    className={`px-6 py-3 font-bold transition-colors ${activeTab === 'details' ? 'text-red-500 border-b-2 border-red-500' : 'text-slate-400 hover:text-white'}`}
-                >
-                    تفاصيل العمل
-                </button>
-                <button
-                    onClick={() => setActiveTab("episodes")}
-                    className={`px-6 py-3 font-bold transition-colors ${activeTab === 'episodes' ? 'text-red-500 border-b-2 border-red-500' : 'text-slate-400 hover:text-white'}`}
-                >
-                    الحلقات ({episodes.length})
-                </button>
-            </div>
+            {/* Tabs Navigation */}
+            <EditAnimeTabsNav
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                episodesCount={episodes.length}
+            />
 
             {activeTab === "details" ? (
                 <AnimeForm initialData={anime} isEdit={true} />
@@ -180,178 +65,32 @@ export default function AnimeDetailsPage({ params }: { params: Promise<{ id: str
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-bold text-white">قائمة الحلقات</h2>
                         <button
-                            onClick={() => {
-                                setEditingEpisode(null);
-                                setEpFormData({ title: "", episodeNumber: (episodes.length + 1).toString(), servers: [{ name: "Mega", url: "", quality: "HD" }] });
-                                setShowEpisodeForm(true);
-                            }}
-                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2"
+                            onClick={openNewEpisodeForm}
+                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 cursor-pointer transition-colors"
                         >
                             <Plus size={20} /> إضافة حلقة
                         </button>
                     </div>
 
                     {showEpisodeForm && (
-                        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-6 animate-in slide-in-from-top-2">
-                            <h3 className="text-lg font-bold text-white mb-4">{editingEpisode ? "تعديل حلقة" : "إضافة حلقة جديدة"}</h3>
-                            <form onSubmit={handleEpisodeSubmit} className="grid md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-slate-400 mb-2 text-sm">عنوان الحلقة</label>
-                                    <input
-                                        type="text"
-                                        value={epFormData.title}
-                                        onChange={e => setEpFormData({ ...epFormData, title: e.target.value })}
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-slate-400 mb-2 text-sm">رقم الحلقة</label>
-                                    <input
-                                        type="number"
-                                        value={epFormData.episodeNumber}
-                                        onChange={e => setEpFormData({ ...epFormData, episodeNumber: e.target.value })}
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="md:col-span-2 border-t border-slate-800 pt-4 mt-2">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <label className="text-white font-bold text-sm flex items-center gap-2">
-                                            <Video size={16} className="text-red-500" /> سيرفرات المشاهدة
-                                        </label>
-                                        <button
-                                            type="button"
-                                            onClick={addServerField}
-                                            className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors flex items-center gap-1"
-                                        >
-                                            <Plus size={14} /> إضافة سيرفر
-                                        </button>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        {epFormData.servers.map((server, index) => (
-                                            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-slate-800/30 p-4 rounded-xl border border-slate-800 relative group">
-                                                <div className="md:col-span-1">
-                                                    <label className="block text-slate-500 mb-1 text-[10px] uppercase">اسم السيرفر (مثل Mega)</label>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Mega, 4shared..."
-                                                        value={server.name}
-                                                        onChange={e => updateServerField(index, "name", e.target.value)}
-                                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white"
-                                                        required
-                                                    />
-                                                </div>
-                                                <div className="md:col-span-2">
-                                                    <label className="block text-slate-500 mb-1 text-[10px] uppercase">رابط الفيديو / Embed</label>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="رابط السيرفر..."
-                                                        value={server.url}
-                                                        onChange={e => updateServerField(index, "url", e.target.value)}
-                                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white font-mono"
-                                                        required
-                                                    />
-                                                </div>
-                                                <div className="md:col-span-1 flex items-end gap-2">
-                                                    <div className="flex-1">
-                                                        <label className="block text-slate-500 mb-1 text-[10px] uppercase">الجودة</label>
-                                                        <select
-                                                            value={server.quality || "HD"}
-                                                            onChange={e => updateServerField(index, "quality", e.target.value)}
-                                                            className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-white"
-                                                        >
-                                                            <option value="FHD">FHD</option>
-                                                            <option value="HD">HD</option>
-                                                            <option value="SD">SD</option>
-                                                        </select>
-                                                    </div>
-                                                    {epFormData.servers.length > 1 && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeServerField(index)}
-                                                            className="p-2 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white rounded-lg transition-all"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-2 md:col-span-2 mt-6 border-t border-slate-800 pt-6">
-                                    <button
-                                        type="submit"
-                                        disabled={epSaving}
-                                        className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-red-600/20"
-                                    >
-                                        {epSaving ? <Loader2 className="animate-spin" /> : <Save size={18} />} {editingEpisode ? "حفظ التعديلات" : "إضافة الحلقة"}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowEpisodeForm(false)}
-                                        className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-8 py-3 rounded-xl font-bold transition-colors"
-                                    >
-                                        إلغاء
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                        <EpisodeFormCard
+                            editingEpisode={editingEpisode}
+                            epFormData={epFormData}
+                            setEpFormData={setEpFormData}
+                            epSaving={epSaving}
+                            onSubmit={handleEpisodeSubmit}
+                            onCancel={closeEpisodeForm}
+                            onAddServer={addServerField}
+                            onRemoveServer={removeServerField}
+                            onUpdateServer={updateServerField}
+                        />
                     )}
 
-                    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-                        <table className="w-full text-right">
-                            <thead className="bg-slate-800 text-slate-400">
-                                <tr>
-                                    <th className="p-4">#</th>
-                                    <th className="p-4">العنوان</th>
-                                    <th className="p-4">السيرفرات</th>
-                                    <th className="p-4">الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-800 text-slate-300">
-                                {episodes.map((ep) => (
-                                    <tr key={ep.id} className="hover:bg-slate-800/50 transition-colors">
-                                        <td className="p-4 font-bold">{ep.episodeNumber}</td>
-                                        <td className="p-4 flex items-center gap-2">
-                                            <PlayCircle size={16} className="text-red-500" />
-                                            {ep.title}
-                                        </td>
-                                        <td className="p-4 text-xs">
-                                            <span className="bg-slate-800 px-2 py-1 rounded text-slate-400 border border-slate-700">
-                                                {ep.servers?.length || 0} سيرفرات
-                                            </span>
-                                        </td>
-                                        <td className="p-4">
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => startEditEpisode(ep)}
-                                                    className="p-2 hover:bg-slate-700 rounded-lg text-blue-400"
-                                                >
-                                                    <Edit size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteEpisode(ep.id)}
-                                                    className="p-2 hover:bg-slate-700 rounded-lg text-red-400"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {episodes.length === 0 && (
-                            <div className="p-8 text-center text-slate-500">
-                                لا توجد حلقات مضافة بعد.
-                            </div>
-                        )}
-                    </div>
+                    <EpisodesAdminTable
+                        episodes={episodes}
+                        onStartEdit={startEditEpisode}
+                        onDelete={handleDeleteEpisode}
+                    />
                 </div>
             )}
         </div>
