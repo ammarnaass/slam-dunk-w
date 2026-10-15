@@ -1,0 +1,67 @@
+// Mapping between Stitch English IDs and Spacetoon Arabic presets
+export const PLANET_ID_MAP: Record<string, string> = {
+  action: "أكشن",
+  adventure: "مغامرات",
+  comedy: "كوميديا",
+  emerald: "زمردة",
+  sports: "رياضة",
+  mystery: "غموض",
+  scifi: "علوم",
+  classics: "تاريخ",
+};
+
+export const REVERSE_PLANET_ID_MAP: Record<string, string> = {
+  "أكشن": "action",
+  "مغامرات": "adventure",
+  "كوميديا": "comedy",
+  "زمردة": "emerald",
+  "رياضة": "sports",
+  "غموض": "mystery",
+  "علوم": "scifi",
+  "تاريخ": "classics",
+};
+
+export const PLANET_ALIASES: Record<string, string> = {
+  sports: "sports",
+  sport: "sports",
+  action: "action",
+  adventure: "adventure",
+  comedy: "comedy",
+  emerald: "emerald",
+  zomoroda: "emerald",
+  drama: "emerald",
+  romance: "emerald",
+  scifi: "scifi",
+  "sci-fi": "scifi",
+  science: "scifi",
+  mystery: "mystery",
+  classics: "classics",
+  history: "classics",
+  historical: "classics",
+  shounen: "action",
+  movies: "action",
+  "رياضة": "sports",
+  "أكشن": "action",
+  "مغامرات": "adventure",
+  "كوميديا": "comedy",
+  "زمردة": "emerald",
+  "دراما": "emerald",
+  "علوم": "scifi",
+  "خيال علمي": "scifi",
+  "غموض": "mystery",
+  "تاريخ": "classics",
+  "أفلام": "action",
+  "سبيستون": "classics",
+};
+
+export const PLANET_NAME_DISPLAY: Record<string, string> = {
+  all: "جميع الكواكب والمجرّات الكونية",
+  action: "كوكب الأكشن والقتال الشونين",
+  adventure: "كوكب المغامرات والأساطير",
+  comedy: "كوكب الكوميديا والمرح",
+  emerald: "كوكب الزمرد والدراما الراقية",
+  sports: "كوكب الرياضة والتحدي",
+  mystery: "كوكب الغموض والتحقيق",
+  scifi: "كوكب الخيال العلمي والميكا",
+  classics: "أرشيف الزهرة الذهبي والنوستالجيا",
+};
