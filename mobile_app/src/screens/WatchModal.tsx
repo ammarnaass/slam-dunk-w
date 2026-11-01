@@ -9,6 +9,7 @@ import {
   Text,
   Linking,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { Episode } from '../types';
 import { styles } from '../components/watch/watch.styles';
@@ -285,10 +286,34 @@ export const WatchModal: React.FC<WatchModalProps> = ({
             <View style={localWatchStyles.primaryActionContainer}>
               <TouchableOpacity
                 style={localWatchStyles.startWatchingBtn}
-                onPress={async () => {
-                  try {
-                    await Linking.openURL(activeServer.url);
-                  } catch (_) {}
+                onPress={() => {
+                  Alert.alert(
+                    '🎬 تشغيل الحلقة',
+                    `سيرفر: ${activeServer.name || 'سيرفر ميجا السريع'}\nالجودة: 1080p FHD\n\nاختر طريقة المشاهدة المفضلة:`,
+                    [
+                      {
+                        text: '🚀 فتح في تطبيق MEGA / المتصفح',
+                        onPress: async () => {
+                          try {
+                            await Linking.openURL(activeServer.url);
+                          } catch (_) {
+                            Alert.alert('تنبيه', 'لم يتم العثور على متصفح أو تطبيق متوافق على هذا الجهاز.');
+                          }
+                        },
+                      },
+                      {
+                        text: '📋 نسخ / مشاركة الرابط',
+                        onPress: () => {
+                          Share.share({
+                            title: `مشاهدة ${episode.title}`,
+                            message: activeServer.url,
+                            url: activeServer.url,
+                          });
+                        },
+                      },
+                      { text: 'إلغاء', style: 'cancel' },
+                    ]
+                  );
                 }}
                 activeOpacity={0.88}
               >

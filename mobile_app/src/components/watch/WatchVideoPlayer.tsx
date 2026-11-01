@@ -7,6 +7,8 @@ import {
   Linking,
   ActivityIndicator,
   StyleSheet,
+  Alert,
+  Share,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { THEME } from '../../constants/theme';
@@ -63,20 +65,39 @@ export const WatchVideoPlayer: React.FC<WatchVideoPlayerProps> = ({
 
   const embedUrl = useMemo(() => getEmbedUrl(videoUrl), [videoUrl]);
 
-  const handleOpenExternal = async () => {
+  const handleOpenExternal = () => {
     if (!videoUrl) return;
-    try {
-      const supported = await Linking.canOpenURL(videoUrl);
-      if (supported) {
-        await Linking.openURL(videoUrl);
-      } else {
-        await Linking.openURL(embedUrl || videoUrl);
-      }
-    } catch (_) {
-      try {
-        await Linking.openURL(videoUrl);
-      } catch (_) {}
-    }
+    Alert.alert(
+      '🎬 تشغيل الحلقة',
+      `سيرفر: ${serverName}\nالجودة: 1080p FHD\n\nاختر طريقة المشاهدة المفضلة:`,
+      [
+        {
+          text: '🚀 فتح في تطبيق MEGA / المتصفح',
+          onPress: async () => {
+            try {
+              await Linking.openURL(videoUrl);
+            } catch (_) {
+              try {
+                await Linking.openURL(embedUrl || videoUrl);
+              } catch {
+                Alert.alert('تنبيه', 'لم يتم العثور على متصفح أو تطبيق متوافق على هذا الجهاز.');
+              }
+            }
+          },
+        },
+        {
+          text: '📋 نسخ / مشاركة الرابط',
+          onPress: () => {
+            Share.share({
+              title: 'رابط مشاهدة الحلقة',
+              message: videoUrl,
+              url: videoUrl,
+            });
+          },
+        },
+        { text: 'إلغاء', style: 'cancel' },
+      ]
+    );
   };
 
   const progressPercent = totalDurationSeconds > 0
