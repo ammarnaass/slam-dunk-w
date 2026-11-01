@@ -1,6 +1,6 @@
 import { StorageService } from '../storage';
 
-export const CLOUD_BASE_HOST = 'https://slam-dunk-w.vercel.app';
+export const CLOUD_BASE_HOST = 'https://backend-anime-daze.vercel.app';
 export const CLOUD_API_BASE_URL = `${CLOUD_BASE_HOST}/api/mobile/v1`;
 export const CLOUD_WEB_API_URL = `${CLOUD_BASE_HOST}/api/v1`;
 

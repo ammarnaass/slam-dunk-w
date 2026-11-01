@@ -7,6 +7,7 @@ import {
 import {
   API_BASE_URL,
   WEB_API_BASE_URL,
+  CLOUD_API_BASE_URL,
   getHeaders,
   apiFetch,
 } from './client';
@@ -38,7 +39,7 @@ export async function fetchHomeData(): Promise<HomeApiResponse> {
   } catch (error: any) {
     console.warn('Home API Error, trying cloud fallback:', error.message);
     try {
-      const fallbackRes = await fetch('https://slam-dunk-w.vercel.app/api/mobile/v1/home');
+      const fallbackRes = await fetch(`${CLOUD_API_BASE_URL}/home`);
       const fallbackJson = await fallbackRes.json();
       if (fallbackJson.success && fallbackJson.data) {
         if (Array.isArray(fallbackJson.data.latest)) {
@@ -62,7 +63,7 @@ export async function fetchCharacters(): Promise<Character[]> {
   } catch (error) {
     console.warn('Fetch characters local failed, trying cloud fallback:', error);
     try {
-      const fallbackRes = await fetch('https://slam-dunk-w.vercel.app/api/mobile/v1/characters');
+      const fallbackRes = await fetch(`${CLOUD_API_BASE_URL}/characters`);
       const fallbackJson = await fallbackRes.json();
       if (fallbackJson.success && Array.isArray(fallbackJson.data)) {
         return fallbackJson.data;
@@ -84,7 +85,7 @@ export async function fetchEpisodes(animeId: string = 'slam-dunk'): Promise<Epis
   } catch (error) {
     console.warn('Fetch episodes local error, trying fallback:', error);
     try {
-      const fallbackRes = await fetch(`https://slam-dunk-w.vercel.app/api/mobile/v1/animes/${animeId}/episodes`);
+      const fallbackRes = await fetch(`${CLOUD_API_BASE_URL}/animes/${animeId}/episodes`);
       const fallbackJson = await fallbackRes.json();
       if (fallbackJson.success && Array.isArray(fallbackJson.data)) {
         return fallbackJson.data.map(normalizeEpisode);
@@ -156,7 +157,7 @@ export async function fetchAnimes(type?: string, status?: string): Promise<Anime
   } catch (error) {
     console.warn('Fetch animes local error, trying fallback:', error);
     try {
-      const fallbackRes = await fetch('https://slam-dunk-w.vercel.app/api/mobile/v1/animes');
+      const fallbackRes = await fetch(`${CLOUD_API_BASE_URL}/animes`);
       const fallbackJson = await fallbackRes.json();
       if (fallbackJson.success && Array.isArray(fallbackJson.data)) {
         return fallbackJson.data;

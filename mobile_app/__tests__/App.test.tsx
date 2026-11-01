@@ -22,7 +22,7 @@ jest.mock('../src/services/api', () => ({
   fetchUserProfile: jest.fn().mockResolvedValue(null),
   fetchPlans: jest.fn().mockResolvedValue([]),
   createPlan: jest.fn().mockResolvedValue({ plan: null }),
-  API_BASE_URL: 'https://slam-dunk-w.vercel.app',
+  API_BASE_URL: 'https://backend-anime-daze.vercel.app',
   setApiBaseUrl: jest.fn(),
 }));
 
