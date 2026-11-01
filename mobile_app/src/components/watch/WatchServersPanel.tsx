@@ -8,6 +8,7 @@ interface ServerOption {
   id: string;
   name: string;
   desc: string;
+  url?: string;
 }
 
 interface WatchServersPanelProps {

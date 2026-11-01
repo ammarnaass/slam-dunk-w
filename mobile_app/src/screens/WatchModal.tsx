@@ -5,6 +5,10 @@ import {
   ScrollView,
   Share,
   StatusBar,
+  TouchableOpacity,
+  Text,
+  Linking,
+  StyleSheet,
 } from 'react-native';
 import { Episode } from '../types';
 import { styles } from '../components/watch/watch.styles';
@@ -14,6 +18,8 @@ import { WatchVideoPlayer } from '../components/watch/WatchVideoPlayer';
 import { WatchServersPanel } from '../components/watch/WatchServersPanel';
 import { WatchEpisodeInfo } from '../components/watch/WatchEpisodeInfo';
 import { WatchCommentsPanel } from '../components/watch/WatchCommentsPanel';
+import { Icon } from '../components/Icon';
+import { THEME } from '../constants/theme';
 import { useAppStore } from '../store/useAppStore';
 import { fetchEpisodeComments, postEpisodeComment } from '../services/api';
 
@@ -51,7 +57,7 @@ export const WatchModal: React.FC<WatchModalProps> = ({
     toggleFavorite,
   } = useAppStore();
 
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [selectedServer, setSelectedServer] = useState('s1');
   const [audioTrack, setAudioTrack] = useState<'dub' | 'sub'>('dub');
   const [comments, setComments] = useState<CommentItem[]>(INITIAL_COMMENTS);
@@ -60,6 +66,39 @@ export const WatchModal: React.FC<WatchModalProps> = ({
 
   const epId = episode?.id || '';
   const totalDurationSeconds = useMemo(() => parseDurationToSeconds(episode?.duration), [episode?.duration]);
+
+  // Real servers from episode data with fallback to mega link
+  const episodeServers = useMemo(() => {
+    if (episode?.servers && episode.servers.length > 0) {
+      return episode.servers.map((s, idx) => ({
+        id: s.id || `srv-${idx}`,
+        name: s.name || `سيرفر ${idx + 1}`,
+        desc: s.quality || '1080p FHD',
+        url: s.url,
+      }));
+    }
+    if (episode?.mega_link) {
+      return [
+        {
+          id: 'srv-mega',
+          name: 'سيرفر ميجا السريع',
+          desc: '1080p FHD',
+          url: episode.mega_link,
+        },
+      ];
+    }
+    return SERVERS.map((s) => ({ ...s, url: '' }));
+  }, [episode]);
+
+  useEffect(() => {
+    if (episodeServers.length > 0) {
+      setSelectedServer(episodeServers[0].id);
+    }
+  }, [episodeServers]);
+
+  const activeServer = useMemo(() => {
+    return episodeServers.find((s) => s.id === selectedServer) || episodeServers[0];
+  }, [episodeServers, selectedServer]);
 
   // Determine bookmark status from real favorites
   const isBookmarked = useMemo(() => {
@@ -233,13 +272,37 @@ export const WatchModal: React.FC<WatchModalProps> = ({
           {/* 2. Embedded Cinematic Video Player (16:9) */}
           <WatchVideoPlayer
             thumbnailUrl={episode.thumbnail}
+            videoUrl={activeServer?.url}
+            serverName={activeServer?.name}
             isPlaying={isPlaying}
             onTogglePlay={() => setIsPlaying(!isPlaying)}
+            positionSeconds={positionSeconds}
+            totalDurationSeconds={totalDurationSeconds}
           />
+
+          {/* Quick Primary Watch Action Button */}
+          {activeServer?.url ? (
+            <View style={localWatchStyles.primaryActionContainer}>
+              <TouchableOpacity
+                style={localWatchStyles.startWatchingBtn}
+                onPress={async () => {
+                  try {
+                    await Linking.openURL(activeServer.url);
+                  } catch (_) {}
+                }}
+                activeOpacity={0.88}
+              >
+                <Icon name="rocket_launch" size={20} color="#FFFFFF" />
+                <Text style={localWatchStyles.startWatchingText}>
+                  تشغيل الحلقة الآن ({activeServer.name || 'سيرفر ميجا السريع'})
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
 
           {/* 3. Streaming Servers Preference Panel */}
           <WatchServersPanel
-            servers={SERVERS}
+            servers={episodeServers}
             selectedServer={selectedServer}
             onSelectServer={setSelectedServer}
             audioTrack={audioTrack}
@@ -272,4 +335,32 @@ export const WatchModal: React.FC<WatchModalProps> = ({
     </Modal>
   );
 };
+
+const localWatchStyles = StyleSheet.create({
+  primaryActionContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 4,
+  },
+  startWatchingBtn: {
+    backgroundColor: THEME.colors.primaryContainer,
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    shadowColor: THEME.colors.primaryContainer,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  startWatchingText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+});
 

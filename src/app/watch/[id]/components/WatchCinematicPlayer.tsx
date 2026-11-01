@@ -94,33 +94,35 @@ export default function WatchCinematicPlayer({
                 onTogglePlay={togglePlay}
             />
 
-            {/* Bottom Cinematic Scrim & Controller Overlay */}
-            <PlayerControlsScrim
-                showControls={showControls}
-                isPlaying={isPlaying}
-                currentTime={currentTime}
-                duration={duration}
-                progressPercent={progressPercent}
-                volume={volume}
-                isMuted={isMuted}
-                playbackSpeed={playbackSpeed}
-                isFullscreen={isFullscreen}
-                onTogglePlay={togglePlay}
-                onSeek={handleSeek}
-                onRewind10={handleRewind10}
-                onForward10={handleForward10}
-                onPrevEpisode={onPrevEpisode}
-                onNextEpisode={onNextEpisode}
-                onToggleMute={() => setIsMuted(!isMuted)}
-                onVolumeChange={(v) => {
-                    setVolume(v);
-                    setIsMuted(false);
-                }}
-                onCycleSpeed={cycleSpeed}
-                onToggleFullscreen={toggleFullscreen}
-                onShowToast={onShowToast}
-                formatTime={formatTime}
-            />
+            {/* Bottom Cinematic Scrim & Controller Overlay (only for direct HTML5 video) */}
+            {isDirectVideo && (
+                <PlayerControlsScrim
+                    showControls={showControls}
+                    isPlaying={isPlaying}
+                    currentTime={currentTime}
+                    duration={duration}
+                    progressPercent={progressPercent}
+                    volume={volume}
+                    isMuted={isMuted}
+                    playbackSpeed={playbackSpeed}
+                    isFullscreen={isFullscreen}
+                    onTogglePlay={togglePlay}
+                    onSeek={handleSeek}
+                    onRewind10={handleRewind10}
+                    onForward10={handleForward10}
+                    onPrevEpisode={onPrevEpisode}
+                    onNextEpisode={onNextEpisode}
+                    onToggleMute={() => setIsMuted(!isMuted)}
+                    onVolumeChange={(v) => {
+                        setVolume(v);
+                        setIsMuted(false);
+                    }}
+                    onCycleSpeed={cycleSpeed}
+                    onToggleFullscreen={toggleFullscreen}
+                    onShowToast={onShowToast}
+                    formatTime={formatTime}
+                />
+            )}
         </div>
     );
 }

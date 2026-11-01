@@ -27,8 +27,8 @@ export function PlayerVideoRenderer({
 }: PlayerVideoRendererProps) {
     return (
         <>
-            {/* Center Big Play Button (when not playing or iframe preview) */}
-            {!isPlaying && (
+            {/* Center Big Play Button (only for direct HTML5 video element) */}
+            {!isPlaying && isDirectVideo && (
                 <button
                     onClick={onTogglePlay}
                     className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-primary-container/90 text-on-primary-container flex items-center justify-center backdrop-blur-md shadow-[0_0_32px_rgba(220,38,38,0.7)] hover:scale-110 active:scale-95 transition-all z-20 cursor-pointer"
@@ -38,6 +38,20 @@ export function PlayerVideoRenderer({
                 >
                     <span className="material-symbols-outlined text-[44px] pr-1">play_arrow</span>
                 </button>
+            )}
+
+            {/* Quick External Player / MEGA app launcher for embeds */}
+            {embedUrl && (
+                <a
+                    href={currentServerUrl || embedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute top-3 left-3 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest/85 backdrop-blur-md text-xs font-bold text-on-surface hover:bg-primary-container hover:text-on-primary-container transition-all border border-white/10 shadow-lg pointer-events-auto"
+                    title="فتح في نافذة مستقلة أو تطبيق MEGA"
+                >
+                    <span className="material-symbols-outlined text-sm">open_in_new</span>
+                    <span>مشغل خارجي / تطبيق MEGA</span>
+                </a>
             )}
 
             {/* Loading state spinner */}

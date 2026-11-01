@@ -209,6 +209,20 @@ export default function WatchEpisodeMetaBar({
             </span>
           </button>
 
+          {/* Direct MEGA / External Stream launcher */}
+          {servers[activeServerIndex]?.url && (
+            <a
+              href={servers[activeServerIndex].url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="min-h-[44px] flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary-container/20 hover:bg-primary-container text-primary hover:text-on-primary-container transition-all border border-primary-container/30 text-xs sm:text-sm font-bold"
+              id="mega-direct-btn"
+            >
+              <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
+              <span>مشاهدة عبر تطبيق MEGA المباشر</span>
+            </a>
+          )}
+
           {/* VIP Download */}
           <Link
             href="/pricing"
