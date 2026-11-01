@@ -29,7 +29,7 @@ export async function fetchHomeData(): Promise<HomeApiResponse> {
   try {
     const res = await fetch(`${API_BASE_URL}/home`, { headers: getHeaders() });
     const json = await res.json();
-    if (json.success && json.data) {
+    if ((json.success || json.ok) && json.data) {
       if (Array.isArray(json.data.latest)) {
         json.data.latest = json.data.latest.map(normalizeEpisode);
       }
@@ -57,7 +57,7 @@ export async function fetchCharacters(): Promise<Character[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/characters`, { headers: getHeaders() });
     const json = await res.json();
-    if (json.success && Array.isArray(json.data)) {
+    if ((json.success || json.ok) && Array.isArray(json.data)) {
       return json.data;
     }
   } catch (error) {
@@ -78,7 +78,7 @@ export async function fetchEpisodes(animeId: string = 'slam-dunk'): Promise<Epis
   try {
     const res = await fetch(`${API_BASE_URL}/animes/${animeId}/episodes`, { headers: getHeaders() });
     const json = await res.json();
-    if (json.success && Array.isArray(json.data)) {
+    if ((json.success || json.ok) && Array.isArray(json.data)) {
       return json.data.map(normalizeEpisode);
     }
     return [];
@@ -107,7 +107,7 @@ export async function fetchEpisodeDetails(episodeId: string): Promise<Episode | 
     // 2. Fallback to mobile v1
     const res = await fetch(`${API_BASE_URL}/episodes/${episodeId}`, { headers: getHeaders() });
     const json = await res.json();
-    if (json.success && json.data) {
+    if ((json.success || json.ok) && json.data) {
       return normalizeEpisode(json.data);
     }
     return null;
@@ -129,7 +129,7 @@ export async function fetchAnimeDetails(animeId: string): Promise<Anime | null> 
     // 2. Fallback to mobile v1
     const res = await fetch(`${API_BASE_URL}/animes/${animeId}`, { headers: getHeaders() });
     const json = await res.json();
-    if (json.success && json.data) {
+    if ((json.success || json.ok) && json.data) {
       return json.data;
     }
     return null;
@@ -150,7 +150,7 @@ export async function fetchAnimes(type?: string, status?: string): Promise<Anime
 
     const res = await fetch(url, { headers: getHeaders() });
     const json = await res.json();
-    if (json.success && Array.isArray(json.data)) {
+    if ((json.success || json.ok) && Array.isArray(json.data)) {
       return json.data;
     }
     return [];
@@ -172,7 +172,7 @@ export async function searchContent(query: string): Promise<{ animes: Anime[]; e
   try {
     const res = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`, { headers: getHeaders() });
     const json = await res.json();
-    if (json.success && json.data) {
+    if ((json.success || json.ok) && json.data) {
       return json.data;
     }
     return { animes: [], episodes: [] };

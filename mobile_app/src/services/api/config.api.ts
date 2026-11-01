@@ -5,7 +5,7 @@ export async function fetchAppConfig(): Promise<AppConfig | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/config`, { headers: getHeaders() });
     const json = await res.json();
-    if (json.success && json.data) {
+    if ((json.success || json.ok) && json.data) {
       return json.data as AppConfig;
     }
   } catch (error: any) {
@@ -13,7 +13,7 @@ export async function fetchAppConfig(): Promise<AppConfig | null> {
     try {
       const res = await fetch(`${CLOUD_API_BASE_URL}/config`);
       const json = await res.json();
-      if (json.success && json.data) return json.data as AppConfig;
+      if ((json.success || json.ok) && json.data) return json.data as AppConfig;
     } catch (_) {}
   }
   return null;
@@ -23,7 +23,7 @@ export async function checkApiHealth(): Promise<boolean> {
   try {
     const res = await fetch(`${API_BASE_URL}/health`, { headers: getHeaders() });
     const json = await res.json();
-    return !!json.success;
+    return !!(json.success || json.ok);
   } catch (_) {
     return false;
   }
