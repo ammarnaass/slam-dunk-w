@@ -23,6 +23,7 @@ import { Icon } from '../components/Icon';
 import { THEME } from '../constants/theme';
 import { useAppStore } from '../store/useAppStore';
 import { fetchEpisodeComments, postEpisodeComment } from '../services/api';
+import { MXVideoPlayer } from '../components/player/MXVideoPlayer';
 
 interface WatchModalProps {
   visible: boolean;
@@ -56,8 +57,11 @@ export const WatchModal: React.FC<WatchModalProps> = ({
     continueWatching,
     syncProgress,
     toggleFavorite,
+    episodes,
+    setSelectedEpisode,
   } = useAppStore();
 
+  const [isMXPlayerOpen, setIsMXPlayerOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedServer, setSelectedServer] = useState('s1');
   const [audioTrack, setAudioTrack] = useState<'dub' | 'sub'>('dub');
@@ -68,27 +72,28 @@ export const WatchModal: React.FC<WatchModalProps> = ({
   const epId = episode?.id || '';
   const totalDurationSeconds = useMemo(() => parseDurationToSeconds(episode?.duration), [episode?.duration]);
 
-  // Real servers from episode data with fallback to mega link
+  // Real servers from episode data with fallback to multi-server matrix
   const episodeServers = useMemo(() => {
-    if (episode?.servers && episode.servers.length > 0) {
-      return episode.servers.map((s, idx) => ({
-        id: s.id || `srv-${idx}`,
-        name: s.name || `سيرفر ${idx + 1}`,
-        desc: s.quality || '1080p FHD',
-        url: s.url,
-      }));
-    }
-    if (episode?.mega_link) {
-      return [
-        {
-          id: 'srv-mega',
-          name: 'سيرفر ميجا السريع',
-          desc: '1080p FHD',
-          url: episode.mega_link,
-        },
-      ];
-    }
-    return SERVERS.map((s) => ({ ...s, url: '' }));
+    const rawList = episode?.watchServers && episode.watchServers.length > 0
+      ? episode.watchServers
+      : episode?.servers && episode.servers.length > 0
+      ? episode.servers
+      : episode?.mega_link
+      ? [{ id: 'srv-mega', name: 'سيرفر ميجا الخارق', url: episode.mega_link, quality: '1080p FHD' }]
+      : SERVERS;
+
+    return rawList.map((s: any, idx: number) => ({
+      id: s.id || `srv-${idx}`,
+      name: s.name || `سيرفر ${idx + 1}`,
+      desc: s.quality || '1080p FHD',
+      url: s.directUrl || s.url,
+      downloadUrl: s.downloadUrl || s.url,
+      category: s.category || 'streaming',
+      matrixCategory: s.matrixCategory || 'direct',
+      provider: s.provider || 'custom',
+      ping: s.ping || (idx === 0 ? '18ms' : idx === 1 ? '24ms' : '36ms'),
+      isWorking: s.isWorking ?? true,
+    }));
   }, [episode]);
 
   useEffect(() => {
@@ -97,8 +102,19 @@ export const WatchModal: React.FC<WatchModalProps> = ({
     }
   }, [episodeServers]);
 
+  const handleAutoFailover = () => {
+    const nextServer = episodeServers.find((s: any) => s.id !== selectedServer && s.isWorking !== false);
+    if (nextServer) {
+      setSelectedServer(nextServer.id);
+      Alert.alert(
+        '🔄 تبديل تلقائي (Zero-Buffering)',
+        `تم تحويل البث تلقائياً إلى "${nextServer.name}" لاستمرار المشاهدة دون انقطاع.`
+      );
+    }
+  };
+
   const activeServer = useMemo(() => {
-    return episodeServers.find((s) => s.id === selectedServer) || episodeServers[0];
+    return episodeServers.find((s: any) => s.id === selectedServer) || episodeServers[0];
   }, [episodeServers, selectedServer]);
 
   // Determine bookmark status from real favorites
@@ -276,10 +292,25 @@ export const WatchModal: React.FC<WatchModalProps> = ({
             videoUrl={activeServer?.url}
             serverName={activeServer?.name}
             isPlaying={isPlaying}
-            onTogglePlay={() => setIsPlaying(!isPlaying)}
+            onTogglePlay={() => setIsMXPlayerOpen(true)}
             positionSeconds={positionSeconds}
             totalDurationSeconds={totalDurationSeconds}
+            onAutoFailover={handleAutoFailover}
           />
+
+          {/* Primary MX Player Launch Button */}
+          <View style={localWatchStyles.primaryActionContainer}>
+            <TouchableOpacity
+              style={localWatchStyles.mxPlayerBtn}
+              onPress={() => setIsMXPlayerOpen(true)}
+              activeOpacity={0.88}
+            >
+              <Icon name="play" size={22} color="#FFFFFF" />
+              <Text style={localWatchStyles.mxPlayerBtnText}>
+                🎬 تشغيل بمشغل MX Player (إيماءات + صوت + سطوع)
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Quick Primary Watch Action Button */}
           {activeServer?.url ? (
@@ -357,6 +388,36 @@ export const WatchModal: React.FC<WatchModalProps> = ({
           />
         </ScrollView>
       </View>
+
+      {/* Fullscreen MX Player Experience */}
+      {isMXPlayerOpen && episode && (
+        <Modal
+          visible={isMXPlayerOpen}
+          animationType="fade"
+          presentationStyle="fullScreen"
+          onRequestClose={() => setIsMXPlayerOpen(false)}
+        >
+          <StatusBar hidden />
+          <MXVideoPlayer
+            episode={episode}
+            allEpisodes={episodes}
+            videoUrl={activeServer?.url || ''}
+            serverName={activeServer?.name || 'سيرفر ميجا السريع'}
+            onClose={() => setIsMXPlayerOpen(false)}
+            onEpisodeChange={(newEp) => {
+              if (setSelectedEpisode) {
+                setSelectedEpisode(newEp);
+              }
+            }}
+            onProgressUpdate={(cur, dur) => {
+              setPositionSeconds(cur);
+              if (dur > 0 && Math.floor(cur) % 15 === 0) {
+                syncProgress(episode.id, cur, dur);
+              }
+            }}
+          />
+        </Modal>
+      )}
     </Modal>
   );
 };
@@ -364,8 +425,29 @@ export const WatchModal: React.FC<WatchModalProps> = ({
 const localWatchStyles = StyleSheet.create({
   primaryActionContainer: {
     paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 4,
+    paddingTop: 10,
+    paddingBottom: 2,
+  },
+  mxPlayerBtn: {
+    backgroundColor: '#E63946',
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    shadowColor: '#E63946',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 6,
+    marginBottom: 8,
+  },
+  mxPlayerBtnText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   startWatchingBtn: {
     backgroundColor: THEME.colors.primaryContainer,

@@ -384,6 +384,22 @@ export function renderMediaIcon(name: string, ctx: IconRenderContext): React.Rea
       );
     }
 
+    case 'volume_mute': {
+      return (
+        <View style={containerStyle}>
+          <Text style={{ color, fontSize: size * 0.75 }}>🔇</Text>
+        </View>
+      );
+    }
+
+    case 'brightness': {
+      return (
+        <View style={containerStyle}>
+          <Text style={{ color, fontSize: size * 0.75 }}>☀️</Text>
+        </View>
+      );
+    }
+
     case 'fullscreen': {
       return (
         <View style={containerStyle}>

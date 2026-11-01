@@ -2,7 +2,16 @@ export interface Server {
   id: string;
   name: string;
   url: string;
+  directUrl?: string;
+  downloadUrl?: string;
   quality?: string;
+  provider?: string;
+  category?: 'streaming' | 'download' | 'both';
+  type?: string;
+  priority?: number;
+  isWorking?: boolean;
+  latencyMs?: number;
+  ping?: string;
 }
 
 export interface Episode {
@@ -20,6 +29,8 @@ export interface Episode {
   animeTitle?: string;
   animeCover?: string;
   servers?: Server[];
+  watchServers?: Server[];
+  downloadServers?: Server[];
 }
 
 export interface AnimeReview {

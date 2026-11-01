@@ -90,12 +90,28 @@ model Episode {
 }
 
 model Server {
-  id        String  @id @default(uuid())
-  episodeId String
-  episode   Episode @relation(fields: [episodeId], references: [id])
-  name      String
-  url       String
-  quality   String?
+  id                 String    @id @default(uuid())
+  episodeId          String
+  episode            Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  name               String
+  url                String
+  directUrl          String?   // رابط البث أو التنزيل المباشر بعد فك التشفير
+  provider           String    @default("custom") // hls | mega | dropbox | 4shared | gdrive | mediafire | vidmoly | okru | streamtape | mp4upload | custom
+  category           String    @default("streaming") // streaming | download | both
+  quality            String?   @default("1080p FHD") // 1080p FHD | 720p HD | 480p SD | 360p | Multi
+  type               String    @default("hls") // hls | mp4 | embed | mega | dash
+  supportedQualities String[]  @default(["1080p", "720p", "480p", "Auto"])
+  priority           Int       @default(1) // 1 = الأساسي، 2 = البديل الأول...
+  isWorking          Boolean   @default(true)
+  lastCheckedAt      DateTime?
+  latencyMs          Int?      // سرعة استجابة السيرفر بالميلي ثانية
+  createdAt          DateTime  @default(now())
+
+  @@index([episodeId])
+  @@index([isWorking])
+  @@index([provider])
+  @@index([category])
+  @@index([priority])
 }
 
 model Review {

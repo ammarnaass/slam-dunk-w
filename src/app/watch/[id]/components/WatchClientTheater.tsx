@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Episode } from "@/types";
+import { resolveStreamUrl } from "@/lib/resolvers";
 import WatchTheaterHeader from "./WatchTheaterHeader";
 import WatchCinematicPlayer from "./WatchCinematicPlayer";
 import WatchEpisodeMetaBar from "./WatchEpisodeMetaBar";
@@ -31,6 +32,7 @@ export default function WatchClientTheater({
   const [activeServerIndex, setActiveServerIndex] = useState(0);
   const [activeQuality, setActiveQuality] = useState("1080p");
   const [audioTrack, setAudioTrack] = useState<"arabic" | "japanese">("arabic");
+  const [playbackSavedTime, setPlaybackSavedTime] = useState(0);
 
   // Toast state
   const [toast, setToast] = useState<{ visible: boolean; message: string; icon: string }>({
@@ -46,14 +48,55 @@ export default function WatchClientTheater({
     }, 3200);
   };
 
-  // Determine servers
-  const servers = episode.servers && episode.servers.length > 0 
-    ? episode.servers 
-    : [
-        ...(episode.video_url ? [{ id: "srv-direct", name: "سيرفر البث المباشر (FHD)", url: episode.video_url, quality: "1080p FHD" }] : []),
-        ...(episode.mega_link ? [{ id: "srv-mega", name: "سيرفر ميجا السريع", url: episode.mega_link, quality: "1080p FHD" }] : []),
-        ...PRESET_SERVERS.map(s => ({ ...s, url: episode.mega_link || episode.video_url || "" }))
-      ];
+  // Determine and enrich servers using Multi-Server Resolver Engine
+  const servers = useMemo(() => {
+    const rawList = episode.servers && episode.servers.length > 0 
+      ? episode.servers 
+      : [
+          ...(episode.video_url ? [{ id: "srv-direct", name: "سيرفر البث المباشر (FHD)", url: episode.video_url, quality: "1080p FHD" }] : []),
+          ...(episode.mega_link ? [{ id: "srv-mega", name: "سيرفر ميجا الخارق", url: episode.mega_link, quality: "1080p FHD" }] : []),
+          ...PRESET_SERVERS.map(s => ({ ...s, url: episode.mega_link || episode.video_url || "" }))
+        ];
+
+    return rawList.map((srv: any, idx: number) => {
+      const resolved = resolveStreamUrl(srv.url || "", srv.quality || "1080p FHD");
+      return {
+        id: srv.id || `srv-${idx}`,
+        name: srv.name || resolved.defaultName,
+        url: srv.url || resolved.directUrl,
+        directUrl: srv.directUrl || resolved.directUrl,
+        embedUrl: srv.embedUrl || resolved.embedUrl,
+        downloadUrl: srv.downloadUrl || resolved.downloadUrl,
+        provider: srv.provider || resolved.provider,
+        category: srv.category || resolved.category,
+        matrixCategory: srv.matrixCategory || resolved.matrixCategory,
+        quality: srv.quality || resolved.quality,
+        type: srv.type || resolved.type,
+        ping: srv.ping || (srv.latencyMs ? `${srv.latencyMs}ms` : (idx === 0 ? "18ms" : idx === 1 ? "24ms" : "38ms")),
+        isWorking: srv.isWorking ?? true,
+        priority: srv.priority || idx + 1,
+      };
+    });
+  }, [episode]);
+
+  // Silent Auto-Failover: Switch to next working server preserving timestamp
+  const handleAutoFailover = useCallback((savedTime: number) => {
+    setPlaybackSavedTime(savedTime);
+    const available = servers
+      .map((s, idx) => ({ s, idx }))
+      .filter(({ s, idx }) => idx !== activeServerIndex && s.isWorking !== false);
+
+    if (available.length > 0) {
+      const next = available[0];
+      setActiveServerIndex(next.idx);
+      showToast(
+        `انتقلنا تلقائياً إلى "${next.s.name}" لاستمرار المشاهدة دون تقطيع`,
+        "autorenew"
+      );
+    } else {
+      showToast("تعذر استكمال البث على هذا السيرفر، جاري المحاولة من جديد...", "error");
+    }
+  }, [servers, activeServerIndex]);
 
   const currentServer = servers[activeServerIndex] || servers[0] || {
     name: "سيرفر البث السحابي",
@@ -112,6 +155,8 @@ export default function WatchClientTheater({
               audioTrack={audioTrack}
               quality={activeQuality}
               lightsOff={lightsOff}
+              initialTime={playbackSavedTime}
+              onAutoFailover={handleAutoFailover}
               onPrevEpisode={prevEpisode ? () => router.push(`/watch/${prevEpisode.id}`) : undefined}
               onNextEpisode={nextEpisode ? () => router.push(`/watch/${nextEpisode.id}`) : undefined}
               onShowToast={showToast}

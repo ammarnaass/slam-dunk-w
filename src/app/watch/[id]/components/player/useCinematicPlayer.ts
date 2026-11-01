@@ -1,22 +1,34 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { resolveStreamUrl } from "@/lib/resolvers";
 
 interface UseCinematicPlayerProps {
     currentServer: {
+        id?: string;
         name: string;
         url: string;
+        directUrl?: string | null;
         quality?: string | null;
+        type?: string;
+        isWorking?: boolean;
     };
+    initialTime?: number;
+    onAutoFailover?: (currentTime: number) => void;
     onShowToast: (message: string, icon?: string) => void;
 }
 
-export function useCinematicPlayer({ currentServer, onShowToast }: UseCinematicPlayerProps) {
+export function useCinematicPlayer({
+    currentServer,
+    initialTime = 0,
+    onAutoFailover,
+    onShowToast,
+}: UseCinematicPlayerProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTime, setCurrentTime] = useState(14 * 60 + 32); // Default to 14:32 for preview if iframe
-    const [duration, setDuration] = useState(24 * 60 + 10); // Default to 24:10
+    const [currentTime, setCurrentTime] = useState(initialTime > 0 ? initialTime : 14 * 60 + 32);
+    const [duration, setDuration] = useState(24 * 60 + 10);
     const [volume, setVolume] = useState(0.8);
     const [isMuted, setIsMuted] = useState(false);
     const [playbackSpeed, setPlaybackSpeed] = useState(1);
@@ -24,33 +36,46 @@ export function useCinematicPlayer({ currentServer, onShowToast }: UseCinematicP
     const [loading, setLoading] = useState(false);
     const [showControls, setShowControls] = useState(true);
 
-    // Parse embed URLs for Mega / 4shared
-    const getEmbedUrl = (url: string) => {
-        if (!url) return "";
-        if (url.includes("mega.nz/file/")) {
-            const match = url.match(/mega\.nz\/file\/([^#]+)#(.+)/);
-            if (match) return `https://mega.nz/embed/${match[1]}!${match[2]}`;
-        }
-        if (url.includes("4shared.com")) {
-            const match = url.match(/4shared\.com\/(?:video|file|rar|zip|mp3)\/([^/]+)/);
-            if (match) return `https://www.4shared.com/web/embed/file/${match[1]}`;
-        }
-        return url;
-    };
+    const currentTimeRef = useRef(currentTime);
+    useEffect(() => {
+        currentTimeRef.current = currentTime;
+    }, [currentTime]);
 
+    // Resolve URL through the smart resolver engine
+    const resolved = resolveStreamUrl(currentServer.url || "", currentServer.quality || undefined);
+    
+    // Direct playable: either MP4 / HLS direct stream or Dropbox raw=1 direct link
     const isDirectVideo = Boolean(
-        currentServer.url &&
-            (currentServer.url.endsWith(".mp4") || currentServer.name.toLowerCase().includes("direct"))
+        resolved.isDirectPlayable ||
+        (currentServer.url && (currentServer.url.endsWith(".mp4") || currentServer.url.includes("raw=1") || currentServer.url.includes(".m3u8")))
     );
 
-    const embedUrl = isDirectVideo ? "" : getEmbedUrl(currentServer.url);
+    const effectiveStreamUrl = resolved.directUrl || currentServer.url;
+    const embedUrl = isDirectVideo ? "" : (resolved.embedUrl || currentServer.url);
 
-    // Reset loading when server changes
+    // Failover handler triggered on video or network failure
+    const triggerFailover = useCallback(() => {
+        if (onAutoFailover) {
+            onShowToast("جاري التبديل التلقائي إلى خادم بديل...", "autorenew");
+            onAutoFailover(currentTimeRef.current);
+        }
+    }, [onAutoFailover, onShowToast]);
+
+    // Reset loading and restore playback position when server changes
     useEffect(() => {
         setLoading(true);
-        const timer = setTimeout(() => setLoading(false), 400);
+        const timer = setTimeout(() => {
+            setLoading(false);
+            if (videoRef.current && isDirectVideo && currentTimeRef.current > 0) {
+                try {
+                    videoRef.current.currentTime = currentTimeRef.current;
+                } catch {
+                    // Ignore if metadata not loaded yet
+                }
+            }
+        }, 400);
         return () => clearTimeout(timer);
-    }, [currentServer.url]);
+    }, [currentServer.url, isDirectVideo]);
 
     // Video element event listeners if direct
     useEffect(() => {
@@ -58,29 +83,42 @@ export function useCinematicPlayer({ currentServer, onShowToast }: UseCinematicP
         if (!video || !isDirectVideo) return;
 
         const handleTimeUpdate = () => setCurrentTime(video.currentTime);
-        const handleLoadedMetadata = () => setDuration(video.duration || 24 * 60 + 10);
+        const handleLoadedMetadata = () => {
+            setDuration(video.duration || 24 * 60 + 10);
+            if (currentTimeRef.current > 0) {
+                video.currentTime = Math.min(currentTimeRef.current, video.duration || currentTimeRef.current);
+            }
+        };
         const handlePlay = () => setIsPlaying(true);
         const handlePause = () => setIsPlaying(false);
+        const handleError = () => {
+            console.warn("Video playback error on current server:", currentServer.name);
+            triggerFailover();
+        };
 
         video.addEventListener("timeupdate", handleTimeUpdate);
         video.addEventListener("loadedmetadata", handleLoadedMetadata);
         video.addEventListener("play", handlePlay);
         video.addEventListener("pause", handlePause);
+        video.addEventListener("error", handleError);
 
         return () => {
             video.removeEventListener("timeupdate", handleTimeUpdate);
             video.removeEventListener("loadedmetadata", handleLoadedMetadata);
             video.removeEventListener("play", handlePlay);
             video.removeEventListener("pause", handlePause);
+            video.removeEventListener("error", handleError);
         };
-    }, [isDirectVideo]);
+    }, [isDirectVideo, triggerFailover, currentServer.name]);
 
     const togglePlay = () => {
         if (videoRef.current && isDirectVideo) {
             if (isPlaying) {
                 videoRef.current.pause();
             } else {
-                videoRef.current.play();
+                videoRef.current.play().catch(() => {
+                    // Autoplay restriction or format error
+                });
             }
         } else {
             setIsPlaying(!isPlaying);
@@ -100,7 +138,6 @@ export function useCinematicPlayer({ currentServer, onShowToast }: UseCinematicP
     const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
-        // In RTL, 0 is at right if flipped, but rect coords are left-to-right.
         const percentage = 1 - clickX / rect.width;
         const newTime = Math.max(0, Math.min(percentage * duration, duration));
 
@@ -174,6 +211,7 @@ export function useCinematicPlayer({ currentServer, onShowToast }: UseCinematicP
         showControls,
         setShowControls,
         isDirectVideo,
+        effectiveStreamUrl,
         embedUrl,
         progressPercent,
         togglePlay,
@@ -184,5 +222,6 @@ export function useCinematicPlayer({ currentServer, onShowToast }: UseCinematicP
         cycleSpeed,
         toggleFullscreen,
         formatTime,
+        triggerFailover,
     };
 }

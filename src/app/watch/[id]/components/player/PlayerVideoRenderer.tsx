@@ -7,6 +7,7 @@ interface PlayerVideoRendererProps {
     embedUrl: string;
     videoRef: RefObject<HTMLVideoElement | null>;
     currentServerUrl: string;
+    effectiveStreamUrl?: string;
     episodeThumbnail?: string | null;
     episodeTitle: string;
     isPlaying: boolean;
@@ -19,6 +20,7 @@ export function PlayerVideoRenderer({
     embedUrl,
     videoRef,
     currentServerUrl,
+    effectiveStreamUrl,
     episodeThumbnail,
     episodeTitle,
     isPlaying,
@@ -74,7 +76,7 @@ export function PlayerVideoRenderer({
                     controls={false}
                     onClick={onTogglePlay}
                 >
-                    <source src={currentServerUrl} type="video/mp4" />
+                    <source src={effectiveStreamUrl || currentServerUrl} type="video/mp4" />
                     المتصفح لا يدعم تشغيل هذا الفيديو.
                 </video>
             ) : embedUrl ? (
@@ -84,6 +86,7 @@ export function PlayerVideoRenderer({
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
+                    sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
                     title={episodeTitle}
                 />
             ) : (

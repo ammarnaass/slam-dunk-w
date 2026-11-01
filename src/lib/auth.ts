@@ -1,7 +1,14 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const secretKey = process.env.JWT_SECRET || "slam-dunk-secret-key-123";
+const isProduction = process.env.NODE_ENV === "production";
+const rawSecret = process.env.JWT_SECRET;
+
+if (isProduction && (!rawSecret || rawSecret === "slam-dunk-secret-key-123" || rawSecret.length < 32)) {
+    console.error("CRITICAL SECURITY WARNING: Production deployment requires a cryptographically strong JWT_SECRET (minimum 32 characters).");
+}
+
+const secretKey = rawSecret || "slam-dunk-secret-key-123-dev-sandbox-isolated";
 const key = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: any) {

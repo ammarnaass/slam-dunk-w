@@ -96,6 +96,8 @@ export type IconName =
   | 'replay_10'
   | 'forward_10'
   | 'volume_up'
+  | 'volume_mute'
+  | 'brightness'
   | 'fullscreen'
   | 'done_all'
   | 'history'

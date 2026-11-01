@@ -49,6 +49,7 @@ interface WatchVideoPlayerProps {
   onTogglePlay: () => void;
   positionSeconds?: number;
   totalDurationSeconds?: number;
+  onAutoFailover?: () => void;
 }
 
 export const WatchVideoPlayer: React.FC<WatchVideoPlayerProps> = ({
@@ -59,6 +60,7 @@ export const WatchVideoPlayer: React.FC<WatchVideoPlayerProps> = ({
   onTogglePlay,
   positionSeconds = 0,
   totalDurationSeconds = 1440,
+  onAutoFailover,
 }) => {
   const [webViewLoading, setWebViewLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -125,6 +127,9 @@ export const WatchVideoPlayer: React.FC<WatchVideoPlayerProps> = ({
             onError={() => {
               setWebViewLoading(false);
               setHasError(true);
+              if (onAutoFailover) {
+                setTimeout(onAutoFailover, 600);
+              }
             }}
           />
 

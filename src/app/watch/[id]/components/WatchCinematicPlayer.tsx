@@ -14,13 +14,19 @@ interface WatchCinematicPlayerProps {
         anime?: { title: string };
     };
     currentServer: {
+        id?: string;
         name: string;
         url: string;
+        directUrl?: string | null;
         quality?: string | null;
+        type?: string;
+        isWorking?: boolean;
     };
     audioTrack: "arabic" | "japanese";
     quality: string;
     lightsOff: boolean;
+    initialTime?: number;
+    onAutoFailover?: (currentTime: number) => void;
     onNextEpisode?: () => void;
     onPrevEpisode?: () => void;
     onShowToast: (message: string, icon?: string) => void;
@@ -32,6 +38,8 @@ export default function WatchCinematicPlayer({
     audioTrack,
     quality,
     lightsOff,
+    initialTime = 0,
+    onAutoFailover,
     onNextEpisode,
     onPrevEpisode,
     onShowToast,
@@ -52,6 +60,7 @@ export default function WatchCinematicPlayer({
         showControls,
         setShowControls,
         isDirectVideo,
+        effectiveStreamUrl,
         embedUrl,
         progressPercent,
         togglePlay,
@@ -62,7 +71,12 @@ export default function WatchCinematicPlayer({
         cycleSpeed,
         toggleFullscreen,
         formatTime,
-    } = useCinematicPlayer({ currentServer, onShowToast });
+    } = useCinematicPlayer({
+        currentServer,
+        initialTime,
+        onAutoFailover,
+        onShowToast,
+    });
 
     return (
         <div
@@ -87,6 +101,7 @@ export default function WatchCinematicPlayer({
                 embedUrl={embedUrl}
                 videoRef={videoRef}
                 currentServerUrl={currentServer.url}
+                effectiveStreamUrl={effectiveStreamUrl}
                 episodeThumbnail={episode.thumbnail}
                 episodeTitle={episode.title}
                 isPlaying={isPlaying}
@@ -119,8 +134,8 @@ export default function WatchCinematicPlayer({
                     }}
                     onCycleSpeed={cycleSpeed}
                     onToggleFullscreen={toggleFullscreen}
-                    onShowToast={onShowToast}
                     formatTime={formatTime}
+                    onShowToast={onShowToast}
                 />
             )}
         </div>
