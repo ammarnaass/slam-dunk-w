@@ -215,7 +215,7 @@ mobile_app/src/features/player/
 |---|---|:---:|---|
 | **ازدواجية وتضخم ملفات Resolvers** | وجود كود فك التشفير لسيرفرات البث في ملفين متضخمين (566 سطر و 535 سطر) | ✅ تم الحل | تم تفكيك المحرك إلى وحدة نمطية نظيفة (11 ملفاً < 135 سطراً) وتوحيد المصدر مع سكربت مزامنة آلي `sync:resolvers`. |
 | **تضخم `WatchModal.tsx` للهاتف** | يحتوي الملف على 473 سطراً يجمع إدارة التعليقات، التحميل، والسيرفرات | ✅ تم الحل | تم تفكيكه بنجاح إلى 22 ملفاً صغيراً في `features/watch/` بمتوسط 70 سطراً للملف. |
-| **تضخم ملفات مسارات Hono** | ملف `admin.routes.ts` يحوي 575 سطراً ويخدم 6 كيانات مختلفة | 🟠 متوسط | تقسيم مسارات الإدارة إلى Controllers فرعية (`users.controller.ts`, `stats.controller.ts`, إلخ). |
+| **تضخم ملفات مسارات Hono** | ملف `admin.routes.ts` كان يحوي 575 سطراً ويخدم 6 كيانات مختلفة | ✅ تم الحل | تم تفكيكه بنجاح إلى 6 وحدات توجيه نمطية في `backend/src/routes/admin/` جميعها دون 185 سطراً. |
 | **تجمع الأنماط في ملفات ضخمة** | ملفات مثل `profile.styles.ts` (684 سطر) و `home.styles.ts` (607 أسطر) | 🟡 منخفض | توزيع الأنماط محلياً بجانب كل مكوّن (`Component.styles.ts`). |
 | **مخزن Zustand الموحد** | `useAppStore.ts` (295 سطر) يجمع كل الحالات في Slice واحدة | 🟡 منخفض | تقسيم المخزن إلى Zustand Slices منفصلة (`authSlice`, `playerSlice`, `downloadSlice`). |
 
@@ -238,13 +238,17 @@ mobile_app/src/features/player/
 - تم تقليص المكون الرئيسي [`WatchEpisodeMetaBar.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/WatchEpisodeMetaBar.tsx) من 444 سطراً إلى 149 سطراً فقط.
 - اجتياز كافة اختبارات الفحص الأمني (56/56) وفحص TypeScript بنسبة 100%.
 
-### 🎯 المرحلة 3: إعادة هيكلة مسارات الواجهة الخلفية (`backend/src/routes/`)
-- ✅ تم إنجاز توحيد وتفكيك محرك `resolvers.ts` بنجاح إلى وحدة نمطية وسكربت مزامنة آلي `sync:resolvers`.
-- تفكيك `admin.routes.ts` (575 سطر) إلى مجلد `backend/src/routes/admin/`:
-  - `admin-stats.routes.ts`
-  - `admin-users.routes.ts`
-  - `admin-episodes.routes.ts`
-  - `admin-reports.routes.ts`
+### ✅ المرحلة 3: إعادة هيكلة مسارات الواجهة الخلفية (`backend/src/routes/`) — (مكتملة بنجاح 🟢)
+- تم إنجاز توحيد وتفكيك محرك `resolvers.ts` بنجاح إلى وحدة نمطية وسكربت مزامنة آلي `sync:resolvers`.
+- تم تفكيك `admin.routes.ts` (576 سطراً) إلى مجلد [`backend/src/routes/admin/`](file:///home/ammar/slam-dunk-w/backend/src/routes/admin/) إلى 6 وحدات نظيفة:
+  - `admin.stats.routes.ts` (28 سطراً)
+  - `admin.users.routes.ts` (40 سطراً)
+  - `admin.settings.routes.ts` (39 سطراً)
+  - `admin.health.routes.ts` (133 سطراً)
+  - `admin.servers.routes.ts` (177 سطراً)
+  - `admin.episodes.routes.ts` (183 سطراً)
+- تقليص `admin.routes.ts` إلى 6 أسطر كطبقة إعادة تصدير متوافقة 100%.
+- اجتياز فحص TypeScript وبناء esbuild (`api/index.js` في 48ms).
 
 ---
 
