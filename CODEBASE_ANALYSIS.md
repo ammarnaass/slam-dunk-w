@@ -54,7 +54,7 @@ pie title توزيع أسطر الشيفرة البرمجية الصافية ف�
 
 | القاعدة المعمارية | الوصف والمعيار | حالة التطبيق في المشروع | التقييم والتوصية |
 |---|---|:---:|---|
-| **1. One Feature = One Folder** | تجميع كل ما يخص الميزة في مجلد مستقل (`features/<feature>/`) | 🟡 جزئي | تم بنجاح في ميزة المشغل (`features/player/`)، وتنتظر ميزات أخرى مثل `watch` و `profile`. |
+| **1. One Feature = One Folder** | تجميع كل ما يخص الميزة في مجلد مستقل (`features/<feature>/`) | 🟢 ممتاز | تم تطبيقها بنجاح واكتمال في ميزتي المشغل (`features/player/`) والمشاهدة (`features/watch/`). |
 | **2. One File = One Responsibility** | هدف محدد وقصير لكل ملف | 🟢 ممتاز | تحققت في 91.6% من ملفات المشروع مع عزل الـ Hooks والـ Utils. |
 | **3. Size Limits (< 150-250 lines)** | استهداف ملفات دون 150 سطراً، وأقصى حد 250 سطراً | 🟢 جيد جداً | تم تقليص متوسط طول الملفات في الميزات المعاد هيكلتها إلى 65 سطراً. |
 | **4. Layers Don't Leak** | واجهة العرض لا تتصل بالشبكة مباشرة، ومنطق الأعمال معزول | 🟢 ممتاز | الخدمات (`services/api.ts`) والخطافات (`hooks/`) تعزل منطق الشبكة عن الـ Components. |
@@ -214,7 +214,7 @@ mobile_app/src/features/player/
 | المنطقة البرمجية | طبيعة المشكلة | مستوى التأثير | خطة المعالجة الموصى بها |
 |---|---|:---:|---|
 | **ازدواجية ملفات Resolvers** | وجود كود فك التشفير لسيرفرات البث مرتين في `src/lib` و `backend/src/lib` | 🔴 مرتفع | توحيدهما في حزمة مشتركة أو استيراد مباشر من مكتبة موحدة. |
-| **تضخم `WatchModal.tsx` للهاتف** | يحتوي الملف على 473 سطراً يجمع إدارة التعليقات، التحميل، والسيرفرات | 🟠 متوسط | تفكيكه إلى ميزة نمطية `features/watch/` بنفس طريقة `features/player/`. |
+| **تضخم `WatchModal.tsx` للهاتف** | يحتوي الملف على 473 سطراً يجمع إدارة التعليقات، التحميل، والسيرفرات | ✅ تم الحل | تم تفكيكه بنجاح إلى 22 ملفاً صغيراً في `features/watch/` بمتوسط 70 سطراً للملف. |
 | **تضخم ملفات مسارات Hono** | ملف `admin.routes.ts` يحوي 575 سطراً ويخدم 6 كيانات مختلفة | 🟠 متوسط | تقسيم مسارات الإدارة إلى Controllers فرعية (`users.controller.ts`, `stats.controller.ts`, إلخ). |
 | **تجمع الأنماط في ملفات ضخمة** | ملفات مثل `profile.styles.ts` (684 سطر) و `home.styles.ts` (607 أسطر) | 🟡 منخفض | توزيع الأنماط محلياً بجانب كل مكوّن (`Component.styles.ts`). |
 | **مخزن Zustand الموحد** | `useAppStore.ts` (295 سطر) يجمع كل الحالات في Slice واحدة | 🟡 منخفض | تقسيم المخزن إلى Zustand Slices منفصلة (`authSlice`, `playerSlice`, `downloadSlice`). |
@@ -223,13 +223,12 @@ mobile_app/src/features/player/
 
 ## 7. خارطة الطريق التنفيذية للمراحل القادمة (Actionable Engineering Roadmap)
 
-### 🎯 المرحلة 1: تفكيك ميزة المشاهدة الكاملة للهاتف (`features/watch/`)
-- إنشاء مجلد ميزة `mobile_app/src/features/watch/` مع مدخل `index.ts`.
-- تفكيك [`WatchModal.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/WatchModal.tsx) إلى:
-  - `useWatchModalState.ts` (إدارة حالة فتح السيرفرات والتعليقات).
-  - `WatchModalHeader.tsx` (زر الإغلاق ومشاركة الحلقة).
-  - `WatchModalActionsRow.tsx` (أزرار المفضلة، التحميل، والإبلاغ).
-- تفكيك [`WatchServersPanel.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/watch/WatchServersPanel.tsx) إلى بطاقات سيرفرات منفصلة.
+### ✅ المرحلة 1: تفكيك ميزة المشاهدة الكاملة للهاتف (`features/watch/`) — (مكتملة بنجاح 🟢)
+- تم إنشاء مجلد الميزة `mobile_app/src/features/watch/` مع مدخل `index.ts`.
+- تم تفكيك المكونات إلى 22 ملفاً صغيراً (لا يتجاوز أي منها 180 سطراً).
+- تم فصل الهوكات النمطية (`useWatchServers`, `useWatchProgress`, `useWatchComments`).
+- تم الحفاظ على التوافقية بنسبة 100% عبر إعادة التصدير من `mobile_app/src/screens/WatchModal.tsx`.
+- اجتياز فحص TypeScript بنسبة 100% بدون أي أخطاء (`0 errors`).
 
 ### 🎯 المرحلة 2: تفكيك شريط ميتاداتا المشاهدة في الويب (`WatchEpisodeMetaBar.tsx`)
 - استخراج درج التنزيلات في مكون `WatchDownloadsDrawer.tsx`.
