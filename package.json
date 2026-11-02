@@ -8,6 +8,7 @@
     "start": "next start",
     "server": "npx tsx src/server.ts",
     "lint": "eslint",
+    "sync:resolvers": "tsx scripts/sync-resolvers.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
