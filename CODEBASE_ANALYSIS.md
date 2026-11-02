@@ -147,7 +147,7 @@ mobile_app/src/features/player/
 1. [`mobile_app/src/screens/WatchModal.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/WatchModal.tsx) — (✅ تم تفكيكه من 473 سطراً إلى 22 ملفاً صغيراً في `features/watch/`).
 2. [`src/app/watch/[id]/components/WatchEpisodeMetaBar.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/WatchEpisodeMetaBar.tsx) — (✅ تم تفكيكه من 444 سطراً إلى 149 سطراً مع 6 مكونات نمطية في `meta-bar/`).
 3. [`mobile_app/src/components/watch/WatchServersPanel.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/watch/WatchServersPanel.tsx) — **306 سطر**
-4. [`mobile_app/src/store/useAppStore.ts`](file:///home/ammar/slam-dunk-w/mobile_app/src/store/useAppStore.ts) — **295 سطر** (مخزن Zustand موحد يحوي المستخدم، التنزيلات، الحلقات، والمفضلة)
+4. [`mobile_app/src/store/useAppStore.ts`](file:///home/ammar/slam-dunk-w/mobile_app/src/store/useAppStore.ts) — (✅ تم تفكيكه من 296 سطراً إلى 13 سطراً مع 3 Slices مستقلة في `slices/`).
 5. [`src/components/HomeSlider.tsx`](file:///home/ammar/slam-dunk-w/src/components/HomeSlider.tsx) — **293 سطر**
 6. [`mobile_app/src/components/watch/WatchVideoPlayer.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/watch/WatchVideoPlayer.tsx) — **293 سطر** (مشغل الـ WebView التقليدي)
 7. [`mobile_app/src/components/AnimeCard.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/AnimeCard.tsx) — **290 سطر**
@@ -217,7 +217,7 @@ mobile_app/src/features/player/
 | **تضخم `WatchModal.tsx` للهاتف** | يحتوي الملف على 473 سطراً يجمع إدارة التعليقات، التحميل، والسيرفرات | ✅ تم الحل | تم تفكيكه بنجاح إلى 22 ملفاً صغيراً في `features/watch/` بمتوسط 70 سطراً للملف. |
 | **تضخم ملفات مسارات Hono** | ملف `admin.routes.ts` كان يحوي 575 سطراً ويخدم 6 كيانات مختلفة | ✅ تم الحل | تم تفكيكه بنجاح إلى 6 وحدات توجيه نمطية في `backend/src/routes/admin/` جميعها دون 185 سطراً. |
 | **تجمع الأنماط في ملفات ضخمة** | ملفات مثل `profile.styles.ts` (684 سطر) و `home.styles.ts` (607 أسطر) | 🟡 منخفض | توزيع الأنماط محلياً بجانب كل مكوّن (`Component.styles.ts`). |
-| **مخزن Zustand الموحد** | `useAppStore.ts` (295 سطر) يجمع كل الحالات في Slice واحدة | 🟡 منخفض | تقسيم المخزن إلى Zustand Slices منفصلة (`authSlice`, `playerSlice`, `downloadSlice`). |
+| **مخزن Zustand الموحد** | `useAppStore.ts` كان يجمع كل الحالات في كتلة واحدة (296 سطراً) | ✅ تم الحل | تم تفكيكه بنجاح إلى 3 Zustand Slices مستقلة في `mobile_app/src/store/slices/` بمتوسط 75 سطراً. |
 
 ---
 
@@ -249,6 +249,14 @@ mobile_app/src/features/player/
   - `admin.episodes.routes.ts` (183 سطراً)
 - تقليص `admin.routes.ts` إلى 6 أسطر كطبقة إعادة تصدير متوافقة 100%.
 - اجتياز فحص TypeScript وبناء esbuild (`api/index.js` في 48ms).
+
+### ✅ المرحلة 4: تفكيك مخزن Zustand لتطبيق الهاتف (`useAppStore.ts`) — (مكتملة بنجاح 🟢)
+- تم إنشاء مجلد الـ Slices النمطية [`mobile_app/src/store/slices/`](file:///home/ammar/slam-dunk-w/mobile_app/src/store/slices/):
+  - `navigationSlice.ts` (66 سطراً) - إدارة التنقل والتبويبات والـ Modals.
+  - `contentSlice.ts` (80 سطراً) - بيانات الأنمي والحلقات وتهيئة النظام.
+  - `userSlice.ts` (90 سطراً) - مصادقة المستخدم، المتابعة، والمفضلة.
+- تقليص [`useAppStore.ts`](file:///home/ammar/slam-dunk-w/mobile_app/src/store/useAppStore.ts) من 296 سطراً إلى 13 سطراً فقط.
+- اجتياز اختبارات Jest (11/11) وفحص TypeScript بنسبة 100%.
 
 ---
 
