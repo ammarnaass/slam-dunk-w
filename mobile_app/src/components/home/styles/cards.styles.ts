@@ -1,0 +1,110 @@
+import { StyleSheet } from 'react-native';
+import { THEME } from '../../../constants/theme';
+
+export const cardsStyles = StyleSheet.create({
+  grid3Col: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  classicCard: {
+    flex: 1,
+    backgroundColor: THEME.colors.surfaceContainer,
+    borderRadius: THEME.radius.lg,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  classicImageFrame: {
+    position: 'relative',
+    width: '100%',
+    aspectRatio: 3 / 4,
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+  },
+  classicImage: {
+    width: '100%',
+    height: '100%',
+  },
+  classicEpTag: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 3,
+  },
+  classicEpText: {
+    ...THEME.typography.labelSm,
+    fontSize: 9,
+    color: THEME.colors.onSurface,
+  },
+  classicDetails: {
+    padding: 8,
+    gap: 2,
+  },
+  classicTitle: {
+    ...THEME.typography.labelLg,
+    fontSize: 13,
+    color: THEME.colors.onSurface,
+    fontWeight: '700',
+  },
+  classicSubtitle: {
+    ...THEME.typography.labelSm,
+    fontSize: 10,
+    color: THEME.colors.onSurfaceVariant,
+  },
+  quoteCard: {
+    marginTop: 24,
+    marginHorizontal: THEME.spacing.margin,
+    padding: 14,
+    borderRadius: THEME.radius.lg,
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
+    elevation: 5,
+  },
+  quoteContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  quoteIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(220, 38, 38, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quoteTextContainer: {
+    flex: 1,
+  },
+  quoteBody: {
+    ...THEME.typography.labelMd,
+    color: THEME.colors.onSurface,
+    lineHeight: 18,
+  },
+  quoteAuthor: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.primaryContainer,
+    marginTop: 3,
+  },
+  quoteRefreshBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: THEME.colors.surfaceContainer,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

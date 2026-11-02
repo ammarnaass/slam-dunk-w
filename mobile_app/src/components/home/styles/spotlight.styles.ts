@@ -1,0 +1,112 @@
+import { StyleSheet } from 'react-native';
+import { THEME } from '../../../constants/theme';
+
+export const spotlightStyles = StyleSheet.create({
+  grid2Col: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  conanCard: {
+    flex: 1,
+    backgroundColor: THEME.colors.surfaceContainer,
+    borderRadius: THEME.radius.lg,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  conanImageFrame: {
+    position: 'relative',
+    width: '100%',
+    aspectRatio: 16 / 10,
+    backgroundColor: THEME.colors.surfaceContainerHigh,
+  },
+  conanImage: {
+    width: '100%',
+    height: '100%',
+  },
+  conanPillRed: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    backgroundColor: THEME.colors.primaryContainer,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  conanPillRedText: {
+    ...THEME.typography.labelSm,
+    fontSize: 9,
+    color: THEME.colors.onPrimaryContainer,
+    fontWeight: '700',
+  },
+  conanPillDark: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    backgroundColor: THEME.colors.surfaceBright,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  conanPillDarkText: {
+    ...THEME.typography.labelSm,
+    fontSize: 9,
+    color: THEME.colors.onSurface,
+    fontWeight: '700',
+  },
+  conanRating: {
+    position: 'absolute',
+    bottom: 4,
+    left: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(10, 14, 22, 0.82)',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 3,
+  },
+  conanRatingText: {
+    ...THEME.typography.labelSm,
+    fontSize: 10,
+    color: THEME.colors.secondary,
+    fontWeight: '700',
+  },
+  conanDetails: {
+    padding: 10,
+    gap: 3,
+  },
+  conanTitle: {
+    ...THEME.typography.titleMd,
+    color: THEME.colors.onSurface,
+  },
+  conanDesc: {
+    ...THEME.typography.bodySm,
+    color: THEME.colors.onSurfaceVariant,
+  },
+  conanMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 6,
+    paddingTop: 4,
+    backgroundColor: THEME.colors.surfaceContainerLow,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 4,
+  },
+  conanMetaRed: {
+    ...THEME.typography.labelSm,
+    fontSize: 10,
+    color: THEME.colors.primaryContainer,
+    fontWeight: '700',
+  },
+  conanMetaMuted: {
+    ...THEME.typography.labelSm,
+    fontSize: 10,
+    color: THEME.colors.onSurfaceVariant,
+  },
+});

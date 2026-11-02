@@ -1,0 +1,146 @@
+import { StyleSheet } from 'react-native';
+import { THEME } from '../../../constants/theme';
+
+export const vipStyles = StyleSheet.create({
+  vipSectionCard: {
+    backgroundColor: THEME.colors.surfaceContainer,
+    borderRadius: THEME.radius.xl,
+    padding: 16,
+    gap: 14,
+    shadowColor: THEME.colors.secondaryContainer,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 14,
+    elevation: 4,
+  },
+  vipSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  vipHeaderTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  vipIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: 'rgba(238, 152, 0, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  vipHeaderTitle: {
+    ...THEME.typography.headlineSm,
+    fontSize: 16,
+    color: THEME.colors.onSurface,
+  },
+  vipHeaderSub: {
+    ...THEME.typography.bodySm,
+    color: THEME.colors.secondary,
+  },
+  vipActiveBadge: {
+    backgroundColor: THEME.colors.secondary,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: THEME.radius.full,
+  },
+  vipActiveBadgeText: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.onSecondary,
+    fontWeight: '800',
+  },
+  perksGrid: {
+    gap: 8,
+  },
+  perkItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(10, 14, 22, 0.6)',
+    padding: 10,
+    borderRadius: 8,
+  },
+  perkText: {
+    ...THEME.typography.bodySm,
+    color: THEME.colors.onSurface,
+  },
+  plansRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  planCard: {
+    flex: 1,
+    backgroundColor: THEME.colors.surfaceContainerLowest,
+    padding: 12,
+    borderRadius: THEME.radius.lg,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    gap: 4,
+    position: 'relative',
+  },
+  planCardActive: {
+    borderColor: THEME.colors.secondary,
+    backgroundColor: THEME.colors.surfaceContainerLow,
+  },
+  saveTag: {
+    position: 'absolute',
+    top: -8,
+    left: 8,
+    backgroundColor: THEME.colors.secondary,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: THEME.radius.full,
+  },
+  saveTagText: {
+    color: THEME.colors.onSecondary,
+    fontSize: 8,
+    fontWeight: '900',
+  },
+  planName: {
+    ...THEME.typography.titleMd,
+    fontSize: 14,
+    color: THEME.colors.onSurface,
+  },
+  planPriceGold: {
+    ...THEME.typography.headlineSm,
+    color: THEME.colors.secondary,
+    fontWeight: '800',
+  },
+  planPriceWhite: {
+    ...THEME.typography.headlineSm,
+    color: THEME.colors.onSurface,
+    fontWeight: '800',
+  },
+  planPricePeriod: {
+    ...THEME.typography.labelSm,
+    color: THEME.colors.onSurfaceVariant,
+    fontWeight: 'normal',
+  },
+  planSaveText: {
+    ...THEME.typography.labelSm,
+    fontSize: 10,
+    color: THEME.colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+  managePlanBtn: {
+    height: 48,
+    borderRadius: THEME.radius.md,
+    backgroundColor: THEME.colors.secondaryContainer,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: THEME.colors.secondaryContainer,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  managePlanBtnText: {
+    ...THEME.typography.labelLg,
+    color: THEME.colors.onSecondary,
+    fontWeight: '800',
+  },
+});
