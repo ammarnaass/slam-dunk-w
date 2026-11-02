@@ -23,7 +23,7 @@ import { Icon } from '../components/Icon';
 import { THEME } from '../constants/theme';
 import { useAppStore } from '../store/useAppStore';
 import { fetchEpisodeComments, postEpisodeComment } from '../services/api';
-import { MXVideoPlayer } from '../components/player/MXVideoPlayer';
+import { MXVideoPlayer } from '../features/player';
 
 interface WatchModalProps {
   visible: boolean;
