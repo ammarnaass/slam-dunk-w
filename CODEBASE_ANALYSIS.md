@@ -144,8 +144,8 @@ mobile_app/src/features/player/
 
 ### ج. مكونات وشاشات واجهة المستخدم (UI Components & Screens - أولوية تفكيك عالية):
 مكونات تحتوي على واجهات مركبة مع منطق تفاعلي أو جلب بيانات:
-1. [`mobile_app/src/screens/WatchModal.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/WatchModal.tsx) — **473 سطر** (تجمع التعليقات، السيرفرات، المشغل، والتحميل)
-2. [`src/app/watch/[id]/components/WatchEpisodeMetaBar.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/WatchEpisodeMetaBar.tsx) — **443 سطر** (شريط التفاعل، التبويبات، الإبلاغ، والجودة)
+1. [`mobile_app/src/screens/WatchModal.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/screens/WatchModal.tsx) — (✅ تم تفكيكه من 473 سطراً إلى 22 ملفاً صغيراً في `features/watch/`).
+2. [`src/app/watch/[id]/components/WatchEpisodeMetaBar.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/WatchEpisodeMetaBar.tsx) — (✅ تم تفكيكه من 444 سطراً إلى 149 سطراً مع 6 مكونات نمطية في `meta-bar/`).
 3. [`mobile_app/src/components/watch/WatchServersPanel.tsx`](file:///home/ammar/slam-dunk-w/mobile_app/src/components/watch/WatchServersPanel.tsx) — **306 سطر**
 4. [`mobile_app/src/store/useAppStore.ts`](file:///home/ammar/slam-dunk-w/mobile_app/src/store/useAppStore.ts) — **295 سطر** (مخزن Zustand موحد يحوي المستخدم، التنزيلات، الحلقات، والمفضلة)
 5. [`src/components/HomeSlider.tsx`](file:///home/ammar/slam-dunk-w/src/components/HomeSlider.tsx) — **293 سطر**
@@ -230,11 +230,15 @@ mobile_app/src/features/player/
 - تم الحفاظ على التوافقية بنسبة 100% عبر إعادة التصدير من `mobile_app/src/screens/WatchModal.tsx`.
 - اجتياز فحص TypeScript بنسبة 100% بدون أي أخطاء (`0 errors`).
 
-### 🎯 المرحلة 2: تفكيك شريط ميتاداتا المشاهدة في الويب (`WatchEpisodeMetaBar.tsx`)
-- استخراج درج التنزيلات في مكون `WatchDownloadsDrawer.tsx`.
-- استخراج نافذة الإبلاغ عن مشكلة في `WatchReportModal.tsx`.
-- عزل تبويبات السيرفرات في `WatchServerTabs.tsx`.
+### ✅ المرحلة 2: تفكيك شريط ميتاداتا المشاهدة في الويب (`WatchEpisodeMetaBar.tsx`) — (مكتملة بنجاح 🟢)
+- تم استخراج درج التنزيلات المباشرة في مكون [`MetaBarDownloadsDrawer.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/meta-bar/MetaBarDownloadsDrawer.tsx) (82 سطراً).
+- تم استخراج تبويبات مصفوفة السيرفرات في [`MetaBarServerTabs.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/meta-bar/MetaBarServerTabs.tsx) (87 سطراً).
+- تم استخراج شريط أزرار التفاعل والإبلاغ في [`MetaBarActionStrip.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/meta-bar/MetaBarActionStrip.tsx) (98 سطراً).
+- تم استخراج قائمة كروت السيرفرات في [`MetaBarServerList.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/meta-bar/MetaBarServerList.tsx) (62 سطراً).
+- تم تقليص المكون الرئيسي [`WatchEpisodeMetaBar.tsx`](file:///home/ammar/slam-dunk-w/src/app/watch/[id]/components/WatchEpisodeMetaBar.tsx) من 444 سطراً إلى 149 سطراً فقط.
+- اجتياز كافة اختبارات الفحص الأمني (56/56) وفحص TypeScript بنسبة 100%.
 
+### 🎯 المرحلة 3: إعادة هيكلة مسارات الواجهة الخلفية (`backend/src/routes/`)
 - ✅ تم إنجاز توحيد وتفكيك محرك `resolvers.ts` بنجاح إلى وحدة نمطية وسكربت مزامنة آلي `sync:resolvers`.
 - تفكيك `admin.routes.ts` (575 سطر) إلى مجلد `backend/src/routes/admin/`:
   - `admin-stats.routes.ts`
